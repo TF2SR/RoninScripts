@@ -1096,3 +1096,31 @@ Scripts:
     client/srm_speedometer.nut
     client/srm_input_display.nut
 ]
+
+// TIMER
+When: "CLIENT || UI"
+Scripts:
+[
+	timer/facts/facts.nut
+	timer/timer_init.nut
+	timer/components/squircle.nut
+	timer/sh_timer.nut
+
+	// FACTS
+	timer/facts/average_speed.nut
+]	
+When: "CLIENT"
+Scripts:
+[
+	timer/cl_timer_overlay.nut
+]
+When: "UI"
+Scripts:
+[
+	timer/ui_timer_overlay.nut
+	timer/run_saves.nut
+	timer/time_measurement.nut
+	timer/components/button_simple.nut
+	timer/components/run_panel.nut
+	ui/menu_past_runs.nut
+]

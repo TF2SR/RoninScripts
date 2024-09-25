@@ -934,6 +934,12 @@ void function InitMenus()
 	SRM_AddSettingSubmenus()
 	SRM_AddPracticeWarpSubmenus()
 
+	// IGT
+	PastRuns_Init()
+	RunSaves_Init()
+	TimerOverlay_Init()
+	TimeMeasurement_Init()
+
 
 	AddMenu( "MainMenu", $"resource/ui/menus/main.menu", InitMainMenu, "#MAIN" )
 	AddPanel( GetMenu( "MainMenu" ), "EstablishUserPanel", InitEstablishUserPanel )
