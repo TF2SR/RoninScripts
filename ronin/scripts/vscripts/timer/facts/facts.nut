@@ -40,7 +40,7 @@ array<string> function TableKeysToArray( tab )
 
 string function GetRandomAvailableFact( table facts )
 {
-    return expectTableKeysToArray( facts ).getrandom()
+    return TableKeysToArray( facts ).getrandom()
 }
 #endif
 
