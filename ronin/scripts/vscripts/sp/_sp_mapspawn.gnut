@@ -47,6 +47,7 @@ void function SPMP_MapSpawn_Init() // original script entry point
 
 	AddCallback_EntitiesDidLoad( ActivateSkyBox )
 	AddCallback_OnClientConnected( SRM_SaveState_Init )
+	StartPointTracker_Init()
 
 	#if DEV
 		ModelViewer_Init()

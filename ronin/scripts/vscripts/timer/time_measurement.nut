@@ -1,5 +1,4 @@
 global function TimeMeasurement_Init
-global function CodeCallback_ShouldChangeLevel
 global function CodeCallback_SetLoadedSaveFile
 global function ResetTime
 global function AddTime
@@ -8,7 +7,7 @@ global function AddCallback_TimeUpdated
 global function SetRunOver
 global function TestSplitName
 global function GetRunCurrentLevel
-global function SaveFacts
+global function SetFacts
 
 struct
 {
@@ -23,6 +22,7 @@ struct
     bool runEnded
     bool awaitingSplit = false
     int isCheckpoint
+    int curStartPoint
     bool reloadActivated
     string activeLevelSplit
     table facts = {}
@@ -30,28 +30,12 @@ struct
     array<void functionref()> onTimerUpdatedCallbacks = []
 } file
 
-// called whenever ChangeLevel( string level, LevelTransitionStruct trans )
-// is called on server vm.
-// if we call SetShouldNotChangeLevel, the level will NOT change.
-// if we do not, the level will change.
-void function CodeCallback_ShouldChangeLevel( string targetLevel )
+bool function ShouldChangeLevel()
 {
-    print("fucl")
-    printt(targetLevel, GetActiveLevel())
-    if (targetLevel == GetActiveLevel()) // we're loading into the same level
-    {
-        return
-    }
-
-    printt(GetRunCategory(), "IL")
     if (GetRunCategory() != "IL")
-        return
+        return true
     
-    // open menu and shit
-    print("runEnded")
-    RunClientScript("SaveFacts")
-    file.runEnded = true
-    SetShouldNotChangeLevel()
+    return false
 }
 
 // called whenever a save file is loaded through the `load` concommand.
@@ -64,7 +48,6 @@ void function CodeCallback_SetLoadedSaveFile( string loadedFile )
         file.isCheckpoint = 1
     else
         file.isCheckpoint = 0
-    printt("file.isCheckpoint", file.isCheckpoint)
     
     file.loadedSave = loadedFile
 }
@@ -99,10 +82,17 @@ void function MeasureTime()
         file.deltaTime = GetCurrentClockTime()
         file.deltaTime = int(RoundToNearestInt(file.deltaTime * GetConVarFloat("host_timescale")))
 
+        SetShouldChangeLevel(ShouldChangeLevel())
+
+        if (!IsInLoadingScreen())
+        {
+            file.isCheckpoint = 0
+        }
         if (GetRunCategory() == "IL" && IsInLoadingScreen())
         {
             if (file.isCheckpoint == 0) // NOT a checkpoint
             {
+                file.curStartPoint = GetConVarInt("sp_startpoint")
                 // we're restarting the level, reset the timer
                 ResetTime()
             }
@@ -139,6 +129,14 @@ void function MeasureTime()
         {
             file.lastLevel = GetActiveLevel()
             AddTime(file.deltaTime)
+        }
+
+        if (Timer_GetCurrentStartPoint() > file.curStartPoint && GetRunCategory() == "IL")
+        {
+            printt("split!  ")
+            Split()
+            file.levelTime.name = "Startpoint " + Timer_GetCurrentStartPoint()
+            file.curStartPoint = Timer_GetCurrentStartPoint()
         }
 
         if (!shouldCount && ShouldStartCounting())
@@ -179,6 +177,11 @@ bool function ShouldStartCounting()
     {
         print("\n\n\nstart timer!!!")
         file.levelTime.name = GetRunCurrentLevel()
+        file.curStartPoint = GetConVarInt("sp_startpoint")
+        if (GetRunCategory() == "IL")
+        {
+            file.levelTime.name = "Startpoint " + file.curStartPoint
+        }
     }
     return result
 }
@@ -191,6 +194,9 @@ void function TestSplitName()
 // whether the timer should stop counting
 bool function ShouldStopCounting()
 {
+    if (HasCurrentLevelEnded() && GetRunCategory() == "IL")
+        file.runEnded = true
+        
     bool result = IsInLoadingScreen() || uiGlobal.activeMenu == GetMenu("MainMenu") || file.runEnded
 
     if (result)
@@ -217,6 +223,8 @@ void function Split()
     file.splits.append(file.levelTime)
     Duration levelTime
     levelTime.name = ""
+    levelTime.seconds = 0
+    levelTime.microseconds = 0
     file.levelTime = levelTime
 }
 
@@ -312,8 +320,10 @@ bool function IsRunValid()
     return true 
 }
 
-void function SaveFacts(string facts)
+void function SetFacts(string facts)
 {
     printt("SAVING FACTS", facts)
+    if (facts == "null")
+        throw "the fuck?"
     file.facts = DecodeJSON(facts)
 }

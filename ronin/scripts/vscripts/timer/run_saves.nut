@@ -4,7 +4,8 @@ global function SaveRunData
 global function TableToDuration
 global function GetRunByIndex
 global function DurationToTable
-global function GetSplitName
+global function GetILSplitName
+global function GetLevelName
 global function GetRunIndex
 global function GetRunCount
 global function DeleteRun
@@ -88,17 +89,39 @@ int function RunsBeingLoaded()
     return file.awaitingRunsToLoad
 }
 
-string function GetSplitName(string split, bool long = false)
+string function GetILSplitName(string split, string map, bool long = false)
 {
-    if (split in file.splitNames && file.splitNames[split] != "")
-        return expect string(file.splitNames[split])
+    if (!SRM_StartsWith(split, "Startpoint "))
+        return GetLevelName(split, long)
     
-    if (split in defaultSplitNames)
-        if ((split + "_long") in defaultSplitNames && long)
-            return defaultSplitNames[split + "_long"]
-        else return defaultSplitNames[split]
+    switch (map)
+    {
+        case "sp_hub_timeshift_start":
+        case "sp_hub_timeshift_end":
+            map = "sp_hub_timeshift"
+            break
+        case "sp_beacon_start":
+        case "sp_beacon_end":
+            map = "sp_beacon"
+            break
+    }
 
-    return split
+    int index = int( split.slice("Startpoint ".len(), split.len()) )
+
+    return GetStartPointNameFromIndex( map, index )
+}
+
+string function GetLevelName(string level, bool long = false)
+{
+    if (level in file.splitNames && file.splitNames[level] != "")
+        return expect string(file.splitNames[level])
+    
+    if (level in defaultSplitNames)
+        if ((level + "_long") in defaultSplitNames && long)
+            return defaultSplitNames[level + "_long"]
+        else return defaultSplitNames[level]
+
+    return level
 }
 
 void function RunLoaded( table data )
@@ -110,6 +133,7 @@ void function RunLoaded( table data )
     run.microseconds = expect int(data.microseconds)
     run.category = expect string(data.category)
     run.splits = ToSplitArray(expect array(data.splits))
+    run.facts = expect table(data.facts)
 
     file.runs.append(run)
 }
@@ -143,7 +167,9 @@ void function SaveRunData( Duration time, array<Duration> splits, table facts, b
     string category = GetRunCategory()
     
     if (category == "IL")
-        category = "IL_" + splits[0].name
+    {
+        category = "IL_" + GetRunCurrentLevel()
+    }
         
     Run run
     run.timestamp = timestamp
@@ -156,6 +182,17 @@ void function SaveRunData( Duration time, array<Duration> splits, table facts, b
 
     if (isValid)
     {
+        Run ornull pbRun = GetPBRun(run.category)
+        if (pbRun == null)
+        {
+            run.isPB = true
+        }
+        else if (IsRunBetter(run, expect Run(pbRun)))
+        {
+            expect Run(pbRun)
+            run.isPB = true
+            pbRun.isPB = false
+        }
         data["timestamp"] <- timestamp
         data["seconds"] <- time.seconds
         data["microseconds"] <- time.microseconds
@@ -171,6 +208,20 @@ void function SaveRunData( Duration time, array<Duration> splits, table facts, b
     }
 
     PastRuns_DisplayRun( run )
+}
+
+bool function IsRunBetter(Run a, Run b)
+{
+    if (a.seconds < b.seconds)
+        return true
+
+    if (a.seconds > b.seconds)
+        return false
+
+    if (a.microseconds < b.microseconds)
+        return true
+
+    return false
 }
 
 array function SplitArrayToTableArray(array<Duration> splits)
@@ -242,4 +293,17 @@ void function DeleteRun( Run run )
 
     DeleteFile( fileName )
     file.runs.remove( index )
+}
+
+Run ornull function GetPBRun(string category)
+{
+    foreach (Run run in file.runs)
+    {
+        if (run.category == category && run.isPB)
+        {
+            return run
+        }
+    }
+    
+    return null
 }

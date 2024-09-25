@@ -51,7 +51,6 @@ void function FactsLoaded()
         if (IsInCutscene())
             continue
 
-
         if (Length2D(player.GetVelocity()) > 3000)
             printt("bruh", Length2D(player.GetVelocity()))
         speedrunFacts[FACT_NAME].time += (Time() - lastTime)

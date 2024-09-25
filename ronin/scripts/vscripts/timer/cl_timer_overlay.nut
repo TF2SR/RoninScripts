@@ -25,7 +25,7 @@ struct
     int seconds
     int microseconds
     int levelSeconds
-    int levelNanoseconds
+    int levelMicroseconds
     bool calledStart
     array<void functionref()> loadedFactsCallbacks
     array<void functionref( string )> dialoguePlayedCallbacks
@@ -61,13 +61,13 @@ void function SetTimerVisible(bool visible)
     Hud_SetVisible( file.timer, visible )
 }
 
-void function SetTime( int seconds, int microseconds, int levelSeconds, int levelNanoseconds, bool runInvalidated )
+void function SetTime( int seconds, int microseconds, int levelSeconds, int levelMicroseconds, bool runInvalidated )
 {
     file.runInvalidated = runInvalidated
     file.seconds = seconds
     file.microseconds = microseconds
     file.levelSeconds = levelSeconds
-    file.levelNanoseconds = levelNanoseconds
+    file.levelMicroseconds = levelMicroseconds
     try
     {
         Signal( GetLocalClientPlayer(), "TimeSet" )
@@ -139,7 +139,7 @@ void function UpdateTimerHUD()
         var digit0 = Hud_GetChild(file.timer, "TimeDigit0")
 
         Hud_SetText( timeLabel, FormatTime(seconds) )
-        Hud_SetText( levelTimeLabel, FormatTime(seconds, microseconds) )
+        Hud_SetText( levelTimeLabel, FormatTime(file.levelSeconds, file.levelMicroseconds) )
 
         // 10 000 000
         Hud_SetText( digit0, format(".%02i", microseconds / 10000) )
@@ -233,7 +233,7 @@ void function SaveFacts()
     printt(speedrunFacts.len())
     string json = EncodeJSON(speedrunFacts)
     printt(json)
-    RunUIScript("SaveFacts", json)
+    RunUIScript("SetFacts", json)
 }
 
 void function AddCallback_DialoguePlayed( void functionref( string ) callback )

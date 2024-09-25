@@ -19,6 +19,8 @@ global struct Duration
 global struct Run
 {
     bool isValid
+    bool isPB
+    array<int> goldSplits // holds indexes
     int timestamp
     int seconds
     int microseconds

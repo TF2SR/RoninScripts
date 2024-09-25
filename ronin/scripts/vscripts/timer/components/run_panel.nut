@@ -27,7 +27,7 @@ void function RunPanel_DisplayRun( var panel, Run run )
     var categoryBG = Hud_GetChild(panel, "CategoryBG")
     var categoryName = Hud_GetChild(panel, "CategoryName")
     vector color = GetCategoryColor(run.category)
-    string categoryDisplayName = (SRM_StartsWith(run.category, "IL_")) ? GetSplitName(run.splits[0].name) : run.category
+    string categoryDisplayName = (SRM_StartsWith(run.category, "IL_")) ? GetLevelName(run.category.slice(3, run.category.len())) : run.category
     int x = Hud_GetX(categoryBG) - Hud_GetX(categoryName)
     
     Hud_SetText(categoryName, categoryDisplayName.toupper())

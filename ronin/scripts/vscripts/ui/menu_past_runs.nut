@@ -91,7 +91,17 @@ void function InitPastRunsMenu()
         dialogData.image = $"ui/menu/common/dialog_error"
         
         #if PC_PROG
-            AddDialogButton( dialogData, "Yes" )
+            AddDialogButton( dialogData, "Yes", void function() : () {
+                for (int i = GetRunCount() - 1; i >= 0; i++)
+                {
+                    Run run = GetRunByIndex(i)
+                    if (!run.isPB && i >= 50 && run.goldSplits.len() <= 0)
+                    {
+                        DeleteRun(run)
+                    }
+                }
+                RunList_Refresh()
+            } )
             AddDialogButton( dialogData, "No" )
 
             AddDialogFooter( dialogData, "#A_BUTTON_SELECT" )
@@ -312,16 +322,25 @@ void function PastRuns_DisplayRun(Run run)
     string splitLabelText = ""
     string timesLabelText = ""
 
+    string map = run.category.slice(3, run.category.len())
+    string categoryDisplayName = (SRM_StartsWith(run.category, "IL_")) ? GetLevelName(map, false) : run.category
+
     foreach (Duration split in run.splits)
     {
-        splitLabelText += GetSplitName(split.name, true) + "\n"
+        if (SRM_StartsWith(run.category, "IL_"))
+        {
+            splitLabelText += GetILSplitName(split.name, map, true)
+        }
+        else
+        {
+            splitLabelText += GetLevelName(split.name, true)
+        }
+        splitLabelText += "\n"
         timesLabelText += AddLeadingSpaceForTime(FormatTime(split.seconds, split.microseconds)) + "\n"
     }
 
     // category
     vector color = GetCategoryColor(run.category)
-
-    string categoryDisplayName = (SRM_StartsWith(run.category, "IL_")) ? GetSplitName(run.splits[0].name) : run.category
     
     Hud_SetText(categoryName, categoryDisplayName.toupper())
     Squircle_SetSize(categoryBG, Hud_GetTextWidth(categoryName) + x * 2, Hud_GetHeight(categoryBG))
