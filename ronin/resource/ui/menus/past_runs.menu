@@ -1,0 +1,460 @@
+resource/ui/menus/timer_overlay.menu
+{
+	menu
+	{
+		ControlName Frame
+		xpos 0
+		ypos 0
+		zpos "0"
+		"wide"								"f0"
+		"tall"								"f0"
+		"autoResize"						"0"
+		"pinCorner"							"0"
+		"visible"							"1"
+		"enabled"							"1"
+		"PaintBackgroundType"				"1"
+		infocus_bgcolor_override "0 0 0 0"
+		outoffocus_bgcolor_override "0 0 0 0"
+        
+        "Screen"
+        {
+            "ControlName" "ImagePanel"
+            image "vgui/hud/white"
+            xpos 0
+            ypos 0
+            zpos "-5"
+            "wide"								"f0"
+            "tall"								"f0"
+            "drawColor" "0 0 0 0" // vanilla label color
+        }
+
+        "MenuTitleBG"
+        {
+            "ControlName" "ImagePanel"
+            "image" "vgui/hud/white"
+            "scaleImage" "1"
+            "drawColor" "30 30 30 255" // vanilla label color
+            "visible" "1"
+            "wide" "445"
+            "tall" "100"
+            "enabled"	"0"
+            
+            "xpos"      "113"
+            "ypos"      "64"
+        }
+
+        "BingusAvoidanceBG"
+        {
+            "ControlName" "ImagePanel"
+            image "vgui/hud/white"
+            scaleImage      1
+            xpos 0
+            ypos 0
+            zpos                    9999
+            "wide"								"f0"
+            "tall"								"f0"
+            "drawColor" "0 0 0 255" // vanilla label color
+            visible 0
+            enabled 0
+        }
+
+        "BingusAvoidance"
+        {
+            ControlName				Label
+            xpos					0
+            ypos					0
+            wide					f0
+            tall					f0
+            zpos                    10000
+            visible					1
+            enabled					1
+            //auto_wide_tocontents	1
+            labelText				"real"
+            textAlignment			center
+            fgcolor_override 		"255 255 255 255"
+            bgcolor_override 		"0 0 0 200"
+            font					JBMonoBold_100
+        }
+
+        "MenuTitle"
+        {
+            ControlName				Label
+            xpos					128
+            ypos					64
+            wide					64
+            tall					100
+            visible					1
+            enabled					1
+            auto_wide_tocontents	1
+            labelText				"PAST RUNS"
+            textAlignment			west
+            fgcolor_override 		"255 255 255 255"
+            bgcolor_override 		"0 0 0 200"
+            font					JBMonoBold_100
+        }
+
+        "RunData"
+        {
+            "ControlName" "ImagePanel"
+            image "vgui/hud/white"
+            scaleImage      1
+            xpos 0
+            ypos 20
+            zpos "0" // overlay over all other menus
+            "wide"								"500"
+            "tall"								"700"
+            "drawColor" "0 0 0 140" // vanilla label color
+            visible 1
+            enabled 1
+
+            pin_to_sibling Screen
+            pin_to_sibling_corner CENTER
+            pin_corner_to_sibling CENTER
+        }
+
+        "Splits"
+        {
+            ControlName				Label
+            xpos					-10
+            ypos					-5
+            wide					400
+            tall					500
+            visible					1
+            enabled					1
+            //auto_wide_tocontents	1
+            labelText				"Split 1"
+            textAlignment			north-west
+            fgcolor_override 		"200 200 200 255"
+            bgcolor_override 		"0 0 0 200"
+            font					JBMonoBold_24
+            
+            pin_to_sibling RunData
+            pin_to_sibling_corner TOP_LEFT
+            pin_corner_to_sibling TOP_LEFT
+        }
+
+        "Times"
+        {
+            ControlName				Label
+            xpos					-10
+            ypos					-5
+            wide					400
+            tall					500
+            visible					1
+            enabled					1
+            auto_wide_tocontents	1
+            labelText				"1:10:00.00"
+            textAlignment			north-east
+            fgcolor_override 		"255 255 255 255"
+            bgcolor_override 		"0 0 0 200"
+            font					JBMonoBold_24
+            pin_to_sibling RunData
+            pin_to_sibling_corner TOP_RIGHT
+            pin_corner_to_sibling TOP_RIGHT
+        }
+
+        "FinalTime"
+        {
+            ControlName				Label
+            xpos					0
+            ypos					0
+            wide					460
+            tall					100
+            visible					1
+            enabled					1
+            //auto_wide_tocontents	1
+            auto_tall_tocontents    1
+            labelText				"1:00:00.00"
+            textAlignment			center
+            fgcolor_override 		"255 255 255 255"
+            bgcolor_override 		"0 0 0 200"
+            font					JBMonoBold_100
+
+            pin_to_sibling RunData
+            pin_to_sibling_corner BOTTOM
+            pin_corner_to_sibling BOTTOM
+            
+        }
+
+        "Line"
+        {
+            "ControlName" "ImagePanel"
+            image "vgui/hud/white"
+            scaleImage      1
+            xpos 0
+            ypos 0
+            zpos "0" // overlay over all other menus
+            "wide"								"480"
+            "tall"								"10"
+            "drawColor" "84 174 189 255" // vanilla label color
+            visible 1
+            enabled 1
+
+            pin_to_sibling FinalTime
+            pin_to_sibling_corner TOP
+            pin_corner_to_sibling BOTTOM
+        }
+
+        "Date"
+        {
+            ControlName				Label
+            xpos					0
+            ypos					4
+            wide					300
+            tall					100
+            visible					1
+            enabled					1
+            //auto_wide_tocontents	1
+            auto_tall_tocontents    1
+            labelText				"5 minutes ago"
+            textAlignment			west
+            fgcolor_override 		"255 255 255 255"
+            bgcolor_override 		"0 0 0 200"
+            font					JBMonoBold_24
+
+            pin_to_sibling RunData
+            pin_to_sibling_corner TOP_LEFT
+            pin_corner_to_sibling BOTTOM_LEFT
+        }
+
+        "CategoryBG"
+        {
+            "ControlName"		"CNestedPanel"
+            InheritProperties   Squircle
+            xpos				0
+            ypos				4
+            wide				64
+            tall			    24
+            
+            pin_to_sibling RunData
+            pin_to_sibling_corner TOP_RIGHT
+            pin_corner_to_sibling BOTTOM_RIGHT
+        }
+
+        "CategoryName"
+        {
+            ControlName				Label
+            xpos					-6
+            ypos					0
+            wide					300
+            tall					24
+            visible					1
+            enabled					1
+            //auto_wide_tocontents	1
+            wrap                    0
+            //auto_tall_tocontents    1
+            labelText				"BLOOD && RUST"
+            textAlignment			east
+            fgcolor_override 		"30 30 30 255"
+            bgcolor_override 		"0 0 0 0"
+            font					JBMonoBold_18
+
+            pin_to_sibling CategoryBG
+            pin_to_sibling_corner BOTTOM_RIGHT
+            pin_corner_to_sibling BOTTOM_RIGHT
+        }
+
+        "Verification"
+        {
+            ControlName				Label
+            xpos					8
+            ypos					-4
+            wide					460
+            tall					692
+            visible					1
+            enabled					1
+            //auto_wide_tocontents	1
+            //auto_tall_tocontents    1
+            wrap                    1
+            labelText				""
+            textAlignment			north-west
+            fgcolor_override 		"255 255 255 255"
+            bgcolor_override 		"0 0 0 200"
+            font					JBMonoBold_24
+
+            pin_to_sibling RunData
+            pin_to_sibling_corner TOP_RIGHT
+            pin_corner_to_sibling TOP_LEFT
+        }
+
+        "RunList"
+        {
+            "ControlName" "ImagePanel"
+            image "vgui/hud/white"
+            scaleImage      1
+            xpos 280
+            ypos 0
+            zpos "0" // overlay over all other menus
+            "wide"								"200"
+            "tall"								"628"
+            "drawColor" "0 0 0 0" // vanilla label color
+            visible 1
+            enabled 1
+
+            pin_to_sibling RunData
+            pin_to_sibling_corner LEFT
+            pin_corner_to_sibling RIGHT
+        }
+
+        "UpArrow"
+        {
+            "ControlName"		"CNestedPanel"
+
+            xpos 280
+            ypos 0
+            zpos "0" // overlay over all other menus
+            "wide"								"200"
+            "tall"								"32"
+
+            pin_to_sibling RunData
+            pin_to_sibling_corner TOP_LEFT
+            pin_corner_to_sibling TOP_RIGHT
+            
+		    controlSettingsFile	"resource/ui/menus/panels/arrow_button.res"
+        }
+
+        "RunPanel0"
+        {
+            "ControlName"		"CNestedPanel"
+            xpos				0
+            ypos				0
+            InheritProperties   RunPanel // see resource/basemodui_scheme.res
+            
+            pin_to_sibling RunList
+            pin_to_sibling_corner TOP
+            pin_corner_to_sibling TOP
+        }
+        "RunPanel1"
+        {
+            "ControlName"		"CNestedPanel"
+            xpos				0
+            ypos				4
+            InheritProperties   RunPanel // see resource/basemodui_scheme.res
+            
+            pin_to_sibling RunPanel0
+            pin_to_sibling_corner BOTTOM_LEFT
+            pin_corner_to_sibling TOP_LEFT
+        }
+        "RunPanel2"
+        {
+            "ControlName"		"CNestedPanel"
+            xpos				0
+            ypos				4
+            InheritProperties   RunPanel // see resource/basemodui_scheme.res
+            
+            pin_to_sibling RunPanel1
+            pin_to_sibling_corner BOTTOM_LEFT
+            pin_corner_to_sibling TOP_LEFT
+        }
+        "RunPanel3"
+        {
+            "ControlName"		"CNestedPanel"
+            xpos				0
+            ypos				4
+            InheritProperties   RunPanel // see resource/basemodui_scheme.res
+            
+            pin_to_sibling RunPanel2
+            pin_to_sibling_corner BOTTOM_LEFT
+            pin_corner_to_sibling TOP_LEFT
+        }
+        "RunPanel4"
+        {
+            "ControlName"		"CNestedPanel"
+            xpos				0
+            ypos				4
+            InheritProperties   RunPanel // see resource/basemodui_scheme.res
+            
+            pin_to_sibling RunPanel3
+            pin_to_sibling_corner BOTTOM_LEFT
+            pin_corner_to_sibling TOP_LEFT
+        }
+        "RunPanel5"
+        {
+            "ControlName"		"CNestedPanel"
+            xpos				0
+            ypos				4
+            InheritProperties   RunPanel // see resource/basemodui_scheme.res
+            
+            pin_to_sibling RunPanel4
+            pin_to_sibling_corner BOTTOM_LEFT
+            pin_corner_to_sibling TOP_LEFT
+        }
+        "RunPanel6"
+        {
+            "ControlName"		"CNestedPanel"
+            xpos				0
+            ypos				4
+            InheritProperties   RunPanel // see resource/basemodui_scheme.res
+            
+            pin_to_sibling RunPanel5
+            pin_to_sibling_corner BOTTOM_LEFT
+            pin_corner_to_sibling TOP_LEFT
+        }
+        "RunPanel7"
+        {
+            "ControlName"		"CNestedPanel"
+            xpos				0
+            ypos				4
+            InheritProperties   RunPanel // see resource/basemodui_scheme.res
+            
+            pin_to_sibling RunPanel6
+            pin_to_sibling_corner BOTTOM_LEFT
+            pin_corner_to_sibling TOP_LEFT
+        }
+        
+        "DownArrow"
+        {
+            "ControlName"		"CNestedPanel"
+
+            xpos 280
+            ypos 0
+            zpos "0" // overlay over all other menus
+            "wide"								"200"
+            "tall"								"32"
+
+            pin_to_sibling RunData
+            pin_to_sibling_corner BOTTOM_LEFT
+            pin_corner_to_sibling BOTTOM_RIGHT
+            
+		    controlSettingsFile	"resource/ui/menus/panels/arrow_button.res"
+        }
+
+        "CleanUpButton"
+        {
+            "ControlName"		"CNestedPanel"
+
+            xpos 0
+            ypos 4
+            zpos "0" // overlay over all other menus
+            "wide"								"200"
+            "tall"								"32"
+            visible         1
+            enabled         1
+
+            pin_to_sibling DownArrow
+            pin_to_sibling_corner BOTTOM_RIGHT
+            pin_corner_to_sibling TOP_RIGHT
+            
+		    controlSettingsFile	"resource/ui/menus/panels/button_simple.res"
+        }
+
+        "DeleteRunButton"
+        {
+            "ControlName"		"CNestedPanel"
+
+            xpos 0
+            ypos 4
+            zpos "0" // overlay over all other menus
+            "wide"								"200"
+            "tall"								"32"
+            visible         1
+            enabled         1
+
+            pin_to_sibling RunData
+            pin_to_sibling_corner BOTTOM_RIGHT
+            pin_corner_to_sibling TOP_RIGHT
+            
+		    controlSettingsFile	"resource/ui/menus/panels/button_simple.res"
+        }
+	}
+}

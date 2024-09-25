@@ -69,35 +69,36 @@ void function SRM_SpeedometerUpdate()
 
 	RuiSetString( file.speedometerUnit, "msgText", speedometerUnitLabel )
 
-	vector speedometerVelocityVector
-	float  speedometerVelocity
+	entity player = GetLocalClientPlayer()
 	while (true)
 	{
 		WaitFrame()
 
-		speedometerVelocityVector = GetLocalClientPlayer().GetVelocity()
+		vector velocity = player.GetVelocity()
+		velocity += Ronin_GetPlayerPlatformVelocity(player)
 
 		switch ( GetConVarInt("srm_speedometer_axismode") )
 		{
 			// XY
-			case 0: speedometerVelocityVector = < speedometerVelocityVector.x, speedometerVelocityVector.y, 0.0 >
+			case 0:
+			velocity.z = 0 // remove vertical axis
 			break
 			// XYZ
 			case 1: // redundant since the other cases just eliminate axes to ignore
 			break
 			// Z
-			case 2: speedometerVelocityVector = < 0.0, 0.0, speedometerVelocityVector.z >
+			case 2: velocity = < 0.0, 0.0, velocity.z >
 			break
 		}
 
-		speedometerVelocity = speedometerVelocityVector.Length()
+		float speed = Length(velocity)
 
 		// update color depending on speed (lerp between 0 - 1000 u)
-		RuiSetFloat3( file.speedometer, "msgColor", SRM_SpeedometerColorLerp( speedometerVelocity ) )
-		RuiSetFloat3( file.speedometerUnit, "msgColor", SRM_SpeedometerColorLerp( speedometerVelocity ) )
-		speedometerVelocity *= unitConversionModifier
+		RuiSetFloat3( file.speedometer, "msgColor", SRM_SpeedometerColorLerp( speed ) )
+		RuiSetFloat3( file.speedometerUnit, "msgColor", SRM_SpeedometerColorLerp( speed ) )
+		speed *= unitConversionModifier
 		// cut off decimals and then convert to string
-		RuiSetString( file.speedometer, "msgText", speedometerVelocity.tointeger().tostring() )
+		RuiSetString( file.speedometer, "msgText", speed.tointeger().tostring() )
 	}
 }
 

@@ -383,4 +383,18 @@ Resource/UI/HudScripted_mp.res
 		enabled 		1
 		controlSettingsFile	"resource/ui/srm_input_display.res"
 	}
+	
+    TimerPanel
+    {
+        "ControlName"		"CNestedPanel"
+        xpos				r512
+        ypos				0
+        wide				512
+        tall				512
+        visible				1
+        enabled				1
+        zpos				10
+
+        controlSettingsFile	"resource/ui/menus/panels/timer.res"
+    }
 }

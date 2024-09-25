@@ -13,14 +13,19 @@ FontFileTable
 	"Titanfall"					"resource/NotoSansTC-Regular.vfont"		[$TCHINESE]
 	"Titanfall"					"resource/MetronicPro-SemiBold.vfont"	[$RUSSIAN]
 
+	"JBMonoLight"				"resource/IosevkaCustom-Regular.ttf"
+	"JBMonoLightItalic"				"resource/IosevkaCustom-Italic.ttf"
+	"JBMonoBold"				"resource/IosevkaCustom-Bold.ttf"
+	"JBMonoBoldItalic"				"resource/IosevkaCustom-BoldItalic.ttf"
+
 	"marlett"					"vgui/fonts/marlett.ttf"
 
 	// Everything below is DONOTSHIP / Dev only
 
 	"arial unicode ms"			"vgui/fonts/arialuni.ttf"
 
-	"lucida console"			"resource/Miracode.ttf"						[$PC]
-	"lucida console"			"resource/MetronicPro-Regular.vfont"	[$GAMECONSOLE]
+	"lucida console"			"resource/IosevkaCustom-Regular.ttf"						[$PC]
+	"lucida console"			"resource/IosevkaCustom-Regular.ttf"	[$GAMECONSOLE]
 
 	"tahoma"					"fonts\\tahoma.ttf"						[$PC]
 	"tahoma"					"resource/MetronicPro-Regular.vfont"  	[$GAMECONSOLE]
