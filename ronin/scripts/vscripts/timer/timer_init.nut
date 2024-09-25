@@ -18,6 +18,7 @@ global struct Duration
 
 global struct Run
 {
+    bool isValid
     int timestamp
     int seconds
     int microseconds

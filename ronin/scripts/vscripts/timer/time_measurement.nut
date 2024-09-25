@@ -12,6 +12,7 @@ global function SaveFacts
 
 struct
 {
+    bool runInvalidated
     int deltaTime
     Duration& time
     Duration& levelTime
@@ -98,20 +99,21 @@ void function MeasureTime()
         file.deltaTime = GetCurrentClockTime()
         file.deltaTime = int(RoundToNearestInt(file.deltaTime * GetConVarFloat("host_timescale")))
 
-        if (GetRunCategory() == "IL" && IsInLoadingScreen() && file.isCheckpoint != -1)
+        if (GetRunCategory() == "IL" && IsInLoadingScreen())
         {
-            printt("file.isCheckpoint", file.isCheckpoint)
             if (file.isCheckpoint == 0) // NOT a checkpoint
             {
                 // we're restarting the level, reset the timer
                 ResetTime()
             }
-            file.isCheckpoint = -1
         }
         else if (uiGlobal.loadingLevel == "sp_training" && file.isCheckpoint == 0)
         {
             ResetTime()
         }
+
+        if (!file.runInvalidated && !IsRunValid())
+            file.runInvalidated = true
 
         foreach (void functionref() callback in file.onTimerUpdatedCallbacks)
             callback()
@@ -122,7 +124,7 @@ void function MeasureTime()
             {
                 if (!lastIsFullyConnected)
                     RunClientScript("LoadFacts", EncodeJSON(file.facts))
-                RunClientScript("SetTime", file.time.seconds, file.time.microseconds, file.levelTime.seconds, file.levelTime.microseconds) // bigger
+                RunClientScript("SetTime", file.time.seconds, file.time.microseconds, file.levelTime.seconds, file.levelTime.microseconds, file.runInvalidated) // bigger
             }
 
             lastIsFullyConnected = !IsInLoadingScreen()
@@ -202,7 +204,7 @@ bool function ShouldStopCounting()
     {
         print("RUN END")
         SetRunJustEnded(true)
-        SaveRunData(file.time, file.splits, file.facts)
+        SaveRunData(file.time, file.splits, file.facts, IsRunValid())
         if (GetRunCategory() == "IL")
             AdvanceMenu(GetMenu("PastRuns"))
     }
@@ -220,6 +222,7 @@ void function Split()
 
 void function ResetTime()
 {
+    file.runInvalidated = false
     file.time.seconds = 0
     file.time.microseconds = 0
     file.levelTime.seconds = 0
@@ -272,6 +275,41 @@ string function GetRunCurrentLevel()
     }
 
     return level
+}
+
+bool function IsRunValid()
+{
+    if (file.runInvalidated)
+        return false
+
+    // i wish cheats were allowed...
+    if (GetConVarBool("sv_cheats"))
+        return false
+    
+    if (IsInLoadingScreen())
+    {
+        // check that the startpoint is valis
+        // and were not starting mid-level
+        int startPoint = GetConVarInt("sp_startpoint") // set when switching level
+        string level = GetActiveLevel()
+        switch (GetActiveLevel())
+        {
+            case "sp_beacon":
+                if (startPoint != 0 && startPoint != 2)
+                    return false
+                break
+            case "sp_hub_timeshift":
+                if (startPoint != 0 && startPoint != 7)
+                    return false
+                break
+            default:
+                if (startPoint != 0)
+                    return false
+                break
+        }
+    }
+
+    return true 
 }
 
 void function SaveFacts(string facts)

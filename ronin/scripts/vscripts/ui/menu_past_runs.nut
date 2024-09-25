@@ -282,7 +282,9 @@ string function GetTimeAsString(int timestamp)
 void function PastRuns_DisplayRun(Run run)
 {
     file.selectedRunIndex = GetRunIndex(run)
+    printt("run index", file.selectedRunIndex)
 
+    var deleteButton = Hud_GetChild(file.menu, "DeleteRunButton")
     var totalTime = Hud_GetChild(file.menu, "FinalTime")
     var splitsLabel = Hud_GetChild(file.menu, "Splits")
     var timesLabel = Hud_GetChild(file.menu, "Times")
@@ -290,14 +292,15 @@ void function PastRuns_DisplayRun(Run run)
     var categoryBG = Hud_GetChild(file.menu, "CategoryBG")
     int x = Hud_GetX(categoryBG) - Hud_GetX(categoryName)
 
-    string verificationLabelText = "^FFD04000Mods Used:^FFFFFFFF\n\n"
-    foreach (string mod, string hash in run.modHashes)
+    string verificationLabelText = ""
+
+    if (!run.isValid)
     {
-        verificationLabelText += "^40FF9600" + mod + ":^FFFFFFF\n" + hash + "\n"
+        verificationLabelText += "^FF404000Run Invalid!^FFFFFFFF\n\n"
     }
 
     if (run.facts.len() > 0)
-        verificationLabelText += "\n^FFD04000Fun Fact:\n^FFFFFFFF" + GetFactString(run.facts, GetRandomAvailableFact(run.facts))
+        verificationLabelText += "^FFD04000Fun Fact:\n^FFFFFFFF" + GetFactString(run.facts, GetRandomAvailableFact(run.facts)) + "\n"
 
     Hud_SetText( Hud_GetChild(file.menu, "Verification"), verificationLabelText )
 
@@ -328,6 +331,8 @@ void function PastRuns_DisplayRun(Run run)
 
     Hud_SetText(splitsLabel, splitLabelText)
     Hud_SetText(timesLabel, timesLabelText)
+
+    Hud_SetVisible( deleteButton, GetRunIndex(run) >= 0 )
 }
 
 // monospace font abusal...

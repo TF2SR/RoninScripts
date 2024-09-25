@@ -104,6 +104,7 @@ string function GetSplitName(string split, bool long = false)
 void function RunLoaded( table data )
 {
     Run run
+    run.isValid = ("isValid" in data) ? expect bool(data.isValid) : true
     run.timestamp = expect int(data.timestamp)
     run.seconds = expect int(data.seconds)
     run.microseconds = expect int(data.microseconds)
@@ -134,7 +135,7 @@ Run function GetRunByIndex(int index)
     return file.runs[index]
 }
 
-void function SaveRunData( Duration time, array<Duration> splits, table facts )
+void function SaveRunData( Duration time, array<Duration> splits, table facts, bool isValid )
 {
     int timestamp = GetUnixTimestamp()
     
@@ -143,30 +144,32 @@ void function SaveRunData( Duration time, array<Duration> splits, table facts )
     
     if (category == "IL")
         category = "IL_" + splits[0].name
-
-    data["timestamp"] <- timestamp
-    data["seconds"] <- time.seconds
-    data["microseconds"] <- time.microseconds
-    data["splits"] <- SplitArrayToTableArray(splits)
-    data["category"] <- category
-    data["modHashes"] <- {}
-    data["facts"] <- facts
-
-    SaveFile( "runs/" + timestamp + ".json", EncodeJSON( data ) ) // fuckRun run
-
+        
     Run run
     run.timestamp = timestamp
     run.seconds = time.seconds
     run.microseconds = time.microseconds
     run.category = category
     run.splits = splits
-    run.modHashes = {}
     run.facts = facts
+    run.isValid = isValid
 
-    foreach (var k, var v in expect table(data.modHashes))
-        run.modHashes[expect string(k)] <- expect string(v)
+    if (isValid)
+    {
+        data["timestamp"] <- timestamp
+        data["seconds"] <- time.seconds
+        data["microseconds"] <- time.microseconds
+        data["splits"] <- SplitArrayToTableArray(splits)
+        data["category"] <- category
+        data["facts"] <- facts
+        data["isValid"] <- isValid
 
-    file.runs.insert( 0, run )
+        SaveFile( "runs/" + timestamp + ".json", EncodeJSON( data ) ) // fuckRun run
+
+        // only insert it into the run list if its a valid run
+        file.runs.insert( 0, run )
+    }
+
     PastRuns_DisplayRun( run )
 }
 
@@ -230,6 +233,10 @@ int function RunCompareLatest( Run a, Run b )
 void function DeleteRun( Run run )
 {
     int index = GetRunIndex( run )
+
+    // run is not in run list, was invalid?
+    if (index < 0 || index > file.runs.len())
+        return
 
     string fileName = "runs/" + run.timestamp + ".json"
 

@@ -21,6 +21,7 @@ global table speedrunFacts
 struct
 {
     var timer
+    bool runInvalidated
     int seconds
     int microseconds
     int levelSeconds
@@ -60,8 +61,9 @@ void function SetTimerVisible(bool visible)
     Hud_SetVisible( file.timer, visible )
 }
 
-void function SetTime( int seconds, int microseconds, int levelSeconds, int levelNanoseconds )
+void function SetTime( int seconds, int microseconds, int levelSeconds, int levelNanoseconds, bool runInvalidated )
 {
+    file.runInvalidated = runInvalidated
     file.seconds = seconds
     file.microseconds = microseconds
     file.levelSeconds = levelSeconds
@@ -93,8 +95,16 @@ void function UpdateTimerHUD()
 
         vector color = GetCategoryColor(GetRunCategory())
         
-        Squircle_SetColor(categoryBG, int(color.x), int(color.y), int(color.z), 255)
-        Hud_SetText(categoryName, GetRunCategory())
+        if (file.runInvalidated)
+        {
+            Squircle_SetColor(categoryBG, 255, 15, 15, 255)
+            Hud_SetText(categoryName, "INVALID")
+        }
+        else
+        {
+            Squircle_SetColor(categoryBG, int(color.x), int(color.y), int(color.z), 255)
+            Hud_SetText(categoryName, GetRunCategory())
+        }
 
         int labelX = Hud_GetX( categoryName )
         int bgX = Hud_GetX( categoryBG )
@@ -220,8 +230,10 @@ void function AddCallback_TrackingStarted( void functionref() callback )
 
 void function SaveFacts()
 {
-    PrintTable(speedrunFacts)
-    RunUIScript("SaveFacts", EncodeJSON(speedrunFacts))
+    printt(speedrunFacts.len())
+    string json = EncodeJSON(speedrunFacts)
+    printt(json)
+    RunUIScript("SaveFacts", json)
 }
 
 void function AddCallback_DialoguePlayed( void functionref( string ) callback )
