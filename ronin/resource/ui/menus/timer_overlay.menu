@@ -1,0 +1,46 @@
+resource/ui/menus/timer_overlay.menu
+{
+	menu
+	{
+		ControlName Frame
+		xpos r412
+		ypos 0
+		zpos "1000" // overlay over all other menus
+		"wide"								"412"
+		"tall"								"256"
+		"autoResize"						"0"
+		"pinCorner"							"0"
+		"visible"							"1"
+		"enabled"							"1"
+		"PaintBackgroundType"				"1"
+		infocus_bgcolor_override "0 0 0 0"
+		outoffocus_bgcolor_override "0 0 0 0"
+
+        TimerPanel
+        {
+			"ControlName"		"CNestedPanel"
+			xpos				-100
+			ypos				0
+			wide				512
+			tall				512
+			visible				1
+			enabled				1
+			zpos				10
+
+			controlSettingsFile	"resource/ui/menus/panels/timer.res"
+        }
+		TimerButtons
+		{
+			"ControlName"		"CNestedPanel"
+			xpos				-100
+			ypos				0
+			wide				512
+			tall				512
+			visible				1
+			enabled				1
+			zpos				12
+
+			controlSettingsFile	"resource/ui/menus/panels/timer_buttons.res"
+		}
+	}
+}

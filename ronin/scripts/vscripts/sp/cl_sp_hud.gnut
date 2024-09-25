@@ -21,6 +21,7 @@ void function ClSpHud_Init()
 	if ( IsLobby() )
 		return
 
+	TimerOverlay_Init()
 	SRM_InfoHUD_Init()
 	SRM_TasHUD_Init()
 	thread SRM_InputDisplay_Init()
