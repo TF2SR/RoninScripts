@@ -6,7 +6,9 @@
 global function GetCategoryColor
 global function GetRunCategory
 global function FormatTime
-global function FormatLevelTime
+global function FormatHUDSplitList
+global function SubtractTimes
+global function SumOfSplits
 
 vector function GetCategoryColor(string category)
 {
@@ -42,32 +44,67 @@ string function GetRunCategory()
     return cat
 }
 
-string function FormatTime( int seconds, int microseconds = -1 )
+Duration function SumOfSplits( array<Duration> splits, int maxIndex )
+{
+    Duration a
+    for (int i = 0; i < minint(maxIndex, splits.len()); i++)
+    {
+        a.seconds += splits[i].seconds
+        a.microseconds += splits[i].microseconds
+    }
+    a.seconds += a.microseconds / 1000000
+    a.microseconds = a.microseconds % 1000000
+
+    return a
+}
+
+Duration function SubtractTimes( Duration a, Duration b)
+{
+    Duration c
+    if (a.seconds < b.seconds || (a.seconds == b.seconds && a.microseconds < b.microseconds))
+    {
+        c = SubtractTimes( b, a )
+        c.seconds *= -1
+        c.microseconds *= -1
+        return c
+    }
+    else
+    {
+        c.seconds = a.seconds - b.seconds
+        c.microseconds = a.microseconds - b.microseconds
+    }
+    if (c.microseconds < 0)
+    {
+        c.microseconds += 1000000
+        c.seconds -= 1
+    }
+
+    return c
+}
+
+string function FormatTime( int seconds, int microseconds = -1, int precision = 2 )
 {
     string result = ""
 
     if (seconds >= 3600)
-        result = format("%i:%02i:%02i.%02i", seconds / 3600, seconds / 60 % 60, seconds % 60, microseconds / 10000)
+        result = format("%i:%02i:%02i.%0" + precision + "i", seconds / 3600, seconds / 60 % 60, seconds % 60, microseconds / pow(10, 6 - precision))
 
     else if (seconds >= 60)
-        result = format("%i:%02i.%02i", seconds / 60, seconds % 60, microseconds / 10000)
+        result = format("%i:%02i.%0" + precision + "i", seconds / 60, seconds % 60, microseconds / pow(10, 6 - precision))
 
     else 
-        result = format("%i.%02i", seconds, microseconds / 10000)
+        result = format("%i.%0" + precision + "i", seconds, microseconds / pow(10, 6 - precision) )
 
-    if (microseconds == -1)
-        return result.slice(0, result.len() - 3)
+    if (microseconds == -1 || precision == 0)
+        return result.slice(0, result.len() - 1 - maxint(1, precision))
     
     return result
 }
 
-string function FormatLevelTime( int seconds, int microseconds )
+string function FormatHUDSplitList( string levelName, int seconds, int microseconds )
 {
-    if (seconds >= 3600)
-        return format("%i:%02i:%02i.%01i", seconds / 3600, seconds / 60 % 60, seconds % 60, microseconds / 10000)
+    string formattedTime = FormatTime( seconds, microseconds, 1 )
+    string stringLen = "                                      "
     
-    if (seconds >= 60)
-        return format("%i:%02i.%01i", seconds / 60, seconds % 60, microseconds / 10000)
-    
-    return format("%i.%01i", seconds, microseconds / 10000)
+    return levelName + stringLen.slice(0, stringLen.len() - levelName.len() - formattedTime.len()) + formattedTime
 }

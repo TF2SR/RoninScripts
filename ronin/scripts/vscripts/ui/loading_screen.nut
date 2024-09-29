@@ -26,6 +26,7 @@ void function LoadingScreen()
             continue
         }
 
+        print("ayo")
         Hud_SetText(timeLabel, GetUnixTimestamp().tostring())
         //print(Hud_GetUTF8Text(modeLabel) + "HELO")
 

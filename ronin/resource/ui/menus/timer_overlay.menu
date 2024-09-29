@@ -5,7 +5,7 @@ resource/ui/menus/timer_overlay.menu
 		ControlName Frame
 		xpos r412
 		ypos 0
-		zpos "1000" // overlay over all other menus
+		zpos "32767" // overlay over all other menus
 		"wide"								"412"
 		"tall"								"256"
 		"autoResize"						"0"

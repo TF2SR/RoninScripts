@@ -273,7 +273,7 @@ void function PastRuns_Placeholder()
     string categoryDisplayName = "BALLING%"
     
     Hud_SetText(categoryName, categoryDisplayName.toupper())
-    Squircle_SetSize(categoryBG, Hud_GetTextWidth(categoryName) + x * 2, Hud_GetHeight(categoryBG))
+    Squircle_SetSize(categoryBG, Hud_GetTextWidth(categoryName) + abs(x) * 2, Hud_GetHeight(categoryBG))
     Squircle_SetColor(categoryBG, int(color.x), int(color.y), int(color.z), 255)
     Hud_SetText(Hud_GetChild(file.menu, "Date"), GetTimeAsString(0))
 
@@ -307,6 +307,11 @@ void function PastRuns_DisplayRun(Run run)
     if (!run.isValid)
     {
         verificationLabelText += "^FF404000Run Invalid!^FFFFFFFF\n\n"
+    }
+    
+    if (run.isPB)
+    {
+        verificationLabelText += "^FFC83200Personal Best!^FFFFFFFF\n\n"
     }
 
     if (run.facts.len() > 0)

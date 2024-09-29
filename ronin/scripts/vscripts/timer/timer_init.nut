@@ -2,6 +2,8 @@
 // e.g. for "no cut" it will display "no cutscenes"
 // but it will actually autocomplete to the first element in the array.
 // suggestions prioritized by order in array.
+global const int RUN_SAVE_VERSION = -1 // increment every time we do a breaking change
+
 array< array<string> > VALID_CATEGORY_ALIASES = [
     ["any%", "any", "any percent"],
     ["ncs", "no cutscenes"],

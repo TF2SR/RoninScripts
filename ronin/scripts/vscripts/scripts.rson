@@ -1086,8 +1086,8 @@ Scripts:
 [
     sp/srm_savestates.nut
     sp/srm_force_moonboots.nut
-    
-    timer/start_point_tracker.nut
+	
+	timer/start_point_tracker.nut
 ]
 
 When: "CLIENT && SP"

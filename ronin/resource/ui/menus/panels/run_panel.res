@@ -37,14 +37,14 @@ resource/ui/menus/panels/run_panel.res
     {
         ControlName				Label
         xpos					-7
-        ypos					0
+        ypos					-5
         wide					186
         tall					36
         visible					0
         enabled					1
         //auto_wide_tocontents	1
         //auto_tall_tocontents    1
-        labelText				"*"
+        labelText				"PB"
         textAlignment			north-west
         fgcolor_override 		"255 200 50 255"
         

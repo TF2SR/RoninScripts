@@ -1,3 +1,4 @@
+untyped
 global function TimeMeasurement_Init
 global function CodeCallback_SetLoadedSaveFile
 global function ResetTime
@@ -8,6 +9,10 @@ global function SetRunOver
 global function TestSplitName
 global function GetRunCurrentLevel
 global function SetFacts
+global function GetLevelTime
+global function IsRunValid
+global function GetTimeDelta
+global function GetSplitIndex
 
 struct
 {
@@ -45,7 +50,7 @@ void function CodeCallback_SetLoadedSaveFile( string loadedFile )
 {
     printt("LOADING SAVE", loadedFile)
     if (loadedFile == "savegame")
-        file.isCheckpoint = 1
+        file.isCheckpoint = 2
     else
         file.isCheckpoint = 0
     
@@ -59,7 +64,7 @@ void function TimeMeasurement_Init()
     Duration levelTime
     
     time.seconds = 0
-    time.microseconds = 0000000
+    time.microseconds = 0
     levelTime.name = ""
     levelTime.seconds = 0
     levelTime.microseconds = 0
@@ -82,11 +87,22 @@ void function MeasureTime()
         file.deltaTime = GetCurrentClockTime()
         file.deltaTime = int(RoundToNearestInt(file.deltaTime * GetConVarFloat("host_timescale")))
 
+        // DONT TOUCH.
+        if (shouldCount)
+        {
+            file.lastLevel = GetActiveLevel()
+            AddTime(file.deltaTime)
+        }
+
         SetShouldChangeLevel(ShouldChangeLevel())
 
-        if (!IsInLoadingScreen())
+        if (!IsInLoadingScreen() && file.isCheckpoint != 2)
         {
             file.isCheckpoint = 0
+        }
+        else if (file.isCheckpoint == 2 && IsInLoadingScreen())
+        {
+            file.isCheckpoint = 1
         }
         if (GetRunCategory() == "IL" && IsInLoadingScreen())
         {
@@ -105,8 +121,6 @@ void function MeasureTime()
         if (!file.runInvalidated && !IsRunValid())
             file.runInvalidated = true
 
-        foreach (void functionref() callback in file.onTimerUpdatedCallbacks)
-            callback()
 
         try
         {
@@ -114,7 +128,15 @@ void function MeasureTime()
             {
                 if (!lastIsFullyConnected)
                     RunClientScript("LoadFacts", EncodeJSON(file.facts))
-                RunClientScript("SetTime", file.time.seconds, file.time.microseconds, file.levelTime.seconds, file.levelTime.microseconds, file.runInvalidated) // bigger
+                    
+                string delta = GetTimeDelta( file.time )
+                string levelDelta = GetTimeDelta( file.levelTime, GetSplitIndex() )
+                RunClientScript("SetTime", file.time.seconds, 
+                file.time.microseconds, 
+                file.levelTime.seconds, 
+                file.levelTime.microseconds, 
+                file.runInvalidated,
+                delta, levelDelta) // bigger
             }
 
             lastIsFullyConnected = !IsInLoadingScreen()
@@ -124,13 +146,6 @@ void function MeasureTime()
             // dont care
         }
 
-        // DONT TOUCH.
-        if (shouldCount)
-        {
-            file.lastLevel = GetActiveLevel()
-            AddTime(file.deltaTime)
-        }
-
         if (Timer_GetCurrentStartPoint() > file.curStartPoint && GetRunCategory() == "IL")
         {
             printt("split!  ")
@@ -138,6 +153,9 @@ void function MeasureTime()
             file.levelTime.name = "Startpoint " + Timer_GetCurrentStartPoint()
             file.curStartPoint = Timer_GetCurrentStartPoint()
         }
+        
+        foreach (void functionref() callback in file.onTimerUpdatedCallbacks)
+            callback()
 
         if (!shouldCount && ShouldStartCounting())
         {
@@ -230,6 +248,8 @@ void function Split()
 
 void function ResetTime()
 {
+    var stackInfos = getstackinfos( 2 )
+    printt("reset!  " + stackInfos["src"] + ":" + stackInfos["line"])
     file.runInvalidated = false
     file.time.seconds = 0
     file.time.microseconds = 0
@@ -239,6 +259,11 @@ void function ResetTime()
     file.splits = []
     file.facts = {}
     file.runEnded = false
+}
+
+int function GetSplitIndex()
+{
+    return file.splits.len()
 }
 
 Duration function GetSpeedrunTimer()
@@ -310,6 +335,8 @@ bool function IsRunValid()
                 if (startPoint != 0 && startPoint != 7)
                     return false
                 break
+            case "":
+                break // dont check if we arent in an active level, will invalidate run incorrectly
             default:
                 if (startPoint != 0)
                     return false
@@ -326,4 +353,37 @@ void function SetFacts(string facts)
     if (facts == "null")
         throw "the fuck?"
     file.facts = DecodeJSON(facts)
+}
+
+string function GetTimeDelta( Duration time, int split = -1 )
+{
+    string category = GetRunCategory()
+    if (category == "IL")
+        category = "IL_" + GetRunCurrentLevel()
+    
+    Run ornull pb = GetPBRun( category )
+
+    if (pb == null)
+        return ""
+
+    expect Run( pb )
+
+    Duration b
+    if (split >= 0)
+    {
+        b = pb.splits[minint(split, pb.splits.len() - 1)]
+    }
+    else
+    {
+        b = SumOfSplits( pb.splits, GetSplitIndex() + 1 )
+    }
+    
+    Duration result = SubtractTimes( time, b )
+    string sign = "+"
+    if (result.seconds < 0 || result.microseconds < 0)
+        sign = "-"
+    if (abs( result.seconds ) > 60)
+        return sign + FormatTime( abs(result.seconds) )
+
+    return sign + FormatTime( abs(result.seconds), abs(result.microseconds), 1 )
 }

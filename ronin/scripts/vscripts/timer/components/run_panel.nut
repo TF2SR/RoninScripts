@@ -23,6 +23,8 @@ void function RunPanel_DisplayRun( var panel, Run run )
         Hud_SetText(dateLabel, (timestamp / 60) + "m")
     else
         Hud_SetText(dateLabel, (timestamp) + "s")
+
+    Hud_SetVisible(Hud_GetChild(panel, "PBStar"), run.isPB)
     
     var categoryBG = Hud_GetChild(panel, "CategoryBG")
     var categoryName = Hud_GetChild(panel, "CategoryName")
@@ -31,7 +33,7 @@ void function RunPanel_DisplayRun( var panel, Run run )
     int x = Hud_GetX(categoryBG) - Hud_GetX(categoryName)
     
     Hud_SetText(categoryName, categoryDisplayName.toupper())
-    Squircle_SetSize(categoryBG, x * 2 + Hud_GetTextWidth(categoryName), 24)
+    Squircle_SetSize(categoryBG, abs(x) * 2 + Hud_GetTextWidth(categoryName), 24)
     Squircle_SetColor(categoryBG, int(color.x), int(color.y), int(color.z), 255)
 }
 

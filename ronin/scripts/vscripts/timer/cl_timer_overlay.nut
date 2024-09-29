@@ -27,6 +27,8 @@ struct
     int levelSeconds
     int levelMicroseconds
     bool calledStart
+    string delta
+    string levelDelta
     array<void functionref()> loadedFactsCallbacks
     array<void functionref( string )> dialoguePlayedCallbacks
 } file
@@ -61,13 +63,15 @@ void function SetTimerVisible(bool visible)
     Hud_SetVisible( file.timer, visible )
 }
 
-void function SetTime( int seconds, int microseconds, int levelSeconds, int levelMicroseconds, bool runInvalidated )
+void function SetTime( int seconds, int microseconds, int levelSeconds, int levelMicroseconds, bool runInvalidated, string delta, string levelDelta )
 {
     file.runInvalidated = runInvalidated
     file.seconds = seconds
     file.microseconds = microseconds
     file.levelSeconds = levelSeconds
     file.levelMicroseconds = levelMicroseconds
+    file.delta = delta
+    file.levelDelta = levelDelta
     try
     {
         Signal( GetLocalClientPlayer(), "TimeSet" )
@@ -92,23 +96,31 @@ void function UpdateTimerHUD()
 
         var categoryName = Hud_GetChild(file.timer, "CategoryName")
         var categoryBG = Hud_GetChild(file.timer, "CategoryBG")
+        var alphaLabel = Hud_GetChild(file.timer, "NotLBLegal")
+        var alphaLabelShadow = Hud_GetChild(file.timer, "NotLBLegalShadow")
+        var mainDeltaLabel = Hud_GetChild(file.timer, "TimeDelta")
+        var levelDeltaLabel = Hud_GetChild(file.timer, "LastLevelTimeDelta")
 
         vector color = GetCategoryColor(GetRunCategory())
         
         if (file.runInvalidated)
         {
-            Squircle_SetColor(categoryBG, 255, 15, 15, 255)
-            Hud_SetText(categoryName, "INVALID")
+            Hud_SetColor(alphaLabel, 255, 40, 40, 255 )
+            Hud_SetText(alphaLabel, "INVALID")
+            Hud_SetText(alphaLabelShadow, "INVALID")
         }
         else
         {
-            Squircle_SetColor(categoryBG, int(color.x), int(color.y), int(color.z), 255)
-            Hud_SetText(categoryName, GetRunCategory())
+            Hud_SetColor(alphaLabel, 255, 192, 32, 255 )
+            Hud_SetText(alphaLabel, "RONIN ALPHA")
+            Hud_SetText(alphaLabelShadow, "RONIN ALPHA")
         }
 
-        int labelX = Hud_GetX( categoryName )
-        int bgX = Hud_GetX( categoryBG )
-        Squircle_SetSize(categoryBG, Hud_GetWidth(categoryName) + (labelX - bgX) * 2 + 1, Hud_GetHeight(categoryBG))
+        Squircle_SetColor(categoryBG, int(color.x), int(color.y), int(color.z), 255)
+        Hud_SetText(categoryName, GetRunCategory())
+        int labelX = Hud_GetAbsX( categoryName )
+        int bgX = Hud_GetAbsX( categoryBG )
+        Squircle_SetSize(categoryBG, Hud_GetWidth(categoryName) + abs(labelX - bgX) * 2 + 1, Hud_GetHeight(categoryBG))
 
         /*if (GetConVarBool("run_ending") && GetRunCategory() == "IL" && !isBlurring)
         {
@@ -133,13 +145,33 @@ void function UpdateTimerHUD()
             isRunOver = true
         }
 
+        if (file.delta.len() <= 0 || file.delta[0] == '-')
+        {
+            Hud_SetColor( mainDeltaLabel, 40, 255, 40, 255 )
+        }
+        else
+        {
+            Hud_SetColor( mainDeltaLabel, 255, 40, 40, 255 )
+        }
+        Hud_SetText(mainDeltaLabel, file.delta)
+        
+        if (file.levelDelta.len() <= 0 || file.levelDelta[0] == '-')
+        {
+            Hud_SetColor( levelDeltaLabel, 40, 255, 40, 255 )
+        }
+        else
+        {
+            Hud_SetColor( levelDeltaLabel, 255, 40, 40, 255 )
+        }
+        Hud_SetText(levelDeltaLabel, file.levelDelta)
+
         // set time
         var timeLabel = Hud_GetChild(file.timer, "Time")
         var levelTimeLabel = Hud_GetChild(file.timer, "LastLevelTime")
         var digit0 = Hud_GetChild(file.timer, "TimeDigit0")
 
         Hud_SetText( timeLabel, FormatTime(seconds) )
-        Hud_SetText( levelTimeLabel, FormatTime(file.levelSeconds, file.levelMicroseconds) )
+        Hud_SetText( levelTimeLabel, FormatTime(file.levelSeconds, file.levelMicroseconds, 1) )
 
         // 10 000 000
         Hud_SetText( digit0, format(".%02i", microseconds / 10000) )

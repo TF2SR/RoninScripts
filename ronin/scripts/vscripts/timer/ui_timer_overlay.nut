@@ -57,25 +57,80 @@ void function UpdateTimerHUD()
     var digit0 = Hud_GetChild(file.timer, "TimeDigit0")
     var categoryName = Hud_GetChild(file.timer, "CategoryName")
     var categoryBG = Hud_GetChild(file.timer, "CategoryBG")
+    var alphaLabel = Hud_GetChild(file.timer, "NotLBLegal")
+    var alphaLabelShadow = Hud_GetChild(file.timer, "NotLBLegalShadow")
+    var splitListLabel = Hud_GetChild(file.timer, "SplitsList")
+    var mainDeltaLabel = Hud_GetChild(file.timer, "TimeDelta")
+    var levelDeltaLabel = Hud_GetChild(file.timer, "LastLevelTimeDelta")
 
+    string splitList = ""
+    for (int i = 0; i < 10; i++)
+    {
+        splitList += FormatHUDSplitList("Test Level " + i, RandomIntRange(30, 900), RandomIntRange(0000, 999999) )
+        splitList += "\n"
+    }
+    Hud_SetText(splitListLabel, splitList)
+    if (IsRunValid())
+    {
+        Hud_SetColor(alphaLabel, 255, 192, 32, 255 )
+        Hud_SetText(alphaLabel, "RONIN ALPHA")
+        Hud_SetText(alphaLabelShadow, "RONIN ALPHA")
+    }
+    else
+    {
+        Hud_SetColor(alphaLabel, 255, 40, 40, 255 )
+        Hud_SetText(alphaLabel, "INVALID RUN")
+        Hud_SetText(alphaLabelShadow, "INVALID RUN")
+    }
+
+    Hud_SetVisible(file.menu, true)
     Hud_SetText(categoryName, GetRunCategory())
+    Hud_SetZ(file.menu, int(pow(2, 14)))
     vector color = GetCategoryColor(GetRunCategory())
     Squircle_SetColor(categoryBG, int(color.x), int(color.y), int(color.z), 255)
 
-    int labelX = Hud_GetX( categoryName )
-    int bgX = Hud_GetX( categoryBG )
+    int labelX = Hud_GetAbsX( categoryName )
+    int bgX = Hud_GetAbsX( categoryBG )
 
     Squircle_SetSize(categoryBG, Hud_GetWidth(categoryName) + (labelX - bgX) * 2 + 1, Hud_GetHeight(categoryBG))
     //Squircle_HideRightCorners(categoryBG)
 
     Duration time = GetSpeedrunTimer()
+    Duration levelTime = GetLevelTime()
+
+    string delta = GetTimeDelta( time )
+    string levelDelta = GetTimeDelta( levelTime, GetSplitIndex() )
+
+    if (delta.len() <= 0 || delta[0] == '-')
+    {
+        Hud_SetColor( mainDeltaLabel, 40, 255, 40, 255 )
+    }
+    else
+    {
+        Hud_SetColor( mainDeltaLabel, 255, 40, 40, 255 )
+    }
+    Hud_SetText(mainDeltaLabel, delta)
+    
+    if (levelDelta.len() <= 0 || levelDelta[0] == '-')
+    {
+        Hud_SetColor( levelDeltaLabel, 40, 255, 40, 255 )
+    }
+    else
+    {
+        Hud_SetColor( levelDeltaLabel, 255, 40, 40, 255 )
+    }
+    Hud_SetText(levelDeltaLabel, levelDelta)
 
     Hud_SetText( timeLabel, FormatTime(time.seconds) )
-    Hud_SetText( levelTimeLabel, FormatTime(time.seconds, time.microseconds) )
+    if (levelTime.seconds < 60)
+        Hud_SetText( levelTimeLabel, FormatTime(levelTime.seconds, levelTime.microseconds, 2) )
+    else
+        Hud_SetText( levelTimeLabel, FormatTime(levelTime.seconds, levelTime.microseconds, 1) )
     
 
     // 10 000 000
-    Hud_SetText( digit0, format(".%02i", time.microseconds / 10000) )
+    int precision = 2
+    Hud_SetText( digit0, format(".%0" + precision  + "i", time.microseconds / int(pow(10, 6 - precision))) )
 }
 
 void function UpdateTimerButtons()

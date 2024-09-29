@@ -10,6 +10,7 @@ global function GetRunIndex
 global function GetRunCount
 global function DeleteRun
 global function RunsBeingLoaded
+global function GetPBRun
 
 table<string, string> defaultSplitNames = {
     sp_training = "The Gauntlet",
@@ -127,6 +128,10 @@ string function GetLevelName(string level, bool long = false)
 void function RunLoaded( table data )
 {
     Run run
+    if ("version" in data && data["version"] < RUN_SAVE_VERSION)
+    {
+        // TODO: convert to newest version
+    }
     run.isValid = ("isValid" in data) ? expect bool(data.isValid) : true
     run.timestamp = expect int(data.timestamp)
     run.seconds = expect int(data.seconds)
@@ -134,6 +139,7 @@ void function RunLoaded( table data )
     run.category = expect string(data.category)
     run.splits = ToSplitArray(expect array(data.splits))
     run.facts = expect table(data.facts)
+    run.isPB = expect bool(data.isPB)
 
     file.runs.append(run)
 }
@@ -163,7 +169,6 @@ void function SaveRunData( Duration time, array<Duration> splits, table facts, b
 {
     int timestamp = GetUnixTimestamp()
     
-    table data = {}
     string category = GetRunCategory()
     
     if (category == "IL")
@@ -192,15 +197,11 @@ void function SaveRunData( Duration time, array<Duration> splits, table facts, b
             expect Run(pbRun)
             run.isPB = true
             pbRun.isPB = false
-        }
-        data["timestamp"] <- timestamp
-        data["seconds"] <- time.seconds
-        data["microseconds"] <- time.microseconds
-        data["splits"] <- SplitArrayToTableArray(splits)
-        data["category"] <- category
-        data["facts"] <- facts
-        data["isValid"] <- isValid
 
+            table data = RunToTable( pbRun )
+            SaveFile( "runs/" + pbRun.timestamp + ".json", EncodeJSON( data ) ) // fuckRun run
+        }
+        table data = RunToTable( run )
         SaveFile( "runs/" + timestamp + ".json", EncodeJSON( data ) ) // fuckRun run
 
         // only insert it into the run list if its a valid run
@@ -208,6 +209,21 @@ void function SaveRunData( Duration time, array<Duration> splits, table facts, b
     }
 
     PastRuns_DisplayRun( run )
+}
+
+table function RunToTable( Run run )
+{
+    table data
+    data["version"] <- RUN_SAVE_VERSION
+    data["timestamp"] <- run.timestamp
+    data["seconds"] <- run.seconds
+    data["microseconds"] <- run.microseconds
+    data["splits"] <- SplitArrayToTableArray(run.splits)
+    data["category"] <- run.category
+    data["facts"] <- run.facts
+    data["isValid"] <- run.isValid
+    data["isPB"] <- run.isPB
+    return data
 }
 
 bool function IsRunBetter(Run a, Run b)
