@@ -196,6 +196,7 @@ void function Server_SP_Init()
 
 	SP_TitanWeaponPickups_Init()
 
+	// Ronin
 	SRM_ForceMoonboots_Init()
 }
 
@@ -294,6 +295,9 @@ void function Client_SP_Init()
 
 	CL_TitanWeaponPickup_Init()
 	ClTitanCockpitSounds_Init()
+
+	// Ronin
+	dq_strafemeterPrecache()
 }
 #endif // CLIENT
 

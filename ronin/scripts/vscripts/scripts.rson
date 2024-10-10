@@ -1096,3 +1096,10 @@ Scripts:
     client/srm_speedometer.nut
     client/srm_input_display.nut
 ]
+
+// strafemeter
+When: "CLIENT || UI"
+Scripts:
+[
+	strafemeter.nut
+]
