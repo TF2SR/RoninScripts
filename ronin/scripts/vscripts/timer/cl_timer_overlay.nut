@@ -248,9 +248,7 @@ void function ResetStartPointValue( entity player )
 
 void function LoadFacts( string facts )
 {
-    printt("LOADED FACTS", facts)
     speedrunFacts = DecodeJSON(facts)
-    printt(speedrunFacts)
     foreach (void functionref() callback in file.loadedFactsCallbacks )
         thread callback()
 }

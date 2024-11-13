@@ -103,7 +103,7 @@ resource/ui/menus/timer_overlay.menu
             zpos "0" // overlay over all other menus
             "wide"								"500"
             "tall"								"700"
-            "drawColor" "0 0 0 140" // vanilla label color
+            "drawColor" "30 30 30 255" // vanilla label color
             visible 1
             enabled 1
 

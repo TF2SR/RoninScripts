@@ -9,12 +9,14 @@ void function RunPanel_DisplayRun( var panel, Run run )
 
     var time = Hud_GetChild(panel, "RunLabel")
 
+
     if (run.seconds < 3600)
         Hud_SetText(time, FormatTime(run.seconds, run.microseconds))
     else
         Hud_SetText(time, FormatTime(run.seconds)) // doesnt have the .00 part 
 
     var dateLabel = Hud_GetChild(panel, "Date")
+    // Hud_SetRotation( dateLabel, 45 ) 
     if (timestamp > 86400)
         Hud_SetText(dateLabel, (timestamp / 86400) + "d")
     else if (timestamp > 3600)

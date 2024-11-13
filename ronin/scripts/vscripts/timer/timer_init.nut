@@ -16,6 +16,7 @@ global struct Duration
     string name
     int seconds
     int microseconds
+    bool isGold
 }
 
 global struct Run

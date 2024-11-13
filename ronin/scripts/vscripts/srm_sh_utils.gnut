@@ -1,6 +1,46 @@
+untyped
 globalize_all_functions
 
 bool function SRM_StartsWith(string str, string cmp)
 {
 	return str.find(cmp) == 0;
+}
+
+string function StringReplaceAll( string baseString, string searchString, string replaceString )
+{
+	string source = baseString
+	var findResult = source.find( searchString )
+	while ( findResult != null )
+	{
+		string part1 = baseString.slice( 0, findResult )
+		string part2 = baseString.slice( findResult + searchString.len(), baseString.len() )
+
+		baseString = part1 + replaceString + part2
+		source = part1 + replaceString + part2
+
+		findResult = source.find( searchString, findResult + replaceString.len() )
+	}
+
+	return baseString
+}
+
+int function SortFunc_FloatAscending( float a, float b )
+{
+	if (a > b)
+		return 1
+
+	if (a == b)
+		return 0
+	
+	return -1
+}
+
+float function MeanOfGenericArray( array a )
+{
+	a.sort( SortFunc_FloatAscending )
+	int n = a.len()
+	if (n % 2 != 0)
+        return expect float(a[n / 2]);
+ 
+    return expect float(a[(n - 1) / 2] + a[n / 2]) / 2.0;
 }

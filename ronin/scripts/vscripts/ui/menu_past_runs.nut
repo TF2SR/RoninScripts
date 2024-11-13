@@ -5,6 +5,7 @@ global function IncrementEasterEgg
 global function PastRuns_DisplayRun
 global function AddLeadingSpaceForTime
 global function PastRuns_RunsFinishedLoading
+global function GetTimeAsString
 
 struct
 {
@@ -111,7 +112,7 @@ void function InitPastRunsMenu()
         OpenDialog( dialogData )
     })
     SimpleButton_SetText( Hud_GetChild(menu, "DeleteRunButton"), "Delete")
-    SimpleButton_SetBGColor( Hud_GetChild(menu, "DeleteRunButton"), 0, 0, 0, 140)
+    SimpleButton_SetBGColor( Hud_GetChild(menu, "DeleteRunButton"), 30, 30, 30, 102)
     SimpleButton_AddEventHandler( Hud_GetChild(menu, "DeleteRunButton"), UIE_CLICK, void function(var button) : ()
     {
         DialogData dialogData
@@ -138,6 +139,8 @@ void function InitPastRunsMenu()
 
         OpenDialog( dialogData )
     })
+    
+
     
     Hud_SetText( Hud_GetChild(menu, "Verification"), "^FFD04000Mods Used:^FFFFFFFF\n\n" +
 "^40FF9600EladNLG.InGameTimer:^FFFFFFF\nba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad\n\n" +

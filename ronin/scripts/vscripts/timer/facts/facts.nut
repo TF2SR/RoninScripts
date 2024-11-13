@@ -12,6 +12,7 @@ table<string, string functionref( table )> displayFuncs
 void function Facts_Init()
 {
 	AverageSpeed_Init()
+	WallkickTiming_Init()
 }
 
 void function RegisterFact( string fact, string functionref( table ) displayFunc )
@@ -40,11 +41,21 @@ array<string> function TableKeysToArray( tab )
 
 string function GetRandomAvailableFact( table facts )
 {
+	if (TableKeysToArray( facts ).len() <= 0)
+		return "No facts available :("
     return TableKeysToArray( facts ).getrandom()
 }
 #endif
 
 string function GetFactString( table facts, string fact )
 {
-    return displayFuncs[fact]( facts )
+	try
+	{
+    	return displayFuncs[fact]( facts )
+	}
+	catch (ex)
+	{
+		return "An error happened when trying to grab a fact :(\nThis likely won't be fixed. If the error happened WHILE doing a run, do report.\n\nError: " + ex
+	}
+	unreachable
 }

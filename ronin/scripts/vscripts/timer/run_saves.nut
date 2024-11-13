@@ -11,6 +11,10 @@ global function GetRunCount
 global function DeleteRun
 global function RunsBeingLoaded
 global function GetPBRun
+global function SplitArrayToTableArray
+global function IsSplitBetter
+global function GetGoldSplitsForCategory
+global function SaveGoldSplits
 
 table<string, string> defaultSplitNames = {
     sp_training = "The Gauntlet",
@@ -38,6 +42,7 @@ struct
 {
     array<Run> runs
     table<string, int> bestRuns
+    table goldSplits
     table splitNames
     int awaitingRunsToLoad
 } file
@@ -53,7 +58,31 @@ void function RunSaves_Init()
         LoadFile( runFiles[i] )
     }
 
+    LoadFile( "gold_splits.json" )
+
+    thread OnFileLoaded( "gold_splits.json", void function(string data) : () {
+        if (data == "")
+        {
+            file.goldSplits = {}
+            return
+        }
+        file.goldSplits = DecodeJSON(data)
+    })
     thread WaitForAllFilesToLoad( runFiles )
+}
+
+void function OnFileLoaded( string file, void functionref(string) callback )
+{
+    while (true)
+    {
+        WaitFrame()
+
+        if (IsFileReady(file))
+        {
+            callback(GetFileResults(file))
+            return
+        }
+    }
 }
 
 void function WaitForAllFilesToLoad( array<string> runFiles )
@@ -77,7 +106,7 @@ void function WaitForAllFilesToLoad( array<string> runFiles )
 
     foreach (string file in runFiles)
     {
-        RunLoaded(DecodeJSON(GetFileResults(file)))
+        RunLoaded(file, DecodeJSON(GetFileResults(file)))
     }
 
     file.runs.sort(RunCompareLatest)
@@ -125,7 +154,7 @@ string function GetLevelName(string level, bool long = false)
     return level
 }
 
-void function RunLoaded( table data )
+void function RunLoaded( string filePath, table data )
 {
     Run run
     if ("version" in data && data["version"] < RUN_SAVE_VERSION)
@@ -140,6 +169,12 @@ void function RunLoaded( table data )
     run.splits = ToSplitArray(expect array(data.splits))
     run.facts = expect table(data.facts)
     run.isPB = expect bool(data.isPB)
+
+    if (filePath.slice("runs/".len(), filePath.len() - ".json".len()) == run.timestamp.tostring())
+    {
+        DeleteFile( filePath )
+        SaveFile( format("runs/%s.json", GetTimeAsString(run.timestamp)), EncodeJSON(data) )
+    }
 
     file.runs.append(run)
 }
@@ -199,10 +234,12 @@ void function SaveRunData( Duration time, array<Duration> splits, table facts, b
             pbRun.isPB = false
 
             table data = RunToTable( pbRun )
-            SaveFile( "runs/" + pbRun.timestamp + ".json", EncodeJSON( data ) ) // fuckRun run
+            SaveFile( "runs/" + StringReplaceAll(GetTimeAsString(pbRun.timestamp), ":", "-") + ".json", EncodeJSON( data ) ) // fuckRun run
         }
+
         table data = RunToTable( run )
-        SaveFile( "runs/" + timestamp + ".json", EncodeJSON( data ) ) // fuckRun run
+        printt("runs/" + StringReplaceAll(GetTimeAsString(timestamp), ":", "-") + ".json")
+        SaveFile( "runs/" + StringReplaceAll(GetTimeAsString(timestamp), ":", "-") + ".json", EncodeJSON( data ) ) // fuckRun run
 
         // only insert it into the run list if its a valid run
         file.runs.insert( 0, run )
@@ -224,6 +261,20 @@ table function RunToTable( Run run )
     data["isValid"] <- run.isValid
     data["isPB"] <- run.isPB
     return data
+}
+
+bool function IsSplitBetter(Duration a, Duration b)
+{
+    if (a.seconds < b.seconds)
+        return true
+
+    if (a.seconds > b.seconds)
+        return false
+
+    if (a.microseconds < b.microseconds)
+        return true
+
+    return false
 }
 
 bool function IsRunBetter(Run a, Run b)
@@ -322,4 +373,17 @@ Run ornull function GetPBRun(string category)
     }
     
     return null
+}
+
+table function GetGoldSplitsForCategory(string category)
+{
+    if (!(category in file.goldSplits))
+        file.goldSplits[category] <- {}
+    
+    return expect table(file.goldSplits[category])
+}
+
+void function SaveGoldSplits()
+{
+    SaveFile( "gold_splits.json", EncodeJSON(file.goldSplits) )
 }

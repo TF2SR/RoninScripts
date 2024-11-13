@@ -30,7 +30,7 @@ struct
     int curStartPoint
     bool reloadActivated
     string activeLevelSplit
-    table facts = {}
+    string facts = "{}"
 
     array<void functionref()> onTimerUpdatedCallbacks = []
 } file
@@ -59,7 +59,7 @@ void function CodeCallback_SetLoadedSaveFile( string loadedFile )
 
 void function TimeMeasurement_Init()
 {
-    file.facts["fuck"] <- "hi"
+    file.facts = "{}"
     Duration time
     Duration levelTime
     
@@ -127,7 +127,7 @@ void function MeasureTime()
             if (!IsInLoadingScreen() && GetActiveLevel() != "") // this was missing
             {
                 if (!lastIsFullyConnected)
-                    RunClientScript("LoadFacts", EncodeJSON(file.facts))
+                    RunClientScript("LoadFacts", file.facts)
                     
                 string delta = GetTimeDelta( file.time )
                 string levelDelta = GetTimeDelta( file.levelTime, GetSplitIndex() )
@@ -227,8 +227,9 @@ bool function ShouldStopCounting()
     if (file.runEnded)
     {
         print("RUN END")
+        //RunClientScript("SaveFacts")
         SetRunJustEnded(true)
-        SaveRunData(file.time, file.splits, file.facts, IsRunValid())
+        SaveRunData(file.time, file.splits, DecodeJSON(file.facts), IsRunValid())
         if (GetRunCategory() == "IL")
             AdvanceMenu(GetMenu("PastRuns"))
     }
@@ -239,6 +240,24 @@ bool function ShouldStopCounting()
 void function Split()
 {
     file.splits.append(file.levelTime)
+
+
+    string category = GetRunCategory()
+    if (category == "IL")
+    {
+        category = "IL_" + GetRunCurrentLevel()
+    }
+
+    // save gold splits
+    table goldSplits = GetGoldSplitsForCategory(category)
+    string splitName = file.levelTime.name
+    if (!(file.levelTime.name in goldSplits) || IsSplitBetter(file.levelTime, TableToDuration(expect table(goldSplits[splitName]))))
+    {
+        file.levelTime.isGold = true // yay!
+        goldSplits[splitName] <- DurationToTable( file.levelTime )
+        SaveGoldSplits()
+    }
+
     Duration levelTime
     levelTime.name = ""
     levelTime.seconds = 0
@@ -257,7 +276,7 @@ void function ResetTime()
     file.levelTime.microseconds = 0
     file.levelTime.name = ""
     file.splits = []
-    file.facts = {}
+    file.facts = "{}"
     file.runEnded = false
 }
 
@@ -316,20 +335,25 @@ bool function IsRunValid()
         return false
 
     // i wish cheats were allowed...
-    if (GetConVarBool("sv_cheats"))
-        return false
+    // cheats are allowed TEMP TEMP TEMP
+    //if (GetConVarBool("sv_cheats"))
+    //    return false
     
-    if (IsInLoadingScreen())
+    if (IsInLoadingScreen() && Timer_GetCurrentStartPoint() != -1 && !file.isCheckpoint)
     {
+        printt(GetActiveLevel(), Timer_GetCurrentStartPoint())
         // check that the startpoint is valis
         // and were not starting mid-level
-        int startPoint = GetConVarInt("sp_startpoint") // set when switching level
+        int startPoint = Timer_GetCurrentStartPoint()
         string level = GetActiveLevel()
         switch (GetActiveLevel())
         {
             case "sp_beacon":
                 if (startPoint != 0 && startPoint != 2)
+                {
+                    printt("startpoint != 2,0", Timer_GetCurrentStartPoint(), GetActiveLevel())
                     return false
+                }
                 break
             case "sp_hub_timeshift":
                 if (startPoint != 0 && startPoint != 7)
@@ -339,7 +363,10 @@ bool function IsRunValid()
                 break // dont check if we arent in an active level, will invalidate run incorrectly
             default:
                 if (startPoint != 0)
+                {
+                    printt("startpoint != 0", GetActiveLevel())
                     return false
+                }
                 break
         }
     }
@@ -352,7 +379,7 @@ void function SetFacts(string facts)
     printt("SAVING FACTS", facts)
     if (facts == "null")
         throw "the fuck?"
-    file.facts = DecodeJSON(facts)
+    file.facts = facts
 }
 
 string function GetTimeDelta( Duration time, int split = -1 )

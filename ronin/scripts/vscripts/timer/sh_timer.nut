@@ -16,25 +16,30 @@ vector function GetCategoryColor(string category)
     {
         case "ANY%":
             return <32, 128, 255>
-            break
+
         case "NCS":
             return <64, 255, 106>
-            break
+
         case "IL":
             return <255, 64, 64>
-            break
+
         case "ALL HELMETS":
             return <255, 204, 64>
-            break
+
         case "SPEEDMOD":
             return <255, 160, 48>
-            break
+
+        case "GRAPPLE%":
+            return <77, 153, 255>
+
+        case "STIM%":
+            return <64, 255, 106>
     }
 
     if (SRM_StartsWith(category, "IL_"))
         return <255, 64, 64>
 
-    return <148, 46, 255>
+    return <128, 128, 128>
 }
 
 string function GetRunCategory()
