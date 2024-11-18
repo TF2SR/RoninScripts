@@ -251,6 +251,12 @@ void function LoadFacts( string facts )
     speedrunFacts = DecodeJSON(facts)
     foreach (void functionref() callback in file.loadedFactsCallbacks )
         thread callback()
+
+    thread void function() : ()
+    {
+        clGlobal.levelEnt.EndSignal( "OnDestroy" )
+        WaitForever()
+    }()
 }
 
 void function AddCallback_TrackingStarted( void functionref() callback )

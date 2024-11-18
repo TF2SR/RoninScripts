@@ -42,6 +42,14 @@ void function FactsLoaded()
     while (!IsAlive( player ))
         wait 0
 
+    vector curOrigin = player.GetOrigin()
+
+    // wait for player to move
+    while (DistanceSqr( curOrigin, player.GetOrigin() ) < 1)
+        wait 0
+
+    print("start")
+
     while (true)
     {
         float lastTime = Time()

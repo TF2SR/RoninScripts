@@ -17,6 +17,11 @@ string function DisplayFact( table facts )
     if (!("totalWKQuality" in facts[FACT_NAME]))
         facts[FACT_NAME].totalWKQuality <- -facts[FACT_NAME].wallkicks - facts[FACT_NAME].missedWallkicks
     
+    if (!("timingOffsets" in facts[FACT_NAME]))
+    {
+        facts[FACT_NAME]["timingOffsets"] <- [ -99 ]
+    }
+
     float totalTimingOffset = 0.0
     foreach (float timingOffset in facts[FACT_NAME].timingOffsets)
         totalTimingOffset += timingOffset
@@ -33,7 +38,7 @@ string function DisplayFact( table facts )
     return format("You have pulled off %d/%d wallkicks (%.0f%% WK Quality).\nYou jump on average %.0fms after beginning wallrunning.\nUnstable Rate: %.2f", 
     facts[FACT_NAME].wallkicks, 
     facts[FACT_NAME].missedWallkicks + facts[FACT_NAME].wallkicks,
-    (facts[FACT_NAME].totalWKQuality * 100.0 / facts[FACT_NAME].wallkicks + facts[FACT_NAME].missedWallkicks),
+    (facts[FACT_NAME].totalWKQuality * 100.0 / facts[FACT_NAME].wallkicks + facts[FACT_NAME].missedWallkicks + facts[FACT_NAME].missedCrouchkicks),
     avgTimingOffset,
     stdDeviation)
 }

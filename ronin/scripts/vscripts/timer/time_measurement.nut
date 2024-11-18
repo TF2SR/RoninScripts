@@ -227,7 +227,7 @@ bool function ShouldStopCounting()
     if (file.runEnded)
     {
         print("RUN END")
-        //RunClientScript("SaveFacts")
+        RunClientScript("SaveFacts")
         SetRunJustEnded(true)
         SaveRunData(file.time, file.splits, DecodeJSON(file.facts), IsRunValid())
         if (GetRunCategory() == "IL")

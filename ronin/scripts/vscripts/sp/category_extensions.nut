@@ -40,6 +40,9 @@ void function ReplaceTactical(string newTactical)
                 continue
             string tacClassName = tac.GetWeaponClassName()
             if (tacClassName == "mp_ability_timeshift" // lets not softlock the player
+            || tacClassName == "mp_titanability_basic_block" // exceptions for ronin block
+            || tacClassName == "mp_titanweapon_heat_shield" // and heat shield
+            || tacClassName == "mp_titanweapon_vortex_shield" // softlocks if expedition
             || tacClassName == newTactical) // player already has tactical we chose
                 continue
             
