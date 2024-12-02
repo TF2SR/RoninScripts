@@ -21,11 +21,14 @@ void function ClSpHud_Init()
 	if ( IsLobby() )
 		return
 
+	// RONIN HUD SCRIPTS
 	TimerOverlay_Init()
 	SRM_InfoHUD_Init()
 	SRM_TasHUD_Init()
 	thread SRM_InputDisplay_Init()
 	thread SRM_Speedometer_Init()
+
+	
 	AddCallback_OnPlayerLifeStateChanged( CallbackUpdatePlayerStatusCounts )
 
 	AddCreateMainHudCallback( SpMainHud )

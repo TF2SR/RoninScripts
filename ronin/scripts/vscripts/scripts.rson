@@ -1121,6 +1121,7 @@ Scripts:
 When: "UI"
 Scripts:
 [
+	timer/ui_subsplit.nut
 	timer/ui_timer_overlay.nut
 	timer/run_saves.nut
 	timer/time_measurement.nut

@@ -279,6 +279,11 @@ void function Split()
         SaveGoldSplits()
     }
 
+    if (category == "IL")
+    {
+        ShowSubsplit()
+    }
+
     Duration levelTime
     levelTime.name = ""
     levelTime.seconds = 0
