@@ -414,4 +414,17 @@ Resource/UI/HudScripted_mp.res
 		auto_wide_tocontents	1
 		fgcolor_override 		"255 255 255 255"
 	}
+
+	SubsplitPanel
+	{
+		"ControlName"		"CNestedPanel"
+		xpos				500
+		ypos				500
+		wide				512
+		tall				512
+		visible				1
+		enabled				1
+		zpos				10
+		controlSettingsFile	"resource/ui/menus/panels/subsplit.res"
+	}
 }

@@ -950,8 +950,6 @@ void function InitMenus()
 	RunSaves_Init()
 	TimerOverlay_Init()
 	TimeMeasurement_Init()
-	Subsplit_Init()
-
 
 	AddMenu( "MainMenu", $"resource/ui/menus/main.menu", InitMainMenu, "#MAIN" )
 	AddPanel( GetMenu( "MainMenu" ), "EstablishUserPanel", InitEstablishUserPanel )

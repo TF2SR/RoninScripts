@@ -260,6 +260,7 @@ bool function ShouldStopCounting()
 
 void function Split()
 {
+    var delta = GetTimeDelta(file.time)
     file.splits.append(file.levelTime)
 
 
@@ -279,9 +280,14 @@ void function Split()
         SaveGoldSplits()
     }
 
-    if (category == "IL")
+    if (GetRunCategory() == "IL")
     {
-        ShowSubsplit()
+        RunClientScript(
+            "ShowSubsplit",
+            GetILSplitName(file.levelTime.name, GetRunCurrentLevel()),
+            FormatTime(file.time.seconds, file.time.microseconds, 3),
+            delta,
+            file.levelTime.isGold)
     }
 
     Duration levelTime

@@ -1,22 +1,6 @@
-resource/ui/menus/timer_overlay.menu
+resource/ui/menus/panels/subsplit.res
 {
-	menu
-	{
-		ControlName	Frame
-		xpos	0
-		ypos	0
-		zpos	15
-		wide	412
-		tall	256
-		autoResize	0
-		pinCorner	0
-		visible		1
-		enabled		1
-		PaintBackgroundType	1
-		infocus_bgcolor_override "0 0 0 0"
-		outoffocus_bgcolor_override "0 0 0 0"
-
-		Name
+        Name
 		{
 			ControlName	Label
 			xpos	0
@@ -30,7 +14,7 @@ resource/ui/menus/timer_overlay.menu
 			textAlignment	south
 			fgcolor_override	"255 255 255 255"
 			bgcolor_override	"255 255 255 255"
-			font 				JBMonoBold_18
+			font 				JBMonoBold_28
 		}
 		Time
 		{
@@ -46,7 +30,7 @@ resource/ui/menus/timer_overlay.menu
 			textAlignment	south
 			fgcolor_override	"255 255 255 255"
 			bgcolor_override	"255 255 255 255"
-			font 				JBMonoBold_18
+			font 				JBMonoBold_28
 
 			pin_to_sibling		Name
 			pin_corner_to_sibling	TOP_LEFT
@@ -66,12 +50,10 @@ resource/ui/menus/timer_overlay.menu
 			textAlignment	south
 			fgcolor_override	"255 40 40 255"
 			bgcolor_override	"255 255 255 255"
-			font 				JBMonoBold_18
+			font 				JBMonoBold_28
 			
 			pin_to_sibling	Time
-			pin_corner_to_sibling RIGHT
-			pin_corner_to_sibling LEFT
+			pin_corner_to_sibling TOP_LEFT
+			pin_to_sibling_corner TOP_RIGHT
 		}
-
-	}
 }

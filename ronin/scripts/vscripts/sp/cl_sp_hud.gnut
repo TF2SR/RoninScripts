@@ -22,6 +22,7 @@ void function ClSpHud_Init()
 		return
 
 	// RONIN HUD SCRIPTS
+	Subsplit_Init()
 	TimerOverlay_Init()
 	SRM_InfoHUD_Init()
 	SRM_TasHUD_Init()
