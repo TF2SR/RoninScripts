@@ -23,6 +23,18 @@ void function TimerSettingsMenu_Init()
 	Carousel_AddClickedHandler( Hud_GetChild(file.menu, "Ruleset"), void function(var button, bool isRight) : (){
 		Carousel_UpdateWithConVarAndCategoryArray( button, VALID_RULESETS, "igt_run_ruleset", isRight )
 	})
+	
+	Carousel_SetLabel( Hud_GetChild(file.menu, "Autoload18Hr"), "BT-7274 - Skip 2nd cutscene in Any%" )
+	Carousel_UpdateValue( Hud_GetChild(file.menu, "Autoload18Hr"), "YES", <64, 255, 64> )
+	Carousel_AddClickedHandler( Hud_GetChild(file.menu, "Autoload18Hr"), void function(var button, bool isRight) : (){	
+		bool value = GetConVarBool("igt_18hr_skip")
+
+		value = !value
+		SetConVarBool( "igt_18hr_skip", value )
+		vector color = value ? <64,255,64> : <255,64,64>
+		
+		Carousel_UpdateValue( button, value ? "YES" : "NO", color )
+	})
 
 	SRM_SetupFooter()
 }

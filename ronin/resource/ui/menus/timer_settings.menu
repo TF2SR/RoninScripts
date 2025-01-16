@@ -41,7 +41,7 @@ resource/ui/menus/srm_settings.menu
             visible					1
             enabled					1
             auto_wide_tocontents	1
-            labelText				"SETTINGS"
+            labelText				"TIMER SETTINGS"
             textAlignment			west
             fgcolor_override 		"255 255 255 255"
             bgcolor_override 		"0 0 0 200"
@@ -105,6 +105,43 @@ resource/ui/menus/srm_settings.menu
 			zpos				10
 
 			pin_to_sibling	Category
+			pin_to_sibling_corner	BOTTOM_LEFT
+			pin_corner_to_sibling	TOP_LEFT
+
+			controlSettingsFile	"resource/ui/menus/panels/button_carousel.res"
+		}
+        "NCSLabel"
+        {
+            ControlName				Label
+            xpos					0
+            ypos					8
+            wide					740
+            tall					40
+            visible					1
+            enabled					1
+            auto_wide_tocontents	1
+            labelText				"NCS Autoloading"
+            textAlignment			west
+            fgcolor_override 		"255 255 255 255"
+            bgcolor_override 		"0 0 0 200"
+            font					JBMonoBold_27
+
+			pin_to_sibling	Ruleset
+			pin_to_sibling_corner	BOTTOM_LEFT
+			pin_corner_to_sibling	TOP_LEFT
+        }
+		Autoload18Hr
+		{
+			"ControlName"		"CNestedPanel"
+			xpos				0
+			ypos				4
+			wide				740
+			tall				40
+			visible				1
+			enabled				1
+			zpos				10
+
+			pin_to_sibling	NCSLabel
 			pin_to_sibling_corner	BOTTOM_LEFT
 			pin_corner_to_sibling	TOP_LEFT
 

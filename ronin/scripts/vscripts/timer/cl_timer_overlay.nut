@@ -205,7 +205,13 @@ bool function BT7274_ActivateNCS()
 {
     if (GetMapName() != "sp_crashsite")
         return false
+
+    if (GetRunCategory() == "ANY%" && !GetConVarBool("igt_18hr_skip"))
+        return false
     
+    if (GetRunCategory() == "IL" && GetRunRuleset() != "NCS")
+        return false
+
     entity player = GetLocalClientPlayer()
     if (!IsValid( player ) || !IsAlive( player )) 
         return false
