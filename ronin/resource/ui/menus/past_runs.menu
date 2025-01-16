@@ -43,39 +43,6 @@ resource/ui/menus/timer_overlay.menu
             "ypos"      "64"
         }
 
-        "BingusAvoidanceBG"
-        {
-            "ControlName" "ImagePanel"
-            image "vgui/hud/white"
-            scaleImage      1
-            xpos 0
-            ypos 0
-            zpos                    9999
-            "wide"								"f0"
-            "tall"								"f0"
-            "drawColor" "0 0 0 255" // vanilla label color
-            visible 0
-            enabled 0
-        }
-
-        "BingusAvoidance"
-        {
-            ControlName				Label
-            xpos					0
-            ypos					0
-            wide					f0
-            tall					f0
-            zpos                    10000
-            visible					1
-            enabled					1
-            //auto_wide_tocontents	1
-            labelText				"real"
-            textAlignment			center
-            fgcolor_override 		"255 255 255 255"
-            bgcolor_override 		"0 0 0 200"
-            font					JBMonoBold_100
-        }
-
         "MenuTitle"
         {
             ControlName				Label

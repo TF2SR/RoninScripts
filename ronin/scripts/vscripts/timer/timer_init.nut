@@ -11,6 +11,11 @@ array< array<string> > VALID_CATEGORY_ALIASES = [
     ["il", "bt7274", "bt-7274", "blood and rust", "bnr", ""]
 ]
 
+// A category would be a route you take through the game.
+// e.g. any% - full game, ILs, Pilot's challenge
+global array<string> VALID_CATEGORIES = [ "ANY%", "IL", "ALL HELMETS" ] 
+global array<string> VALID_RULESETS = [ "NORMAL", "NCS", "MASTER", "GRAPPLE%", "STIM%", "SPEEDMOD" ] 
+
 global struct Duration
 {
     string name
@@ -28,6 +33,7 @@ global struct Run
     int seconds
     int microseconds
     string category
+    string ruleset
     array<Duration> splits
     table<string, string> modHashes
     table facts

@@ -189,7 +189,7 @@
 	
 	UnixTimestamp
 	{
-		//ControlName				Label
+		ControlName				Label
 		xpos					50
 		ypos					50
 		wide					250

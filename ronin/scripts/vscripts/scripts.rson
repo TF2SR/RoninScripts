@@ -1059,6 +1059,7 @@ Scripts:
     ui/loading_screen.nut
     ui/srm_ui_utils.nut
     ui/srm_menu_settings.nut
+	ui/menu_timer_settings.nut
     ui/srm_menu_speedometer_settings.nut
     ui/srm_menu_input_display_settings.nut
     ui/srm_menu_practicewarps.nut
@@ -1125,6 +1126,7 @@ Scripts:
 	timer/run_saves.nut
 	timer/time_measurement.nut
 	timer/components/button_simple.nut
+	timer/components/button_carousel.nut
 	timer/components/run_panel.nut
 	ui/menu_past_runs.nut
 ]

@@ -1,7 +1,6 @@
 untyped
 global function PastRuns_Init
 global function SetRunJustEnded
-global function IncrementEasterEgg
 global function PastRuns_DisplayRun
 global function AddLeadingSpaceForTime
 global function PastRuns_RunsFinishedLoading
@@ -14,6 +13,7 @@ struct
     int easterEgg = 0
     int runListScrollOffset = 0
     int selectedRunIndex = 0
+    bool buttonsRegistered = false
 } file
 
 void function SetRunJustEnded(bool justEnded)
@@ -32,38 +32,6 @@ void function SetRunJustEnded(bool justEnded)
     Hud_SetWidth(titleBG, Hud_GetWidth(title) + (Hud_GetX(title) - Hud_GetX(titleBG)) * 2)
 }
 
-void function IncrementEasterEgg()
-{
-    file.easterEgg++
-    UpdateEasterEgg()
-}
-
-void function UpdateEasterEgg()
-{
-    int egg = file.easterEgg
-    var baName = Hud_GetChild(file.menu, "BingusAvoidance")
-    var baBG = Hud_GetChild(file.menu, "BingusAvoidanceBG")
-    Hud_SetVisible(baBG, egg >= 2)
-    Hud_SetColor(baBG, 0, 0, 0, minint(maxint((egg - 1) * 16, 0), 255))
-    Hud_SetVisible(baName, egg >= 18)
-    if (egg == 18)
-    {
-        array<string> funkies = [
-            "  IT IS CALLED  \n" +
-            "BINGUS AVOIDANCE",
-            "THE DARK IS BACK",
-            "so, funny thing,\nthis isnt actually center aligned\nbecause valve is dumb :[",
-            "TAKE WORLD RECCY\n" + 
-            "FOR ME, WILL YA?",
-            " ALL CAPS LOOKS \n" +
-            "EDGY AND OMINOUS"
-        ]
-        Hud_SetText(baName, funkies.getrandom())
-    }
-    if (egg == 20)
-        ClientCommand("quit") // 
-}
-
 void function PastRuns_Init()
 {
 	AddMenu( "PastRuns", $"resource/ui/menus/past_runs.menu", InitPastRunsMenu )
@@ -74,7 +42,6 @@ void function InitPastRunsMenu()
     var menu = GetMenu( "PastRuns" )
     file.menu = menu
     
-    UpdateEasterEgg()
     SetRunJustEnded(false)
 
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnMenuOpened )
@@ -178,7 +145,6 @@ void function InitPastRunsMenu()
 
 void function ArrowButton_GetFocus( var button )
 {
-    print("fuck")
     var panel = Hud_GetParent( button )
     Hud_SetColor( Hud_GetChild(panel, "BG"), 255, 255, 255, 255 )
     Hud_SetColor( Hud_GetChild(panel, "Arrow"), 30, 30, 30, 255 )
@@ -187,7 +153,6 @@ void function ArrowButton_GetFocus( var button )
 
 void function ArrowButton_LoseFocus( var button )
 {
-    print("shit")
     var panel = Hud_GetParent( button )
     Hud_SetColor( Hud_GetChild(panel, "BG"), 30, 30, 30, 255 )
     Hud_SetColor( Hud_GetChild(panel, "Arrow"), 255, 255, 255, 255 )
@@ -196,6 +161,7 @@ void function ArrowButton_LoseFocus( var button )
 
 void function UpArrowButtonClicked( var button )
 {
+    print("shit")
     file.runListScrollOffset = maxint(0, file.runListScrollOffset - 8)
 
     RunList_Refresh()
@@ -259,16 +225,16 @@ void function PastRuns_Placeholder()
     var categoryBG = Hud_GetChild(file.menu, "CategoryBG")
     int x = Hud_GetX(categoryBG) - Hud_GetX(categoryName)
 
-    string verificationLabelText = "^FFD04000Mods Used:^FFFFFFFF\n\n" +
-                                    "N/A\n" +
+    string verificationLabelText = "^FFD04000Fun Fact:^FFFFFFFF\n\n" +
+                                    "You haven't done a run yet.\n" +
                                     "You can only see this because i accounted\n" + 
                                     "For this specific edge case (this took so\n" + 
                                     "long) "
 
     Hud_SetText( Hud_GetChild(file.menu, "Verification"), verificationLabelText )
 
-    string splitLabelText = "DO A RUN PLS"
-    string timesLabelText = "WHY ARE YOU EVEN LOOKING HERE"
+    string splitLabelText = "NO RUN AVAILABLE"
+    string timesLabelText = "START RUNNING TODAY!"
 
     // category
     vector color = GetCategoryColor("IL")
@@ -282,7 +248,7 @@ void function PastRuns_Placeholder()
 
     Hud_SetText(splitsLabel, splitLabelText)
     Hud_SetText(timesLabel, timesLabelText)
-    Hud_SetText(totalTime, "15 years")
+    Hud_SetText(totalTime, "NO RUNS")
 }
 
 string function GetTimeAsString(int timestamp)
@@ -373,20 +339,28 @@ string function AddLeadingSpaceForTime(string str)
 void function OnMenuOpened()
 {
     RunList_Refresh()
-	RegisterButtonPressedCallback(MOUSE_WHEEL_UP, UpArrowButtonClicked)
-	RegisterButtonPressedCallback(MOUSE_WHEEL_DOWN, DownArrowButtonClicked)
+    if (!file.buttonsRegistered)
+    {
+        RegisterButtonPressedCallback(MOUSE_WHEEL_UP, UpArrowButtonClicked)
+        RegisterButtonPressedCallback(MOUSE_WHEEL_DOWN, DownArrowButtonClicked)
+        file.buttonsRegistered = true
+    }
     if (file.runJustEnded)
         SetTimerVisible(false)
 }
 
 void function OnMenuClosed()
 {
-	DeregisterButtonPressedCallback(MOUSE_WHEEL_UP, UpArrowButtonClicked)
-	DeregisterButtonPressedCallback(MOUSE_WHEEL_DOWN, DownArrowButtonClicked)
-    SetTimerVisible(true)
+    print("menu closed")
+    if (file.buttonsRegistered)
+    {
+        DeregisterButtonPressedCallback(MOUSE_WHEEL_UP, UpArrowButtonClicked)
+        DeregisterButtonPressedCallback(MOUSE_WHEEL_DOWN, DownArrowButtonClicked)
+        file.buttonsRegistered = false
+    }
+    SetTimerVisible(GetConVarBool("igt_enable"))
     SetRunJustEnded(false)
     file.easterEgg = 0
-    UpdateEasterEgg()
 }
 
 void function OnNavigateBack()

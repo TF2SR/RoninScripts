@@ -33,7 +33,13 @@ vector function GetCategoryColor(string category)
             return <77, 153, 255>
 
         case "STIM%":
-            return <64, 255, 106>
+            return <64, 255, 80>
+        
+        case "NORMAL":
+            return <128, 128, 128>
+
+        case "MASTER":
+            return <128, 32, 32>
     }
 
     if (SRM_StartsWith(category, "IL_"))
@@ -45,6 +51,13 @@ vector function GetCategoryColor(string category)
 string function GetRunCategory()
 {
     string cat = GetConVarString("igt_run_category").toupper()
+    
+    return cat
+}
+
+string function GetRunRuleset()
+{
+    string cat = GetConVarString("igt_run_ruleset").toupper()
     
     return cat
 }

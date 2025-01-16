@@ -29,9 +29,8 @@ void function SRM_InfoHUD_Init()
     // the first modded custom convar (one that starts with "srm_")
     // that is found will be displayed and everything else will be skipped
     // otherwise convars are displayed in order as they are registered
-    RegisterConVar( "srm_practice_mode", 0.0, "Practice Mode" )
-    RegisterConVar( "srm_force_moonboots", 0.0, "Forced Moonboots" )
     RegisterConVar( "sv_cheats", 0.0 )
+    RegisterConVar( "srm_force_moonboots", 0.0, "Forced Moonboots" )
     RegisterConVar( "host_timescale", 1.0 )
     RegisterConVar( "player_respawnInputDebounceDuration", 0.5 )
 
@@ -97,7 +96,7 @@ void function RegisterConVar( string ConVarName, float defautValue, string displ
     ConVar.defautValue = defautValue
     ConVar.value = GetConVarFloat(ConVarName)
 
-    if (SRM_StartsWith(ConVarName, "srm_"))
+    if (ConVarName == "sv_cheats") // sv_cheats gets special treatment :)
         SRM_CustomConVars.append(ConVar)
     else
         SRM_DefaultConVars.append(ConVar)

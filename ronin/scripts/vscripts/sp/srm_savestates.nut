@@ -11,17 +11,7 @@ struct {
 void function SRM_SaveState_Init( entity player )
 {
     AddClientCommandCallback( "createsavestate", Pressed_CreateSaveState )
-    AddClientCommandCallback( "noclip", Pressed_Noclip )
     AddClientCommandCallback( "loadsavestate", Pressed_LoadSaveState )
-}
-
-bool function Pressed_Noclip( entity player, array<string> args )
-{
-    if (!GetConVarBool("sv_cheats"))
-        return true
-    
-    player.SetPhysics( player.IsNoclipping() ? MOVETYPE_WALK : MOVETYPE_NOCLIP ) 
-    return true
 }
 
 bool function Pressed_CreateSaveState( entity player, array<string> args )
@@ -35,7 +25,7 @@ bool function Pressed_CreateSaveState( entity player, array<string> args )
 
 bool function Pressed_LoadSaveState( entity player, array<string> args )
 {
-    if (!file.savestateExists || !GetConVarInt("srm_practice_mode")) return false
+    if (!file.savestateExists || !GetConVarInt("sv_cheats")) return false
     player.SetOrigin(file.position)
     player.SetAngles(file.angles)
     player.SetVelocity(file.velocity)

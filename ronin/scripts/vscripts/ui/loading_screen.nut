@@ -7,7 +7,6 @@ void function LoadingScreen_Init()
 
 void function LoadingScreen()
 {
-    return
     while (true)
 	{
 		wait 0
@@ -26,7 +25,6 @@ void function LoadingScreen()
             continue
         }
 
-        print("ayo")
         Hud_SetText(timeLabel, GetUnixTimestamp().tostring())
         //print(Hud_GetUTF8Text(modeLabel) + "HELO")
 

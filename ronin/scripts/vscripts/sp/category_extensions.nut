@@ -7,13 +7,21 @@ string function GetRunCategory()
     return cat
 }
 
+string function GetRunRuleset()
+{
+    string cat = GetConVarString("igt_run_ruleset").toupper()
+    
+    return cat
+}
+
 void function CategoryExtensions_Init()
 {
-    switch (GetRunCategory())
+    switch (GetRunRuleset())
     {
         case "GRAPPLE%":
             PrecacheWeapon("mp_ability_grapple")
-            ReplaceTactical("mp_ability_grapple")
+            if (GetMapName() != "sp_crashsite") // i hate titan tutorial!!!
+                ReplaceTactical("mp_ability_grapple")
             break
         case "STIM%":
             PrecacheWeapon("mp_ability_heal")

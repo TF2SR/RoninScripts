@@ -18,6 +18,8 @@ global const float SP_LEVEL_TRANSITION_HOLDTIME = 3.0
 // and transferred onto UIVM. 
 global table speedrunFacts
 
+global float cutsceneStartTime = -1.0
+
 struct
 {
     var timer
@@ -44,6 +46,7 @@ void function Delayed_TimerOverlay_Init()
 {
     wait 0.001
     file.timer = HudElement("TimerPanel")
+    Hud_SetVisible( file.timer, GetConVarBool("igt_enable") )
     RegisterSignal("TimeSet")
 	RegisterConCommandTriggeredCallback( "ingamemenu_activate", HideTimer )
     thread UpdateTimerHUD()
@@ -127,6 +130,11 @@ void function UpdateTimerHUD()
             isBlurring = true
             SetScreenBlur( 1.0, 1.5, EASING_LINEAR )
         }*/
+        if (BT7274_ActivateNCS())
+        {
+            // balls.
+            GetLocalClientPlayer().ClientCommand("load fastany1")
+        }
         if (GetRunCategory() == "IL" && !isRunOver)
         {
             if (GetMapName() == "sp_s2s" && ArkIL_HasLevelEnded()
@@ -191,6 +199,30 @@ bool function BloodAndRust_HasLevelEnded()
         hasEnteredArena = origin.x > -9000
     // IMPLEMENT THIS YOU MORON
     return player.ContextAction_IsBusy() && IsInCutscene() && (player.GetCinematicEventFlags() & (CE_FLAG_EMBARK | CE_FLAG_DISEMBARK)) == 0
+}
+
+bool function BT7274_ActivateNCS()
+{
+    if (GetMapName() != "sp_crashsite")
+        return false
+    
+    entity player = GetLocalClientPlayer()
+    if (!IsValid( player ) || !IsAlive( player )) 
+        return false
+    
+    if (!IsInCutscene())
+    {
+        cutsceneStartTime = -1.0
+        return false
+    }
+
+    if (DistanceSqr(player.GetOrigin(), < 212, -204, -12225 >) > 500 * 500)
+        return false
+
+    if (cutsceneStartTime < 0.0)
+        cutsceneStartTime = Time()
+    
+    return (Time() - cutsceneStartTime) > 5.00 // this is 5 seconds since the start of the cutscene, not 5 seconds since we entered the area IN the cutscene.
 }
 
 bool function EffectAndCause3IL_HasLevelEnded()

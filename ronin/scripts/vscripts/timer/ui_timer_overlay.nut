@@ -34,24 +34,18 @@ void function TimerOverlay_Init()
 
 void function AutoShowClientTimer()
 {
-    var categoryChoiceBG = Hud_GetChild(file.buttons, "CategoryChoiceBG")
-    var categoryDesc = Hud_GetChild(file.buttons, "CategoryDescription")
-    var categoryTextEntry = Hud_GetChild(file.buttons, "CategoryTextEntry")
     while (1)
     {
 		WaitSignal( uiGlobal.signalDummy, "ActiveMenuChanged" )
 
-        Hud_SetVisible(categoryChoiceBG, false)
-        Hud_SetVisible(categoryDesc, false)
-        Hud_SetVisible(categoryTextEntry, false)
-
         if (uiGlobal.activeMenu == null && IsFullyConnected())
-            RunClientScript("SetTimerVisible", true)
+            RunClientScript("SetTimerVisible", GetConVarBool("igt_enable"))
     }
 }
 
 void function UpdateTimerHUD()
 {
+    Hud_SetVisible( file.timer, GetConVarBool("igt_enable") )
     var timeLabel = Hud_GetChild(file.timer, "Time")
     var levelTimeLabel = Hud_GetChild(file.timer, "LastLevelTime")
     var digit0 = Hud_GetChild(file.timer, "TimeDigit0")
@@ -123,7 +117,7 @@ void function UpdateTimerHUD()
 
     Hud_SetText( timeLabel, FormatTime(time.seconds) )
     if (levelTime.seconds < 60)
-        Hud_SetText( levelTimeLabel, FormatTime(levelTime.seconds, levelTime.microseconds, 2) )
+        Hud_SetText( levelTimeLabel, FormatTime(levelTime.seconds, levelTime.microseconds, 1) )
     else
         Hud_SetText( levelTimeLabel, FormatTime(levelTime.seconds, levelTime.microseconds, 1) )
     
@@ -138,31 +132,15 @@ void function UpdateTimerButtons()
     var pastRunsBG = Hud_GetChild(file.buttons, "PastRunsBG")
     var pastRunsLabel = Hud_GetChild(file.buttons, "PastRunsLabel")
     var pastRunsButton = Hud_GetChild(file.buttons, "PastRunsButton")
-    var categoryBG = Hud_GetChild(file.buttons, "CategoryBG")
-    var categoryLabel = Hud_GetChild(file.buttons, "CategoryLabel")
-    var categoryButton = Hud_GetChild(file.buttons, "CategoryButton")
-    var categoryChoiceBG = Hud_GetChild(file.buttons, "CategoryChoiceBG")
-    var categoryDesc = Hud_GetChild(file.buttons, "CategoryDescription")
-    var categoryTextEntry = Hud_GetChild(file.buttons, "CategoryTextEntry")
     var settingsButton = Hud_GetChild(file.buttons, "SettingsButton")
     var settingsBG = Hud_GetChild(file.buttons, "SettingsBG")
     var settingsLabel = Hud_GetChild(file.buttons, "SettingsLabel")
     
-    Hud_AddEventHandler( categoryTextEntry, UIE_LOSE_FOCUS, SendTextPanelChanges )
-    Hud_AddEventHandler( categoryButton, UIE_CLICK, ShowCategoryMenu )
     Hud_AddEventHandler( pastRunsButton, UIE_CLICK, OpenPastRunsMenu )
-
-    Squircle_SetColor(categoryChoiceBG, 30, 30, 30, 255)
-    Squircle_Update(categoryChoiceBG)
-    Hud_SetText(categoryDesc, "Enter Your Category.\nSpecial Categories:\n"
-    + "^40FF6A00NCS^FFFFFFFF - Enables NCS Saves.\n"
-    + "^FF404000IL^FFFFFFFF - For all ILs.\nPauses automatically.\n"
-    + "^2080FF00ANY%^FFFFFFFF - Is blue :]\n"
-    + "^FFCC4000All Helmets^FFFFFFFF - is yellow! :D")
+    Hud_AddEventHandler( settingsButton, UIE_CLICK, AdvanceMenuEventHandler(GetMenu("SRM_TimerSettingsMenu")) )
 
     array< array<var> > buttons = [ 
         [ pastRunsButton, pastRunsBG, pastRunsLabel ],
-        [ categoryButton, categoryBG, categoryLabel ],
         [ settingsButton, settingsBG, settingsLabel ],
     ]
     foreach (array<var> arr in buttons)
@@ -199,49 +177,10 @@ void function OpenPastRunsMenu( var button )
     AdvanceMenu( GetMenu( "PastRuns" ) )
 }
 
-void function ShowCategoryMenu( var button )
-{
-    var categoryChoiceBG = Hud_GetChild(file.buttons, "CategoryChoiceBG")
-    var categoryDesc = Hud_GetChild(file.buttons, "CategoryDescription")
-    var categoryTextEntry = Hud_GetChild(file.buttons, "CategoryTextEntry")
-
-    bool showCategory = !Hud_IsVisible(categoryChoiceBG)
-    Hud_SetVisible(categoryChoiceBG, showCategory)
-    Hud_SetVisible(categoryDesc, showCategory)
-    Hud_SetVisible(categoryTextEntry, showCategory)
-}
 
 void function SetTimerVisible(bool visible)
 {
     Hud_SetVisible( file.timer, visible )
     if (IsFullyConnected())
         RunClientScript("SetTimerVisible", visible)
-}
-
-void function SendTextPanelChanges( var _ )
-{
-    var categoryChoiceBG = Hud_GetChild(file.buttons, "CategoryChoiceBG")
-    var categoryDesc = Hud_GetChild(file.buttons, "CategoryDescription")
-    var categoryTextEntry = Hud_GetChild(file.buttons, "CategoryTextEntry")
-
-    // this is done so when you open the console after typing in your category
-    // you wont add a ` to the string by accident.
-    string category = GetConVarString("igt_run_category")
-    while (category.find("`") == category.len() - 1)
-    {
-        category = category.slice(0, category.find("`"))
-    }
-    while (category.find("`") == 0)
-    {
-        category = category.slice(1, category.len())
-    }
-    while (category.len() > 0 && category[category.len() - 1] == ' ')
-    {
-        category = category.slice(0, category.len() - 1)
-    }
-    //SetConVarString("run_category", category)
-
-    Hud_SetVisible(categoryChoiceBG, false)
-    Hud_SetVisible(categoryDesc, false)
-    Hud_SetVisible(categoryTextEntry, false)
 }

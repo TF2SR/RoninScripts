@@ -1135,7 +1135,7 @@ void function InitMenus()
 
 	// RoninScripts
 	LoadingScreen_Init()
-	SRM_SetSubtitles()
+	SRM_UIInit()
 }
 
 void functionref( var ) function AdvanceMenuEventHandler( var menu )
