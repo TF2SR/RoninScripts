@@ -166,6 +166,7 @@ void function RunLoaded( string filePath, table data )
     run.seconds = expect int(data.seconds)
     run.microseconds = expect int(data.microseconds)
     run.category = expect string(data.category)
+    run.ruleset = expect string(data.ruleset)
     run.splits = ToSplitArray(expect array(data.splits))
     run.facts = expect table(data.facts)
     run.isPB = expect bool(data.isPB)
@@ -259,6 +260,7 @@ table function RunToTable( Run run )
     data["microseconds"] <- run.microseconds
     data["splits"] <- SplitArrayToTableArray(run.splits)
     data["category"] <- run.category
+    data["ruleset"] <- run.ruleset
     data["facts"] <- run.facts
     data["isValid"] <- run.isValid
     data["isPB"] <- run.isPB
