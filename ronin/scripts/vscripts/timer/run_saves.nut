@@ -205,6 +205,7 @@ void function SaveRunData( Duration time, array<Duration> splits, table facts, b
     int timestamp = GetUnixTimestamp()
     
     string category = GetRunCategory()
+    string ruleset = GetRunRuleset()
     
     if (category == "IL")
     {
@@ -216,6 +217,7 @@ void function SaveRunData( Duration time, array<Duration> splits, table facts, b
     run.seconds = time.seconds
     run.microseconds = time.microseconds
     run.category = category
+    run.ruleset = ruleset
     run.splits = splits
     run.facts = facts
     run.isValid = isValid

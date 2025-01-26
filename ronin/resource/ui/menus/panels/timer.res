@@ -198,6 +198,42 @@ resource/ui/menus/panels/timer.res
 		pin_corner_to_sibling TOP_LEFT
 	}
 
+	RulesetBG
+	{
+		"ControlName"		"CNestedPanel"
+		InheritProperties   Squircle
+		xpos				4
+		ypos				0
+		wide				36
+		tall				24
+		zpos					0
+
+		pin_to_sibling		CategoryBG
+		pin_to_sibling_corner TOP_RIGHT
+		pin_corner_to_sibling TOP_LEFT
+	}
+	"RulesetName"
+	{
+		ControlName				Label
+		xpos					-6
+		wide					64
+		tall					24
+		visible					1
+		enabled					1
+		allcaps					1
+		auto_wide_tocontents	1
+		zpos					2
+		labelText				"NCS"
+		textAlignment			west
+		fgcolor_override 		"31 31 31 255"
+		bgcolor_override 		"0 0 0 200"
+		font					JBMonoBold_18
+
+		pin_to_sibling		RulesetBG
+		pin_to_sibling_corner TOP_LEFT
+		pin_corner_to_sibling TOP_LEFT
+	}
+
 	"NotLBLegal"
 	{
 		ControlName				Label

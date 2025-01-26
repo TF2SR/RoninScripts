@@ -5,10 +5,13 @@
 
 global function GetCategoryColor
 global function GetRunCategory
+global function GetCategoryShortName
+global function GetRunRuleset
 global function FormatTime
 global function FormatHUDSplitList
 global function SubtractTimes
 global function SumOfSplits
+global function IsILCategory
 
 vector function GetCategoryColor(string category)
 {
@@ -25,6 +28,9 @@ vector function GetCategoryColor(string category)
 
         case "ALL HELMETS":
             return <255, 204, 64>
+
+        case "ALL HELMETS IL":
+            return <255, 104, 64>
 
         case "SPEEDMOD":
             return <255, 160, 48>
@@ -48,11 +54,31 @@ vector function GetCategoryColor(string category)
     return <128, 128, 128>
 }
 
+bool function IsILCategory(string category)
+{
+    string cat = GetConVarString("igt_run_category").toupper()
+    
+    return cat.find("IL") != null
+}
+
 string function GetRunCategory()
 {
     string cat = GetConVarString("igt_run_category").toupper()
     
     return cat
+}
+
+string function GetCategoryShortName(string category)
+{
+    switch (GetRunCategory())
+    {
+        case "ALL HELMETS":
+            return "AH"
+        case "ALL HELMETS IL":
+            return "AH IL"
+    }
+
+    return category
 }
 
 string function GetRunRuleset()

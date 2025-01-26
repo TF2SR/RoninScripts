@@ -24,8 +24,37 @@ void function TimerSettingsMenu_Init()
 		Carousel_UpdateWithConVarAndCategoryArray( button, VALID_RULESETS, "igt_run_ruleset", isRight )
 	})
 	
+	Carousel_SetLabel( Hud_GetChild(file.menu, "ShowDeltas"), "Show Comparison" )
+	Carousel_UpdateValue( Hud_GetChild(file.menu, "ShowDeltas"), ["NO", "YES", "ONLY IN LOAD SCREEN (NOT IMPLEMENTED)"][GetConVarInt("igt_show_deltas")], <128, 128, 128> )
+	Carousel_AddClickedHandler( Hud_GetChild(file.menu, "ShowDeltas"), void function(var button, bool isRight) : (){	
+		string convar = "igt_show_deltas"
+		array<string> categories = ["NO", "YES", "ONLY IN LOAD SCREEN (NOT IMPLEMENTED)"]
+		printt(convar, isRight)
+		string conVarValue = GetConVarString(convar)
+
+		int currentRulesetIndex = GetConVarInt(convar)
+		if (isRight)
+		{
+			currentRulesetIndex++
+			if (currentRulesetIndex >= categories.len())
+				currentRulesetIndex = 0
+		}
+		else
+		{
+			currentRulesetIndex--
+			if (currentRulesetIndex < 0)
+				currentRulesetIndex = categories.len() - 1
+		}
+
+		conVarValue = categories[currentRulesetIndex]
+		SetConVarInt( convar, currentRulesetIndex )
+		vector color = GetCategoryColor(conVarValue)
+		
+		Carousel_UpdateValue( button, conVarValue, color )
+	})
+
 	Carousel_SetLabel( Hud_GetChild(file.menu, "Autoload18Hr"), "BT-7274 - Skip 2nd cutscene in Any%" )
-	Carousel_UpdateValue( Hud_GetChild(file.menu, "Autoload18Hr"), "YES", <64, 255, 64> )
+	Carousel_UpdateValue( Hud_GetChild(file.menu, "Autoload18Hr"), GetConVarBool("igt_18hr_skip") ? "YES" : "NO", GetConVarBool("igt_18hr_skip") ? <64,255,64> : <255,64,64> )
 	Carousel_AddClickedHandler( Hud_GetChild(file.menu, "Autoload18Hr"), void function(var button, bool isRight) : (){	
 		bool value = GetConVarBool("igt_18hr_skip")
 

@@ -1,11 +1,4 @@
-global function SRM_ForceMoonboots_Init
-
-void function SRM_ForceMoonboots_Init()
-{
-    thread SRM_ForceMoonboots()
-}
-
-void function SRM_ForceMoonboots()
+thread void function() : ()
 {
     bool hasMoonboots
     while ( true )
@@ -24,4 +17,4 @@ void function SRM_ForceMoonboots()
             GetFirstPlayer().kv.gravity = 0.0
         }
     }
-}
+}()

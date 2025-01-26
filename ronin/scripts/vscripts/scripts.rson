@@ -1085,10 +1085,6 @@ Scripts:
 When: "SERVER && SP"
 Scripts:
 [
-    sp/srm_savestates.nut
-    sp/srm_force_moonboots.nut
-	sp/category_extensions.nut
-	
 	timer/start_point_tracker.nut
 ]
 

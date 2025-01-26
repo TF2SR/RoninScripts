@@ -98,7 +98,9 @@ void function UpdateTimerHUD()
             return
 
         var categoryName = Hud_GetChild(file.timer, "CategoryName")
+        var rulesetName = Hud_GetChild(file.timer, "RulesetName")
         var categoryBG = Hud_GetChild(file.timer, "CategoryBG")
+        var rulesetBG = Hud_GetChild(file.timer, "RulesetBG")
         var alphaLabel = Hud_GetChild(file.timer, "NotLBLegal")
         var alphaLabelShadow = Hud_GetChild(file.timer, "NotLBLegalShadow")
         var mainDeltaLabel = Hud_GetChild(file.timer, "TimeDelta")
@@ -120,10 +122,22 @@ void function UpdateTimerHUD()
         }
 
         Squircle_SetColor(categoryBG, int(color.x), int(color.y), int(color.z), 255)
-        Hud_SetText(categoryName, GetRunCategory())
+        Hud_SetText(categoryName, GetCategoryShortName(GetRunCategory()))
         int labelX = Hud_GetAbsX( categoryName )
         int bgX = Hud_GetAbsX( categoryBG )
         Squircle_SetSize(categoryBG, Hud_GetWidth(categoryName) + abs(labelX - bgX) * 2 + 1, Hud_GetHeight(categoryBG))
+        
+    Hud_SetText(rulesetName, GetRunRuleset())
+    color = GetCategoryColor(GetRunRuleset())
+    Squircle_SetColor(rulesetBG, int(color.x), int(color.y), int(color.z), 255)
+    
+    labelX = Hud_GetAbsX( rulesetName )
+    bgX = Hud_GetAbsX( rulesetBG )
+
+    Squircle_SetSize(rulesetBG, Hud_GetWidth(rulesetName) + (labelX - bgX) * 2 + 1, Hud_GetHeight(rulesetBG))
+
+    Hud_SetVisible(rulesetName, GetRunRuleset() != "NORMAL")
+    Hud_SetVisible(rulesetBG, GetRunRuleset() != "NORMAL")
 
         /*if (GetConVarBool("run_ending") && GetRunCategory() == "IL" && !isBlurring)
         {
@@ -135,7 +149,7 @@ void function UpdateTimerHUD()
             // balls.
             GetLocalClientPlayer().ClientCommand("load fastany1")
         }
-        if (GetRunCategory() == "IL" && !isRunOver)
+        if (IsILCategory(GetRunCategory()) && !isRunOver)
         {
             if (GetMapName() == "sp_s2s" && ArkIL_HasLevelEnded()
                 || (GetMapName() == "sp_hub_timeshift" && EffectAndCause3IL_HasLevelEnded())
@@ -161,7 +175,10 @@ void function UpdateTimerHUD()
         {
             Hud_SetColor( mainDeltaLabel, 255, 40, 40, 255 )
         }
-        Hud_SetText(mainDeltaLabel, file.delta)
+        if (GetConVarInt("igt_show_deltas") == 1)
+            Hud_SetText(mainDeltaLabel, file.delta)
+        else
+            Hud_SetText(mainDeltaLabel, "")
         
         if (file.levelDelta.len() <= 0 || file.levelDelta[0] == '-')
         {
@@ -171,7 +188,10 @@ void function UpdateTimerHUD()
         {
             Hud_SetColor( levelDeltaLabel, 255, 40, 40, 255 )
         }
-        Hud_SetText(levelDeltaLabel, file.levelDelta)
+        if (GetConVarInt("igt_show_deltas") == 1)
+            Hud_SetText(levelDeltaLabel, file.levelDelta)
+        else
+            Hud_SetText(levelDeltaLabel, "")
 
         // set time
         var timeLabel = Hud_GetChild(file.timer, "Time")
@@ -209,7 +229,7 @@ bool function BT7274_ActivateNCS()
     if (GetRunCategory() == "ANY%" && !GetConVarBool("igt_18hr_skip"))
         return false
     
-    if (GetRunCategory() == "IL" && GetRunRuleset() != "NCS")
+    if (IsILCategory(GetRunCategory()) && GetRunRuleset() != "NCS")
         return false
 
     entity player = GetLocalClientPlayer()

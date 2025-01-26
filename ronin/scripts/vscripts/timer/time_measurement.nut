@@ -37,10 +37,10 @@ struct
 
 bool function ShouldChangeLevel()
 {
-    if (GetRunCategory() != "IL")
-        return true
+    if (IsILCategory(GetRunCategory()))
+        return false
     
-    return false
+    return true
 }
 
 // called whenever a save file is loaded through the `load` concommand.
@@ -104,7 +104,7 @@ void function MeasureTime()
         {
             file.isCheckpoint = 1
         }
-        if (GetRunCategory() == "IL" && IsInLoadingScreen())
+        if (IsILCategory(GetRunCategory()) && IsInLoadingScreen())
         {
             if (file.isCheckpoint == 0) // NOT a checkpoint
             {
@@ -146,7 +146,7 @@ void function MeasureTime()
             // dont care
         }
 
-        if (Timer_GetCurrentStartPoint() > file.curStartPoint && GetRunCategory() == "IL")
+        if (Timer_GetCurrentStartPoint() > file.curStartPoint && IsILCategory(GetRunCategory()))
         {
             printt("split!  ")
             Split()
@@ -196,7 +196,7 @@ bool function ShouldStartCounting()
         print("\n\n\nstart timer!!!")
         file.levelTime.name = GetRunCurrentLevel()
         file.curStartPoint = GetConVarInt("sp_startpoint")
-        if (GetRunCategory() == "IL")
+        if (IsILCategory(GetRunCategory()))
         {
             file.levelTime.name = "Startpoint " + file.curStartPoint
         }
@@ -212,7 +212,7 @@ void function TestSplitName()
 // whether the timer should stop counting
 bool function ShouldStopCounting()
 {
-    if (HasCurrentLevelEnded() && GetRunCategory() == "IL")
+    if (HasCurrentLevelEnded() && IsILCategory(GetRunCategory()))
         file.runEnded = true
         
     bool result = IsInLoadingScreen() || uiGlobal.activeMenu == GetMenu("MainMenu") || file.runEnded
@@ -230,7 +230,7 @@ bool function ShouldStopCounting()
         RunClientScript("SaveFacts")
         SetRunJustEnded(true)
         SaveRunData(file.time, file.splits, DecodeJSON(file.facts), IsRunValid())
-        if (GetRunCategory() == "IL")
+        if (IsILCategory(GetRunCategory()) && GetConVarBool("igt_enable"))
             AdvanceMenu(GetMenu("PastRuns"))
     }
     
@@ -341,7 +341,6 @@ bool function IsRunValid()
     
     if (IsInLoadingScreen() && Timer_GetCurrentStartPoint() != -1 && !file.isCheckpoint)
     {
-        printt(GetActiveLevel(), Timer_GetCurrentStartPoint())
         // check that the startpoint is valis
         // and were not starting mid-level
         int startPoint = Timer_GetCurrentStartPoint()

@@ -296,12 +296,17 @@ void function PastRuns_DisplayRun(Run run)
     string splitLabelText = ""
     string timesLabelText = ""
 
-    string map = run.category.slice(3, run.category.len())
-    string categoryDisplayName = (SRM_StartsWith(run.category, "IL_")) ? GetLevelName(map, false) : run.category
+    bool isIL = IsILCategory(run.category)
+    string map
+    if (isIL)
+    {
+        map = run.category.slice(run.category.find("_") + 1, run.category.len())
+    }
+    string categoryDisplayName = isIL ? GetLevelName(map, false) : run.category
 
     foreach (Duration split in run.splits)
     {
-        if (SRM_StartsWith(run.category, "IL_"))
+        if (isIL)
         {
             splitLabelText += GetILSplitName(split.name, map, true)
         }

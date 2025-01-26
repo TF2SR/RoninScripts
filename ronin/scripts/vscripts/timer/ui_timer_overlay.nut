@@ -46,11 +46,15 @@ void function AutoShowClientTimer()
 void function UpdateTimerHUD()
 {
     Hud_SetVisible( file.timer, GetConVarBool("igt_enable") )
+    Hud_SetZ(file.menu, int(pow(2, 14)))
+
     var timeLabel = Hud_GetChild(file.timer, "Time")
     var levelTimeLabel = Hud_GetChild(file.timer, "LastLevelTime")
     var digit0 = Hud_GetChild(file.timer, "TimeDigit0")
     var categoryName = Hud_GetChild(file.timer, "CategoryName")
+    var rulesetName = Hud_GetChild(file.timer, "RulesetName")
     var categoryBG = Hud_GetChild(file.timer, "CategoryBG")
+    var rulesetBG = Hud_GetChild(file.timer, "RulesetBG")
     var alphaLabel = Hud_GetChild(file.timer, "NotLBLegal")
     var alphaLabelShadow = Hud_GetChild(file.timer, "NotLBLegalShadow")
     var splitListLabel = Hud_GetChild(file.timer, "SplitsList")
@@ -77,9 +81,7 @@ void function UpdateTimerHUD()
         Hud_SetText(alphaLabelShadow, "INVALID RUN")
     }
 
-    Hud_SetVisible(file.menu, true)
-    Hud_SetText(categoryName, GetRunCategory())
-    Hud_SetZ(file.menu, int(pow(2, 14)))
+    Hud_SetText(categoryName, GetCategoryShortName(GetRunCategory()))
     vector color = GetCategoryColor(GetRunCategory())
     Squircle_SetColor(categoryBG, int(color.x), int(color.y), int(color.z), 255)
 
@@ -87,6 +89,18 @@ void function UpdateTimerHUD()
     int bgX = Hud_GetAbsX( categoryBG )
 
     Squircle_SetSize(categoryBG, Hud_GetWidth(categoryName) + (labelX - bgX) * 2 + 1, Hud_GetHeight(categoryBG))
+
+    Hud_SetText(rulesetName, GetRunRuleset())
+    color = GetCategoryColor(GetRunRuleset())
+    Squircle_SetColor(rulesetBG, int(color.x), int(color.y), int(color.z), 255)
+
+    labelX = Hud_GetAbsX( rulesetName )
+    bgX = Hud_GetAbsX( rulesetBG )
+
+    Squircle_SetSize(rulesetBG, Hud_GetWidth(rulesetName) + (labelX - bgX) * 2 + 1, Hud_GetHeight(rulesetBG))
+
+    Hud_SetVisible(rulesetName, GetRunRuleset() != "NORMAL")
+    Hud_SetVisible(rulesetBG, GetRunRuleset() != "NORMAL")
     //Squircle_HideRightCorners(categoryBG)
 
     Duration time = GetSpeedrunTimer()
