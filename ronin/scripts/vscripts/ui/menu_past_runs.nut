@@ -79,7 +79,7 @@ void function InitPastRunsMenu()
         OpenDialog( dialogData )
     })
     SimpleButton_SetText( Hud_GetChild(menu, "DeleteRunButton"), "Delete")
-    SimpleButton_SetBGColor( Hud_GetChild(menu, "DeleteRunButton"), 30, 30, 30, 102)
+    SimpleButton_SetBGColor( Hud_GetChild(menu, "DeleteRunButton"), 30, 30, 30, 255)
     SimpleButton_AddEventHandler( Hud_GetChild(menu, "DeleteRunButton"), UIE_CLICK, void function(var button) : ()
     {
         DialogData dialogData
@@ -105,6 +105,15 @@ void function InitPastRunsMenu()
             AddDialogFooter( dialogData, "#B_BUTTON_CANCEL" )
 
         OpenDialog( dialogData )
+    })
+    
+    Hud_EnableKeyBindingIcons( Hud_GetChild(Hud_GetChild(menu, "RetryButton"), "Label") )
+    SimpleButton_SetText( Hud_GetChild(menu, "RetryButton"), "%[Y_BUTTON|X]%Retry")
+    SimpleButton_SetBGColor( Hud_GetChild(menu, "RetryButton"), 30, 30, 30, 255)
+    SimpleButton_AddEventHandler( Hud_GetChild(menu, "RetryButton"), UIE_CLICK, void function(var button) : ()
+    {
+        // reset for current category
+        RetryRun( button )
     })
     
 
@@ -161,10 +170,33 @@ void function ArrowButton_LoseFocus( var button )
 
 void function UpArrowButtonClicked( var button )
 {
-    print("shit")
     file.runListScrollOffset = maxint(0, file.runListScrollOffset - 8)
 
     RunList_Refresh()
+}
+
+void function RetryRun( var button )
+{
+    Run currentRun = GetRunByIndex(file.selectedRunIndex)
+    string category = currentRun.category
+    SetConVarString( "igt_run_category", category )
+    SetConVarString( "igt_run_ruleset", currentRun.ruleset )
+
+    SetConVarBool( "sv_cheats", false )
+    SetConVarFloat("player_respawnInputDebounceDuration", 0.5)
+
+    bool isIL = IsILCategory(category)
+    if (isIL)
+    {
+        string map = category.slice(category.find("_") + 1, category.len())
+        
+        
+        ClientCommand( "map " + map )
+    }
+    else
+    {
+        ClientCommand( "map sp_training" )
+    }
 }
 
 void function DownArrowButtonClicked( var button )
@@ -348,6 +380,8 @@ void function OnMenuOpened()
     {
         RegisterButtonPressedCallback(MOUSE_WHEEL_UP, UpArrowButtonClicked)
         RegisterButtonPressedCallback(MOUSE_WHEEL_DOWN, DownArrowButtonClicked)
+        RegisterButtonPressedCallback(BUTTON_Y, RetryRun)
+        RegisterButtonPressedCallback(KEY_X, RetryRun)
         file.buttonsRegistered = true
     }
     if (file.runJustEnded)
@@ -361,6 +395,8 @@ void function OnMenuClosed()
     {
         DeregisterButtonPressedCallback(MOUSE_WHEEL_UP, UpArrowButtonClicked)
         DeregisterButtonPressedCallback(MOUSE_WHEEL_DOWN, DownArrowButtonClicked)
+        DeregisterButtonPressedCallback(BUTTON_Y, RetryRun)
+        DeregisterButtonPressedCallback(KEY_X, RetryRun)
         file.buttonsRegistered = false
     }
     SetTimerVisible(GetConVarBool("igt_enable"))

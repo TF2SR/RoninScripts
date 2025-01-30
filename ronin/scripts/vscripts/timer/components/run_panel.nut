@@ -1,3 +1,4 @@
+untyped
 global function RunPanel_DisplayRun
 global function RunPanel_GetFocus
 global function RunPanel_LoseFocus
@@ -31,7 +32,14 @@ void function RunPanel_DisplayRun( var panel, Run run )
     var categoryBG = Hud_GetChild(panel, "CategoryBG")
     var categoryName = Hud_GetChild(panel, "CategoryName")
     vector color = GetCategoryColor(run.category)
-    string categoryDisplayName = (SRM_StartsWith(run.category, "IL_")) ? GetLevelName(run.category.slice(3, run.category.len())) : run.category
+    
+    bool isIL = IsILCategory(run.category)
+    string map
+    if (isIL)
+    {
+        map = run.category.slice(run.category.find("_") + 1, run.category.len())
+    }
+    string categoryDisplayName = isIL ? GetLevelName(map) : run.category
     int x = Hud_GetX(categoryBG) - Hud_GetX(categoryName)
     
     Hud_SetText(categoryName, categoryDisplayName.toupper())

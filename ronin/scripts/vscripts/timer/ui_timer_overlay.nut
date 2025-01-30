@@ -151,7 +151,7 @@ void function UpdateTimerButtons()
     var settingsLabel = Hud_GetChild(file.buttons, "SettingsLabel")
     
     Hud_AddEventHandler( pastRunsButton, UIE_CLICK, OpenPastRunsMenu )
-    Hud_AddEventHandler( settingsButton, UIE_CLICK, AdvanceMenuEventHandler(GetMenu("SRM_TimerSettingsMenu")) )
+    Hud_AddEventHandler( settingsButton, UIE_CLICK, OpenTimerSettingsMenu )
 
     array< array<var> > buttons = [ 
         [ pastRunsButton, pastRunsBG, pastRunsLabel ],
@@ -181,9 +181,20 @@ void function UpdateTimerButtons()
     }
 }
 
+
+void function OpenTimerSettingsMenu( var button )
+{
+    if (uiGlobal.menuStack.contains( GetMenu("SRM_TimerSettingsMenu") ))
+    {
+        return
+    }
+    
+    AdvanceMenu( GetMenu( "SRM_TimerSettingsMenu" ) )
+}
+
 void function OpenPastRunsMenu( var button )
 {
-    if (uiGlobal.activeMenu == GetMenu("PastRuns"))
+    if (uiGlobal.menuStack.contains( GetMenu("PastRuns") ))
     {
         return
     }

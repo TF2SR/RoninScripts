@@ -92,6 +92,7 @@ resource/ui/menus/srm_settings.menu
 			pin_to_sibling			ImgHudSubheaderBackground
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			navDown				BtnSpeedometerSettings
 		}
 
 		BtnSpeedometerSettings
@@ -102,6 +103,8 @@ resource/ui/menus/srm_settings.menu
 			pin_to_sibling			SwchSpeedometer
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp				SwchSpeedometer
+			navDown				SwchInputDisplay
 		}
 
 		SwchInputDisplay
@@ -120,6 +123,8 @@ resource/ui/menus/srm_settings.menu
 			pin_to_sibling			BtnSpeedometerSettings
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp				BtnSpeedometerSettings
+			navDown				BtnInputDisplaySettings
 		}
 
 		BtnInputDisplaySettings
@@ -130,6 +135,8 @@ resource/ui/menus/srm_settings.menu
 			pin_to_sibling			SwchInputDisplay
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp				SwchInputDisplay
+			navDown				SwchShowFPS
 		}
 
 		SwchShowFPS
@@ -148,6 +155,8 @@ resource/ui/menus/srm_settings.menu
 			pin_to_sibling			BtnInputDisplaySettings
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp				BtnInputDisplaySettings
+			navDown				SwchShowPos
 		}
 
 		SwchShowPos
@@ -165,6 +174,8 @@ resource/ui/menus/srm_settings.menu
 			pin_to_sibling			SwchShowFPS
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp				SwchShowFPS
+			navDown				SwchPracticeMode
 		}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -201,6 +212,8 @@ resource/ui/menus/srm_settings.menu
 			pin_to_sibling			ImgPracticeSubheaderBackground
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp				SwchShowPos
+			navDown				BtnPracticeWarps
 		}
 
 		BtnPracticeWarps
@@ -210,6 +223,8 @@ resource/ui/menus/srm_settings.menu
 			pin_to_sibling			SwchPracticeMode
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp				SwchPracticeMode
+			navDown				SwchForceMoonboots
 		}
 
 		SwchForceMoonboots
@@ -226,6 +241,8 @@ resource/ui/menus/srm_settings.menu
 			pin_to_sibling			BtnPracticeWarps
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp				BtnPracticeWarps
+			navDown				SwchCrouchKickFix
 		}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -262,6 +279,8 @@ resource/ui/menus/srm_settings.menu
 			pin_to_sibling			ImgUtilitySubheaderBackground
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp				SwchForceMoonboots
+			navDown				SwchEnableMP
 		}
 
 		SwchEnableMP
@@ -278,6 +297,8 @@ resource/ui/menus/srm_settings.menu
 			pin_to_sibling			SwchCrouchKickFix
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp				SwchCrouchKickFix
+			navDown				BtnResetHelmets
 		}
 
 		BtnResetHelmets
@@ -287,6 +308,8 @@ resource/ui/menus/srm_settings.menu
 			pin_to_sibling			SwchEnableMP
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp				SwchEnableMP
+			navDown				BtnUnlockAllLevels
 		}
 
 		BtnUnlockAllLevels
@@ -296,6 +319,8 @@ resource/ui/menus/srm_settings.menu
 			pin_to_sibling			BtnResetHelmets
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp				BtnResetHelmets
+			navDown				SwchTasMode
 		}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -332,6 +357,7 @@ resource/ui/menus/srm_settings.menu
 			pin_to_sibling			ImgTasSubheaderBackground
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					BtnUnlockAllLevels
 		}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

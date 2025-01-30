@@ -217,6 +217,8 @@ bool function UICodeCallback_UpdateLoadingLevelName( string levelname )
 		return false
 #endif
 
+	uiGlobal.loadingLevel = levelname
+
 	return true
 }
 
