@@ -79,6 +79,11 @@ void function SpMainHud( var mainVGUI, entity player )
 	Ronin_AppendServerSquirrelBuffer("sp/category_extensions.nut")
 	Ronin_AppendServerSquirrelBuffer("timer/start_point_tracker.nut")
 	player.ClientCommand("script_executesqbuffer")
+
+	delaythread(0.1) void function () : (player){
+		Ronin_AppendServerSquirrelBuffer("timer/player_track.nut")
+		player.ClientCommand("script_executesqbuffer")
+	}()
 }
 
 /************************************************************************************************\

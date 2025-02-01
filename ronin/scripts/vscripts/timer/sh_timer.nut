@@ -56,7 +56,7 @@ vector function GetCategoryColor(string category)
 
 bool function IsILCategory(string category)
 {
-    string cat = GetConVarString("igt_run_category").toupper()
+    string cat = category.toupper()
     
     return cat.find("IL") != null
 }
