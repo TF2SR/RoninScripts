@@ -16,10 +16,11 @@ void function SRM_UIInit() {
 void function ResetAnyPercent()
 {
     SetConVarString( "igt_run_category", "any%" )
-    SetConVarString( "igt_run_ruleset", "normal" )
 
     SetConVarBool( "sv_cheats", false )
     SetConVarFloat("player_respawnInputDebounceDuration", 0.5)
+    
+    ClientCommand("set_loading_progress_detente #INTROSCREEN_HINT_PC #INTROSCREEN_HINT_CONSOLE")
 
     ClientCommand( "fgr" )
 }
@@ -27,20 +28,24 @@ void function ResetAnyPercent()
 void function ResetAllHelmets()
 {
     SetConVarString( "igt_run_category", "all helmets" )
-    SetConVarString( "igt_run_ruleset", "normal" )
 
     ResetCollectiblesProgress_All()
+    
     SetConVarBool( "sv_cheats", false )
     SetConVarFloat("player_respawnInputDebounceDuration", 0.5)
+    
+    ClientCommand("set_loading_progress_detente #INTROSCREEN_HINT_PC #INTROSCREEN_HINT_CONSOLE")
 
+    ClientCommand( "fgr" )
 }
 
 void function ResetIL()
 {
     SetConVarString( "igt_run_category", "il" )
-    SetConVarString( "igt_run_ruleset", "normal" )
     SetConVarBool( "sv_cheats", false )
     SetConVarFloat("player_respawnInputDebounceDuration", 0.5)
+
+    ClientCommand("set_loading_progress_detente #INTROSCREEN_HINT_PC #INTROSCREEN_HINT_CONSOLE")
 
     ClientCommand( "restart" )
 }

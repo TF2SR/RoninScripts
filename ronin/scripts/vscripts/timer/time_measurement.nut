@@ -26,7 +26,8 @@ struct
     array<Duration> splits
     bool runEnded
     bool awaitingSplit = false
-    int isCheckpoint
+    bool isCheckpoint
+    bool NCSSave
     int curStartPoint
     bool reloadActivated
     string activeLevelSplit
@@ -37,6 +38,8 @@ struct
 
 bool function ShouldChangeLevel()
 {
+    if (!GetConVarBool("igt_enable"))
+        return true
     if (IsILCategory(GetRunCategory()))
         return false
     
@@ -50,9 +53,14 @@ void function CodeCallback_SetLoadedSaveFile( string loadedFile )
 {
     printt("LOADING SAVE", loadedFile)
     if (loadedFile == "savegame")
-        file.isCheckpoint = 2
+        file.isCheckpoint = true
     else
-        file.isCheckpoint = 0
+        file.isCheckpoint = false
+    
+    if (loadedFile == "fastany1" || (GetRunRuleset() == "NCS" && SRM_StartsWith(loadedFile, "fastany")))
+    {
+        file.isCheckpoint = true // hack to disable startpoint checking
+    }
     
     file.loadedSave = loadedFile
 }
@@ -79,6 +87,7 @@ void function MeasureTime()
 {
     bool shouldCount = false
     bool lastIsFullyConnected = false
+    bool lastIsInLoadingScreen = false
     StartClockTime()
     while (1)
     {
@@ -96,27 +105,21 @@ void function MeasureTime()
 
         SetShouldChangeLevel(ShouldChangeLevel())
 
-        if (!IsInLoadingScreen() && file.isCheckpoint != 2)
-        {
-            file.isCheckpoint = 0
-        }
-        else if (file.isCheckpoint == 2 && IsInLoadingScreen())
-        {
-            file.isCheckpoint = 1
-        }
         if (IsILCategory(GetRunCategory()) && IsInLoadingScreen())
         {
-            if (file.isCheckpoint == 0) // NOT a checkpoint
+            if (!file.isCheckpoint) // NOT a checkpoint
             {
                 file.curStartPoint = GetConVarInt("sp_startpoint")
                 // we're restarting the level, reset the timer
                 ResetTime()
             }
         }
-        else if (uiGlobal.loadingLevel == "sp_training" && file.isCheckpoint == 0)
+        else if (uiGlobal.loadingLevel == "sp_training" && !file.isCheckpoint)
         {
             ResetTime()
         }
+
+        CheckRunValid()
 
         if (!file.runInvalidated && !IsRunValid())
             file.runInvalidated = true
@@ -146,12 +149,12 @@ void function MeasureTime()
             // dont care
         }
 
-        if (Timer_GetCurrentStartPoint() > file.curStartPoint && IsILCategory(GetRunCategory()))
+        if (GetConVarInt("sp_currentstartpoint") > file.curStartPoint && IsILCategory(GetRunCategory()))
         {
             printt("split!  ")
             Split()
-            file.levelTime.name = "Startpoint " + Timer_GetCurrentStartPoint()
-            file.curStartPoint = Timer_GetCurrentStartPoint()
+            file.levelTime.name = "Startpoint " + GetConVarInt("sp_currentstartpoint")
+            file.curStartPoint = GetConVarInt("sp_currentstartpoint")
         }
         
         foreach (void functionref() callback in file.onTimerUpdatedCallbacks)
@@ -194,8 +197,10 @@ bool function ShouldStartCounting()
     if (result)
     {
         print("\n\n\nstart timer!!!")
+        
+        file.isCheckpoint = false
         file.levelTime.name = GetRunCurrentLevel()
-        file.curStartPoint = GetConVarInt("sp_startpoint")
+        file.curStartPoint = GetConVarInt("sp_currentstartpoint")
         if (IsILCategory(GetRunCategory()))
         {
             file.levelTime.name = "Startpoint " + file.curStartPoint
@@ -302,7 +307,7 @@ void function SetRunOver()
 
 void function SetIsCheckpoint()
 {
-    file.isCheckpoint = 1
+    file.isCheckpoint = true
 }
 
 void function ReloadActivated()
@@ -329,48 +334,29 @@ string function GetRunCurrentLevel()
     return level
 }
 
-bool function IsRunValid()
+bool function CheckRunValid()
 {
     if (file.runInvalidated)
         return false
 
     // i wish cheats were allowed...
     // cheats are allowed TEMP TEMP TEMP
-    //if (GetConVarBool("sv_cheats"))
-    //    return false
+    if (GetConVarBool("sv_cheats"))
+        return false
+    if (GetConVarFloat("host_timescale") != 1.0)
+        return false
+    if (GetConVarFloat("player_respawnInputDebounceDuration") != 0.5)
+        return false
+    if (GetConVarBool("srm_force_moonboots"))
+        return false
+    //printt(IsInLoadingScreen(), file.isCheckpoint, GetConVarInt("sp_currentstartpoint"))
     
-    if (IsInLoadingScreen() && Timer_GetCurrentStartPoint() != -1 && !file.isCheckpoint)
-    {
-        // check that the startpoint is valis
-        // and were not starting mid-level
-        int startPoint = Timer_GetCurrentStartPoint()
-        string level = GetActiveLevel()
-        switch (GetActiveLevel())
-        {
-            case "sp_beacon":
-                if (startPoint != 0 && startPoint != 2)
-                {
-                    printt("startpoint != 2,0", Timer_GetCurrentStartPoint(), GetActiveLevel())
-                    return false
-                }
-                break
-            case "sp_hub_timeshift":
-                if (startPoint != 0 && startPoint != 7)
-                    return false
-                break
-            case "":
-                break // dont check if we arent in an active level, will invalidate run incorrectly
-            default:
-                if (startPoint != 0)
-                {
-                    printt("startpoint != 0", GetActiveLevel())
-                    return false
-                }
-                break
-        }
-    }
-
     return true 
+}
+
+bool function IsRunValid()
+{
+    return !file.runInvalidated
 }
 
 void function SetFacts(string facts)

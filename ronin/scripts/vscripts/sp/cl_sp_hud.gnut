@@ -51,11 +51,6 @@ void function UpdatePlayerStatusCountsOnWaveSpawnFinished( entity player, int ol
 	player.EndSignal( "OnDestroy" )
 	player.EndSignal( "OnDeath" )
 
-	Ronin_AppendServerSquirrelBuffer("sp/srm_savestates.nut")
-	Ronin_AppendServerSquirrelBuffer("sp/srm_force_moonboots.nut")
-	Ronin_AppendServerSquirrelBuffer("sp/category_extensions.nut")
-	GetLocalClientPlayer().ClientCommand("script_executesqbuffer")
-
 	wait 0.5
 
 	while( player.GetParent() && player.GetParent().GetClassName() == "npc_dropship" )
@@ -79,6 +74,11 @@ void function UpdatePlayerStatusCountsOnWaveSpawnFinished( entity player, int ol
 void function SpMainHud( var mainVGUI, entity player )
 {
 
+	Ronin_AppendServerSquirrelBuffer("sp/srm_savestates.nut")
+	Ronin_AppendServerSquirrelBuffer("sp/srm_force_moonboots.nut")
+	Ronin_AppendServerSquirrelBuffer("sp/category_extensions.nut")
+	Ronin_AppendServerSquirrelBuffer("timer/start_point_tracker.nut")
+	player.ClientCommand("script_executesqbuffer")
 }
 
 /************************************************************************************************\

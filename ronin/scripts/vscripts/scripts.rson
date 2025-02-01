@@ -1082,11 +1082,6 @@ Scripts:
     srm_sh_utils.gnut
 ]
 
-When: "SERVER && SP"
-Scripts:
-[
-	timer/start_point_tracker.nut
-]
 
 When: "CLIENT && SP"
 Scripts:

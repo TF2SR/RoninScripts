@@ -87,6 +87,7 @@ void function SetTime( int seconds, int microseconds, int levelSeconds, int leve
 
 bool isBlurring = false
 bool isRunOver = false
+bool isNCSActivated = false
 void function UpdateTimerHUD()
 {
     while (1)
@@ -144,8 +145,11 @@ void function UpdateTimerHUD()
             isBlurring = true
             SetScreenBlur( 1.0, 1.5, EASING_LINEAR )
         }*/
-        if (BT7274_ActivateNCS())
+        if (BT7274_ActivateNCS() && !isNCSActivated)
         {
+            isNCSActivated = true
+            if (GetRunCategory() == "ANY%")
+                RunUIScript("AddTime", 207210000) // 3:22.21
             // balls.
             GetLocalClientPlayer().ClientCommand("load fastany1")
         }

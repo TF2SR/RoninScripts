@@ -177,6 +177,8 @@ void function UpArrowButtonClicked( var button )
 
 void function RetryRun( var button )
 {
+    if (uiGlobal.activeMenu != file.menu)
+        return
     Run currentRun = GetRunByIndex(file.selectedRunIndex)
     string category = currentRun.category
     SetConVarString( "igt_run_category", category )
@@ -188,8 +190,8 @@ void function RetryRun( var button )
     bool isIL = IsILCategory(category)
     if (isIL)
     {
+        SetConVarString( "igt_run_category", category.slice(0, category.find("_")) )
         string map = category.slice(category.find("_") + 1, category.len())
-        
         
         ClientCommand( "map " + map )
     }

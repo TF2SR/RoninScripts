@@ -411,6 +411,11 @@ void function NewGame_Start()
 	file.selectedStartPoint = "Pod Intro"
 	file.playIntro = true
 
+	SetConVarBool("sv_cheats", false)
+	SetConVarBool("srm_force_moonboots", false)
+	SetConVarFloat("player_respawnInputDebounceDuration", 0.5)
+	SetConVarFloat("host_timescale", 1.0)
+
 	StartLevelNormal()
 	//DifficultyMenuPopUp()
 }

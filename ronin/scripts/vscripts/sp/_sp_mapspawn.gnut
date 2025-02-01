@@ -46,7 +46,6 @@ void function SPMP_MapSpawn_Init() // original script entry point
 	RegisterSignal( "HitSky" )
 
 	AddCallback_EntitiesDidLoad( ActivateSkyBox )
-	AddCallback_EntitiesDidLoad( StartPointTracker_Init )
 
 	#if DEV
 		ModelViewer_Init()
