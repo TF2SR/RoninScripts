@@ -27,6 +27,7 @@ void function SRM_CreateSpeedometer()
     )
     RuiSetFloat( file.speedometer, "msgFontSize", 45 )
     RuiSetFloat( file.speedometer, "msgAlpha", GetConVarFloat("srm_speedometer_alpha") )
+    RuiSetString( file.speedometer, "msgText", "" )
     RuiSetFloat3( file.speedometer, "msgColor", <1.0,1.0,1.0> )
 
     // unit label
@@ -40,6 +41,7 @@ void function SRM_CreateSpeedometer()
     )
     RuiSetFloat( file.speedometerUnit, "msgFontSize", 20 )
     RuiSetFloat( file.speedometerUnit, "msgAlpha", GetConVarFloat("srm_speedometer_alpha") )
+    RuiSetString( file.speedometer, "msgText", "" )
     RuiSetFloat3( file.speedometerUnit, "msgColor", <1.0,1.0,1.0> )
 }
 

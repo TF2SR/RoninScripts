@@ -408,7 +408,7 @@ Resource/UI/HudScripted_mp.res
 		tall					100
 		visible					1
 		auto_wide_tocontents	0
-		font					TimerDigitsSmall
+		font					JBMonoBold_27
 		labelText				"60"
 		textAlignment			north-west
 		auto_wide_tocontents	1

@@ -39,7 +39,9 @@ void function AutoShowClientTimer()
 		WaitSignal( uiGlobal.signalDummy, "ActiveMenuChanged" )
 
         if (uiGlobal.activeMenu == null && IsFullyConnected())
+        {
             RunClientScript("SetTimerVisible", GetConVarBool("igt_enable"))
+        }
     }
 }
 
@@ -71,8 +73,8 @@ void function UpdateTimerHUD()
     if (IsRunValid())
     {
         Hud_SetColor(alphaLabel, 255, 192, 32, 255 )
-        Hud_SetText(alphaLabel, "RONIN ALPHA")
-        Hud_SetText(alphaLabelShadow, "RONIN ALPHA")
+        Hud_SetText(alphaLabel, "CKF ENABLED")
+        Hud_SetText(alphaLabelShadow, "CKF ENABLED")
     }
     else
     {

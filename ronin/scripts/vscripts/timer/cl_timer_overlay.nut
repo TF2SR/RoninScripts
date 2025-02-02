@@ -126,13 +126,13 @@ void function UpdateTimerHUD()
         }
         else
         {
-            Hud_SetColor(alphaLabel, 255, 192, 32, 0 )
-            Hud_SetText(alphaLabel, "")
-            Hud_SetText(alphaLabelShadow, "")
+            Hud_SetColor(alphaLabel, 255, 192, 32, 255 )
+            Hud_SetText(alphaLabel, "CKF ENABLED")
+            Hud_SetText(alphaLabelShadow, "CKF ENABLED")
         }
 
         Hud_SetText(HudElement("FPSCounter"), int(1000.0 / TimerEnd()).tostring())
-        Hud_SetScale(HudElement("FPSCounter"), 0.75, 0.75)
+        Hud_SetScale(HudElement("FPSCounter"), GetConVarFloat("fps_scale"), GetConVarFloat("fps_scale"))
 
         Squircle_SetColor(categoryBG, int(color.x), int(color.y), int(color.z), 255)
         Hud_SetText(categoryName, GetCategoryShortName(GetRunCategory()))

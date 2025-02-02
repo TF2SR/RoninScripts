@@ -204,7 +204,11 @@ void function RetryRun( var button )
                 ClientCommand( "map sp_beacon" )
                 break
             case "sp_hub_timeshift_end":
-                SetConVarInt( "sp_startpoint", 2 )
+                SetConVarInt( "sp_startpoint", 7 )
+                ClientCommand( "map sp_hub_timeshift" )
+                break
+            case "sp_hub_timeshift_start":
+                SetConVarInt( "sp_startpoint", 0 )
                 ClientCommand( "map sp_hub_timeshift" )
                 break
             default:
