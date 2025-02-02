@@ -397,4 +397,21 @@ Resource/UI/HudScripted_mp.res
 
         controlSettingsFile	"resource/ui/menus/panels/timer.res"
     }
+	
+	FPSCounter
+	{
+		ControlName				Label
+		xpos					2
+		ypos					2
+		zpos					3501
+		wide					1000
+		tall					100
+		visible					1
+		auto_wide_tocontents	0
+		font					TimerDigitsSmall
+		labelText				"60"
+		textAlignment			north-west
+		auto_wide_tocontents	1
+		fgcolor_override 		"255 255 255 255"
+	}
 }

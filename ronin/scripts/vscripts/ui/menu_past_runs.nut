@@ -193,6 +193,26 @@ void function RetryRun( var button )
         SetConVarString( "igt_run_category", category.slice(0, category.find("_")) )
         string map = category.slice(category.find("_") + 1, category.len())
         
+        switch (map)
+        {
+            case "sp_beacon_start":
+                SetConVarInt( "sp_startpoint", 0 )
+                ClientCommand( "map sp_beacon" )
+                break
+            case "sp_beacon_end":
+                SetConVarInt( "sp_startpoint", 2 )
+                ClientCommand( "map sp_beacon" )
+                break
+            case "sp_hub_timeshift_end":
+                SetConVarInt( "sp_startpoint", 2 )
+                ClientCommand( "map sp_hub_timeshift" )
+                break
+            default:
+                SetConVarInt( "sp_startpoint", 0 )
+                ClientCommand( "map " + map )
+
+        }
+        
         ClientCommand( "map " + map )
     }
     else

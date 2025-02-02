@@ -92,6 +92,15 @@ void function UpdateTimerHUD()
 {
     while (1)
     {
+        try
+        {
+            TimerEnd()
+        }
+        catch (ex)
+        {
+
+        }
+        TimerStart()
         WaitSignal( GetLocalClientPlayer(), "TimeSet" )
         int seconds = file.seconds
         int microseconds = file.microseconds
@@ -117,10 +126,13 @@ void function UpdateTimerHUD()
         }
         else
         {
-            Hud_SetColor(alphaLabel, 255, 192, 32, 255 )
-            Hud_SetText(alphaLabel, "RONIN ALPHA")
-            Hud_SetText(alphaLabelShadow, "RONIN ALPHA")
+            Hud_SetColor(alphaLabel, 255, 192, 32, 0 )
+            Hud_SetText(alphaLabel, "")
+            Hud_SetText(alphaLabelShadow, "")
         }
+
+        Hud_SetText(HudElement("FPSCounter"), int(1000.0 / TimerEnd()).tostring())
+        Hud_SetScale(HudElement("FPSCounter"), 0.75, 0.75)
 
         Squircle_SetColor(categoryBG, int(color.x), int(color.y), int(color.z), 255)
         Hud_SetText(categoryName, GetCategoryShortName(GetRunCategory()))

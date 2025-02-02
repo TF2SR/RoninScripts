@@ -237,6 +237,8 @@ bool function ShouldStopCounting()
         SaveRunData(file.time, file.splits, DecodeJSON(file.facts), IsRunValid())
         if (IsILCategory(GetRunCategory()) && GetConVarBool("igt_enable"))
             AdvanceMenu(GetMenu("PastRuns"))
+        else if (GetConVarBool("igt_enable"))
+            overridePause = true
     }
     
     return result

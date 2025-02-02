@@ -6,6 +6,11 @@ bool function SRM_StartsWith(string str, string cmp)
 	return str.find(cmp) == 0;
 }
 
+bool function SRM_EndsWith(string str, string cmp)
+{
+	return str.find(cmp) == str.len() - cmp.len() - 1;
+}
+
 string function StringReplaceAll( string baseString, string searchString, string replaceString )
 {
 	string source = baseString

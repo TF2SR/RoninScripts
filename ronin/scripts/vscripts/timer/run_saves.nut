@@ -138,6 +138,9 @@ string function GetILSplitName(string split, string map, bool long = false)
 
     int index = int( split.slice("Startpoint ".len(), split.len()) )
 
+    if (index < 0)
+        return "quicksave L"
+
     return GetStartPointNameFromIndex( map, index )
 }
 

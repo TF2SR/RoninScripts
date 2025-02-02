@@ -2,6 +2,7 @@ untyped
 
 global const bool EDIT_LOADOUT_SELECTS = true
 global const string PURCHASE_SUCCESS_SOUND = "UI_Menu_Store_Purchase_Success"
+global bool overridePause = false
 
 global function UICodeCallback_CloseAllMenus
 global function UICodeCallback_ActivateMenus
@@ -152,6 +153,12 @@ void function UICodeCallback_ToggleInGameMenu()
 			return
 
 		ingameMenu = GetMenu( "InGameSPMenu" )
+	}
+
+	if (overridePause)
+	{
+		overridePause = false
+		ingameMenu = GetMenu( "PastRuns" )
 	}
 
 	if ( IsDialog( uiGlobal.activeMenu ) )
