@@ -292,6 +292,8 @@ void function Client_SP_Init()
 
 	CL_TitanWeaponPickup_Init()
 	ClTitanCockpitSounds_Init()
+
+	MusicStopper_Init()
 }
 #endif // CLIENT
 

@@ -1090,6 +1090,8 @@ Scripts:
     client/srm_tas_hud.nut
     client/srm_speedometer.nut
     client/srm_input_display.nut
+
+	music/music_stopper.nut
 ]
 
 // TIMER
