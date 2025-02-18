@@ -219,6 +219,8 @@ bool function UICodeCallback_UpdateLoadingLevelName( string levelname )
 {
 	printt( "UICodeCallback_UpdateLoadingLevelName: " + levelname )
 
+	uiGlobal.loadingLevel = levelname
+
 #if CONSOLE_PROG
 	if ( !Console_IsSignedIn() )
 		return false

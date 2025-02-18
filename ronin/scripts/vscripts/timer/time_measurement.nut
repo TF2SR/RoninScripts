@@ -42,7 +42,7 @@ bool function ShouldChangeLevel()
         return true
     if (IsILCategory(GetRunCategory()))
         return false
-    
+
     return true
 }
 
@@ -56,12 +56,16 @@ void function CodeCallback_SetLoadedSaveFile( string loadedFile )
         file.isCheckpoint = true
     else
         file.isCheckpoint = false
-    
+
     if (loadedFile == "fastany1" || (GetRunRuleset() == "NCS" && SRM_StartsWith(loadedFile, "fastany")))
     {
         file.isCheckpoint = true // hack to disable startpoint checking
     }
-    
+
+    if (GetRunRuleset() == "NCS" && loadedFile != "fastany9" && (SRM_StartsWith(loadedFile, "fastany") || SRM_StartsWith(loadedFile, "fasthelms"))) {
+        Split()
+    }
+
     file.loadedSave = loadedFile
 }
 
@@ -70,7 +74,7 @@ void function TimeMeasurement_Init()
     file.facts = "{}"
     Duration time
     Duration levelTime
-    
+
     time.seconds = 0
     time.microseconds = 0
     levelTime.name = ""
@@ -131,13 +135,13 @@ void function MeasureTime()
             {
                 if (!lastIsFullyConnected)
                     RunClientScript("LoadFacts", file.facts)
-                    
+
                 string delta = GetTimeDelta( file.time )
                 string levelDelta = GetTimeDelta( file.levelTime, GetSplitIndex() )
-                RunClientScript("SetTime", file.time.seconds, 
-                file.time.microseconds, 
-                file.levelTime.seconds, 
-                file.levelTime.microseconds, 
+                RunClientScript("SetTime", file.time.seconds,
+                file.time.microseconds,
+                file.levelTime.seconds,
+                file.levelTime.microseconds,
                 file.runInvalidated,
                 delta, levelDelta) // bigger
             }
@@ -156,7 +160,7 @@ void function MeasureTime()
             file.levelTime.name = "Startpoint " + GetConVarInt("sp_currentstartpoint")
             file.curStartPoint = GetConVarInt("sp_currentstartpoint")
         }
-        
+
         foreach (void functionref() callback in file.onTimerUpdatedCallbacks)
             callback()
 
@@ -180,7 +184,7 @@ void function AddTime( int microseconds )
     file.time.microseconds += microseconds
     file.time.seconds += file.time.microseconds / 1000000
     file.time.microseconds = file.time.microseconds % 1000000
-    
+
     file.levelTime.microseconds += microseconds
     file.levelTime.seconds += file.levelTime.microseconds / 1000000
     file.levelTime.microseconds = file.levelTime.microseconds % 1000000
@@ -197,7 +201,7 @@ bool function ShouldStartCounting()
     if (result)
     {
         print("\n\n\nstart timer!!!")
-        
+
         file.isCheckpoint = false
         file.levelTime.name = GetRunCurrentLevel()
         file.curStartPoint = GetConVarInt("sp_currentstartpoint")
@@ -219,7 +223,7 @@ bool function ShouldStopCounting()
 {
     if (HasCurrentLevelEnded() && IsILCategory(GetRunCategory()))
         file.runEnded = true
-        
+
     bool result = IsInLoadingScreen() || uiGlobal.activeMenu == GetMenu("MainMenu") || file.runEnded
 
     if (result)
@@ -240,7 +244,7 @@ bool function ShouldStopCounting()
         else if (GetConVarBool("igt_enable"))
             overridePause = true
     }
-    
+
     return result
 }
 
@@ -352,8 +356,8 @@ bool function CheckRunValid()
     if (GetConVarBool("srm_force_moonboots"))
         return false
     //printt(IsInLoadingScreen(), file.isCheckpoint, GetConVarInt("sp_currentstartpoint"))
-    
-    return true 
+
+    return true
 }
 
 bool function IsRunValid()
@@ -374,7 +378,7 @@ string function GetTimeDelta( Duration time, int split = -1 )
     string category = GetRunCategory()
     if (category == "IL")
         category = "IL_" + GetRunCurrentLevel()
-    
+
     Run ornull pb = GetPBRun( category )
 
     if (pb == null)
@@ -391,7 +395,7 @@ string function GetTimeDelta( Duration time, int split = -1 )
     {
         b = SumOfSplits( pb.splits, GetSplitIndex() + 1 )
     }
-    
+
     Duration result = SubtractTimes( time, b )
     string sign = "+"
     if (result.seconds < 0 || result.microseconds < 0)
