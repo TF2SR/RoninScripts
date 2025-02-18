@@ -85,7 +85,7 @@ void function MusicStopper() {
                     StopSoundOnEntity(player, "music_boomtown_07_downthestepagain")
                     StopSoundOnEntity(player, "music_boomtown_08_btsnatched")
                     break
-                case "sp_boomtown_assembly":
+                case "sp_boomtown":
                     StopSoundOnEntity(player, "music_boomtown_09_middleintro")
                     StopSoundOnEntity(player, "music_boomtown_10_assembly_start")
                     StopSoundOnEntity(player, "music_boomtown_11_assembly_jumpontomovingplatform")
