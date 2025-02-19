@@ -5,7 +5,7 @@ void function MusicStopper_Init() {
 }
 
 void function MusicStopper() {
-    if (GetConVarBool("disable_music")) {
+    if (!GetConVarBool("sp_music")) {
         while (true) {
             WaitFrame()
             if (!IsValid(GetLocalClientPlayer())) continue
