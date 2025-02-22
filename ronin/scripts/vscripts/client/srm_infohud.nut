@@ -33,6 +33,7 @@ void function SRM_InfoHUD_Init()
     RegisterConVar( "srm_force_moonboots", 0.0, "Forced Moonboots" )
     RegisterConVar( "host_timescale", 1.0 )
     RegisterConVar( "player_respawnInputDebounceDuration", 0.5 )
+    RegisterConVar("sp_music", 1.0)
 
     screenSize = GetScreenSize()
 

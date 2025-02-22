@@ -11,7 +11,7 @@ void function SRM_TasHUD_Init()
 {
 	screenSize = GetScreenSize()
 
-    //thread SRM_TasHUD_Thread()
+    thread SRM_TasHUD_Thread()
 }
 
 void function SRM_TasHUD_Thread()
@@ -19,10 +19,13 @@ void function SRM_TasHUD_Thread()
 	TasInfoDisplay tasLabel = CreateTasInfoDisplay( <0.26,0.85,0.0>, 40.0 )
 	TasInfoDisplay tasTimescaleLabel = CreateTasInfoDisplay( <0.295,0.84,0.0>, 30.0 )
 
+	TasInfoDisplay ckfLabel = CreateTasInfoDisplay(<0.15,0.86,0.0>, 40.0)
+
 	while(true)
 	{
 		WaitFrame()
 
+		/* TODO: tas when
 		if (GetConVarInt("fzzy_enableTas") == 1)
 		{
     		RuiSetString( tasLabel.rui, "msgText", "TAS" )
@@ -32,6 +35,14 @@ void function SRM_TasHUD_Thread()
 		{
 	    	RuiSetString( tasLabel.rui, "msgText", "" )
 	    	RuiSetString( tasTimescaleLabel.rui, "msgText", "" )
+		}
+			*/
+
+		//if (GetConVarInt("ckf")) { TODO ckf enable convar
+		if (true) {
+			RuiSetString(ckfLabel.rui, "msgText", "CKF")
+		} else {
+			RuiSetString(ckfLabel.rui, "msgText", "")
 		}
 	}
 }
@@ -45,7 +56,7 @@ TasInfoDisplay function CreateTasInfoDisplay( vector position, float fontSize )
     RuiSetString( rui, "msgText", "" )
     RuiSetFloat2( rui, "msgPos", position )
     RuiSetFloat( rui, "msgFontSize", fontSize )
-    RuiSetFloat( rui, "msgAlpha", 1.0 )
+    RuiSetFloat( rui, "msgAlpha", 0.7 )
     RuiSetFloat3( rui, "msgColor", <1.0,1.0,1.0> )
     display.rui = rui
 
