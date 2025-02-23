@@ -1,0 +1,273 @@
+global function MusicStopper_Init
+
+void function MusicStopper_Init() {
+    thread MusicStopper()
+}
+
+void function MusicStopper() {
+    if (!GetConVarBool("sp_music")) {
+        while (true) {
+            WaitFrame()
+            if (!IsValid(GetLocalClientPlayer())) continue
+
+            entity player = GetLocalClientPlayer()
+
+            string map = GetMapName()
+
+            switch (map) {
+                case "sp_training":
+                    StopSoundOnEntity(player, "music_training_01_glitch")
+                    break
+                case "sp_crashsite":
+                    StopSoundOnEntity(player, "Wilds_Scr_RespawnLogoToPodCrash")
+                    StopSoundOnEntity(player, "music_wilds_00_escapepoddrop")
+                    StopSoundOnEntity(player, "music_wilds_01_intro")
+                    StopSoundOnEntity(player, "music_wilds_02_titanfall")
+                    StopSoundOnEntity(player, "music_wilds_03_btdown")
+                    StopSoundOnEntity(player, "music_wilds_04_prowlers")
+                    StopSoundOnEntity(player, "music_wilds_05_ogdown")
+                    StopSoundOnEntity(player, "music_wilds_06_explore")
+                    StopSoundOnEntity(player, "music_wilds_06a_seetheship")
+                    StopSoundOnEntity(player, "music_wilds_6b_towardthelight")
+                    StopSoundOnEntity(player, "music_wilds_07_combatstart")
+                    StopSoundOnEntity(player, "music_wilds_07_combat")
+                    StopSoundOnEntity(player, "music_wilds_08_combatphase02start")
+                    StopSoundOnEntity(player, "music_wilds_08_combatphase02")
+                    StopSoundOnEntity(player, "music_wilds_09_combatphase03")
+                    StopSoundOnEntity(player, "music_wilds_10_postcombatpreship")
+                    StopSoundOnEntity(player, "music_wilds_11_insideship")
+                    StopSoundOnEntity(player, "music_wilds_12_batterytwo")
+                    StopSoundOnEntity(player, "music_wilds_13_postshipprowlers")
+                    StopSoundOnEntity(player, "music_wilds_14_timetoinstallbatterytwo")
+                    StopSoundOnEntity(player, "music_wilds_15_explorealt")
+                    StopSoundOnEntity(player, "music_wilds_16_batterythree")
+                    StopSoundOnEntity(player, "music_wilds_18_fightfinished")
+                    StopSoundOnEntity(player, "music_wilds_16a_installbatterythree")
+                    StopSoundOnEntity(player, "music_wilds_16d_embark")
+                    StopSoundOnEntity(player, "music_wilds_16b_spectres")
+                    StopSoundOnEntity(player, "music_wilds_16c_linking")
+                    StopSoundOnEntity(player, "music_wilds_17_titanfight")
+                    break
+                case "sp_sewers1":
+                    StopSoundOnEntity(player, "music_reclamation_01_intro")
+                    StopSoundOnEntity(player, "music_reclamation_02_intobattle")
+                    StopSoundOnEntity(player, "music_reclamation_03_jumpintoriver")
+                    StopSoundOnEntity(player, "music_reclamation_04_firsttitanbattle")
+                    StopSoundOnEntity(player, "music_reclamation_05_enterthesewer")
+                    StopSoundOnEntity(player, "music_reclamation_06_sewerfirstcontact")
+                    StopSoundOnEntity(player, "music_reclamation_07_sewerstitanbattle")
+                    StopSoundOnEntity(player, "music_reclamation_08_sewerstitandefeated")
+                    StopSoundOnEntity(player, "music_reclamation_09_onfoot")
+                    StopSoundOnEntity(player, "music_reclamation_10_doorupambush")
+                    StopSoundOnEntity(player, "music_reclamation_10a_splitup")
+                    StopSoundOnEntity(player, "music_reclamation_11_outside")
+                    StopSoundOnEntity(player, "music_reclamation_12_friendlies")
+                    StopSoundOnEntity(player, "music_reclamation_13_stalkerintro")
+                    StopSoundOnEntity(player, "music_reclamation_14_stalkerswading")
+                    StopSoundOnEntity(player, "music_reclamation_15_stalkerbattleend")
+                    StopSoundOnEntity(player, "music_reclamation_15a_corkscrewfight")
+                    StopSoundOnEntity(player, "music_reclamation_16_shitshower")
+                    StopSoundOnEntity(player, "music_reclamation_17_activatesluice")
+                    StopSoundOnEntity(player, "music_reclamation_17a_thingsgetbad")
+                    StopSoundOnEntity(player, "music_reclamation_18_sluicebuildup")
+                    StopSoundOnEntity(player, "music_reclamation_19_btreqoins")
+                    StopSoundOnEntity(player, "music_reclamation_20_backwithbt")
+                    StopSoundOnEntity(player, "music_reclamation_21_kaneslamcam")
+                    StopSoundOnEntity(player, "music_reclamation_22_kanedefeated")
+                    break
+                case "sp_boomtown_start":
+                    StopSoundOnEntity(player, "music_boomtown_01_intro")
+                    StopSoundOnEntity(player, "music_boomtown_02_waterfall")
+                    StopSoundOnEntity(player, "music_boomtown_03_downthestep")
+                    StopSoundOnEntity(player, "music_boomtown_04_ontoslide")
+                    StopSoundOnEntity(player, "music_boomtown_05_enemytitans")
+                    StopSoundOnEntity(player, "music_boomtown_06_enemytitansdefeated")
+                    StopSoundOnEntity(player, "music_boomtown_07_downthestepagain")
+                    StopSoundOnEntity(player, "music_boomtown_08_btsnatched")
+                    break
+                case "sp_boomtown":
+                    StopSoundOnEntity(player, "music_boomtown_09_middleintro")
+                    StopSoundOnEntity(player, "music_boomtown_10_assembly_start")
+                    StopSoundOnEntity(player, "music_boomtown_11_assembly_jumpontomovingplatform")
+                    StopSoundOnEntity(player, "music_boomtown_12_assembly_highway")
+                    StopSoundOnEntity(player, "music_boomtown_13_townclimb_buildingtipsup")
+                    StopSoundOnEntity(player, "music_boomtown_14_townclimb_outoftheroof")
+                    StopSoundOnEntity(player, "music_boomtown_15_townclimb_activateconsole")
+                    StopSoundOnEntity(player, "music_boomtown_16_reapertown_scenarioload")
+                    StopSoundOnEntity(player, "music_boomtown_17_reapertown_deployspectres")
+                    StopSoundOnEntity(player, "music_boomtown_18_reapertown_reaperarrive")
+                    StopSoundOnEntity(player, "music_boomtown_19_reapertown_humanenemies")
+                    StopSoundOnEntity(player, "music_boomtown_20_abovethedome")
+
+                    break
+                case "sp_boomtown_end":
+                    StopSoundOnEntity(player, "music_boomtown_20_abovethedome")
+                    StopSoundOnEntity(player, "music_boomtown_21_btcheksin")
+                    StopSoundOnEntity(player, "music_boomtown_22_embarkbt")
+                    StopSoundOnEntity(player, "music_boomtown_01_jumblerun")
+                    StopSoundOnEntity(player, "music_boomtown_23_ashintro")
+                    StopSoundOnEntity(player, "music_boomtown_24_ashdefeat")
+                    StopSoundOnEntity(player, "music_boomtown_22a_rockfall")
+                    break
+
+                case "sp_hub_timeshift":
+                    StopSoundOnEntity(player, "music_timeshift_01_intro")
+                    StopSoundOnEntity(player, "music_timeshift_02_buildup")
+                    StopSoundOnEntity(player, "music_timeshift_03_flashback01")
+                    StopSoundOnEntity(player, "music_timeshift_04_corridor")
+                    StopSoundOnEntity(player, "music_timeshift_04b_flashback04")
+                    StopSoundOnEntity(player, "music_timeshift_05_jumpdown")
+                    StopSoundOnEntity(player, "music_timeshift_06_findanderson")
+                    StopSoundOnEntity(player, "music_timeshift_07_gethelmet")
+                    StopSoundOnEntity(player, "music_timeshift_08_andersonlog01")
+                    StopSoundOnEntity(player, "music_timeshift_09_onzipline")
+                    StopSoundOnEntity(player, "music_timeshift_10_hitthefloor")
+                    StopSoundOnEntity(player, "music_timeshift_11_secondwave")
+                    StopSoundOnEntity(player, "music_timeshift_12_flashback07")
+                    StopSoundOnEntity(player, "music_timeshift_13_flashback08")
+
+                    StopSoundOnEntity(player, "music_timeshift_30a_prefight")
+                    StopSoundOnEntity(player, "music_timeshift_14_pastloop")
+                    StopSoundOnEntity(player, "music_timeshift_18_startelevatorfight")
+                    StopSoundOnEntity(player, "music_timeshift_19_combatpast")
+                    StopSoundOnEntity(player, "music_timeshift_20_combatpresent")
+                    StopSoundOnEntity(player, "music_timeshift_21_combatpresentdone")
+                    StopSoundOnEntity(player, "music_timeshift_21a_combatpastdone")
+                    StopSoundOnEntity(player, "music_timeshift_21c_pastloop_stop")
+                    StopSoundOnEntity(player, "music_timeshift_31_backwithbt")
+                    StopSoundOnEntity(player, "music_timeshift_32_doordown")
+                    StopSoundOnEntity(player, "music_timeshift_33_locatedthecontrols")
+                    StopSoundOnEntity(player, "music_timeshift_34_timestop")
+                    StopSoundOnEntity(player, "music_timeshift_35_coreandepilogue")
+                    break
+
+                case "sp_timeshift_spoke02":
+                    StopSoundOnEntity(player, "music_timeshift_15_gettemporaldevice")
+                    StopSoundOnEntity(player, "music_timeshift_14_pastloop")
+                    StopSoundOnEntity(player, "music_timeshift_16_explorepresent")
+                    StopSoundOnEntity(player, "music_timeshift_17_enterelevatorarea")
+                    StopSoundOnEntity(player, "music_timeshift_18_startelevatorfight")
+                    StopSoundOnEntity(player, "music_timeshift_21c_pastloop_stop")
+                    StopSoundOnEntity(player, "music_timeshift_21b_climboutofelevator")
+                    StopSoundOnEntity(player, "music_timeshift_20_combatpresent")
+                    StopSoundOnEntity(player, "music_timeshift_21_combatpresentdone")
+                    StopSoundOnEntity(player, "music_timeshift_19_combatpast")
+                    StopSoundOnEntity(player, "music_timeshift_21_combatpastdone")
+                    StopSoundOnEntity(player, "music_timeshift_22_panicburst")
+                    StopSoundOnEntity(player, "music_timeshift_23_andersonlog02")
+                    StopSoundOnEntity(player, "music_timeshift_24_ambush")
+                    StopSoundOnEntity(player, "music_timeshift_25_andersonlog03")
+                    StopSoundOnEntity(player, "music_timeshift_26_humanresearch")
+                    StopSoundOnEntity(player, "music_timeshift_27_towardthemachine")
+                    StopSoundOnEntity(player, "music_timeshift_28_bridge")
+                    StopSoundOnEntity(player, "music_timeshift_29_downtherabbithole")
+                    StopSoundOnEntity(player, "music_timeshift_30_andersonlog04")
+                    break
+                case "sp_beacon":
+                    StopSoundOnEntity(player, "Music_Beacon_1_LevelStart")
+                    StopSoundOnEntity(player, "Music_Beacon_3_AllThreatsEliminated")
+                    StopSoundOnEntity(player, "Music_Beacon_9_BackToHubSuccessStinger")
+                    StopSoundOnEntity(player, "Music_Beacon_15A_FirstDropshipAttack_Ambient")
+                    StopSoundOnEntity(player, "music_beacon_16a_second_dropship_wave")
+                    StopSoundOnEntity(player, "Music_Beacon_15B_FirstDropshipAttack_Percussive")
+                    StopSoundOnEntity(player, "Music_Beacon_16_ReinforcementsToChokepoints")
+                    StopSoundOnEntity(player, "Music_Beacon_17_ReaperBattle")
+                    StopSoundOnEntity(player, "Music_Beacon_21_BTAntiTitanSquads")
+                    StopSoundOnEntity(player, "Music_Beacon_23_FinishZiplineBattle") // maybe disable? idk
+                    StopSoundOnEntity(player, "music_beacon_22_areabeforezipline")
+                    StopSoundOnEntity(player, "Music_Beacon_25_ClimbToTheDish")
+                    StopSoundOnEntity(player, "Music_Beacon_27_FinalBattleReapersArrive")
+                    StopSoundOnEntity(player, "Music_Beacon_28_BossArrivesAndBattle")
+                    StopSoundOnEntity(player, "Music_Beacon_29_FinalBattleEnds")
+                    StopSoundOnEntity(player, "music_beacon_29a_elevator")
+                    StopSoundOnEntity(player, "Music_Beacon_2_HearTheDistantBattle")
+                    StopSoundOnEntity(player, "Music_Beacon_10_RelayChamber")
+                    StopSoundOnEntity(player, "Music_Beacon_11_DishStartAndFail")
+                    StopSoundOnEntity(player, "Music_Beacon_12_Spoke1FallenSoldiers")
+                    StopSoundOnEntity(player, "Music_Beacon_13_BTGivesThePlan")
+                    StopSoundOnEntity(player, "Music_Beacon_14_BTThrowThruFirstCrane")
+                    StopSoundOnEntity(player, "Music_Beacon_18_SeeTheDish")
+                    StopSoundOnEntity(player, "Music_Beacon_19A_DishMoveStingerToDishBattle_Ambient")
+                    StopSoundOnEntity(player, "music_beacon_24a_blisktease")
+                    StopSoundOnEntity(player, "Music_Beacon_19B_DishBattle_Percussive")
+                    StopSoundOnEntity(player, "Music_Beacon_3_AllThreatsEliminated")
+                    StopSoundOnEntity(player, "Music_Beacon_24_BTLob")
+                    StopSoundOnEntity(player, "Music_Beacon_26_ActivateDishStingerToFallCatch")
+                    StopSoundOnEntity(player, "Music_Beacon_20_RemoveModuleStinger")
+                    break
+
+                case "sp_beacon_spoke0":
+                    StopSoundOnEntity(player, "Music_Beacon_4_DescendIntoSubstation")
+                    StopSoundOnEntity(player, "Music_Beacon_5_FirstCombat")
+                    StopSoundOnEntity(player, "Music_Beacon_6_TurbineDeactivationStinger")
+                    StopSoundOnEntity(player, "Music_Beacon_7_SecondCombat")
+                    StopSoundOnEntity(player, "Music_Beacon_8_ThirdCombat")
+                    StopSoundOnEntity(player, "music_beacon_8a_jumpingsuccess")
+                    break
+
+                case "sp_tday":
+                    StopSoundOnEntity(player, "music_tday_02_intro")
+                    StopSoundOnEntity(player, "music_tday_03_arches")
+                    StopSoundOnEntity(player, "music_tday_06_elevator")
+                    StopSoundOnEntity(player, "music_tday_08_battletoship")
+                    StopSoundOnEntity(player, "music_tday_10_platform")
+                    StopSoundOnEntity(player, "music_tday_11_theygotaway")
+                    StopSoundOnEntity(player, "music_tday_09_downthestep")
+                    break
+
+                case "sp_s2s":
+                    StopSoundOnEntity(player, "music_s2s_00a_intro")
+                    StopSoundOnEntity(player, "music_s2s_00bu_unidentifiedbogey")
+                    StopSoundOnEntity(player, "music_s2s_01_briefing")
+                    StopSoundOnEntity(player, "music_s2s_02_throw2blackbird64_land")
+                    StopSoundOnEntity(player, "music_s2s_02_throw2blackbird64_throw")
+                    StopSoundOnEntity(player, "music_s2s_03_jump3malta")
+                    StopSoundOnEntity(player, "music_s2s_04_maltabattle")
+                    StopSoundOnEntity(player, "music_s2s_04_maltabattle_alt")
+                    StopSoundOnEntity(player, "music_s2s_04a_maltabattle_alt_end")
+                    StopSoundOnEntity(player, "music_s2s_05_maltabattle_end")
+                    StopSoundOnEntity(player, "music_s2s_06_ridelift")
+                    StopSoundOnEntity(player, "music_s2s_07_shipexplode")
+                    StopSoundOnEntity(player, "music_s2s_08_ziplines")
+                    StopSoundOnEntity(player, "music_s2s_09_teamfight")
+                    StopSoundOnEntity(player, "music_s2s_11_downtobusiness")
+                    StopSoundOnEntity(player, "music_s2s_12_steering")
+                    StopSoundOnEntity(player, "music_s2s_13_btarrives")
+                    StopSoundOnEntity(player, "music_s2s_14_titancombat")
+                    StopSoundOnEntity(player, "music_s2s_15_bossgone")
+                    StopSoundOnEntity(player, "music_s2s_16_bossreturns")
+                    StopSoundOnEntity(player, "music_s2s_17a_btdead")
+                    StopSoundOnEntity(player, "music_s2s_17_bossdead")
+                    StopSoundOnEntity(player, "music_s2s_18_evac")
+                    StopSoundOnEntity(player, "music_s2s_19_btshut")
+                    break
+
+                case "sp_skyway_v1":
+                    StopSoundOnEntity(player, "music_skyway_01_intro")
+                    StopSoundOnEntity(player, "music_skyway_02a_bithitcylinder")
+                    StopSoundOnEntity(player, "music_skyway_02_btopens")
+                    StopSoundOnEntity(player, "music_skyway_03_fireroom")
+                    StopSoundOnEntity(player, "music_skyway_04_smartpistolrun")
+                    StopSoundOnEntity(player, "music_skyway_05_arcfolddrones")
+                    StopSoundOnEntity(player, "music_skyway_06_smartpistolrun02")
+                    StopSoundOnEntity(player, "music_skyway_07_calltitan")
+                    StopSoundOnEntity(player, "music_skyway_08_titanhill")
+                    StopSoundOnEntity(player, "music_skyway_09_titanhillcomplete")
+                    StopSoundOnEntity(player, "music_skyway_10_titanhillwave02")
+                    StopSoundOnEntity(player, "music_skyway_11_intermission")
+                    StopSoundOnEntity(player, "music_skyway_12_titanhillwave03")
+                    StopSoundOnEntity(player, "music_skyway_13_enroutetobliskandslone")
+                    //StopSoundOnEntity(player, "music_skyway_14_arcfoldagain")
+                    // lol, commented out in level script???
+                    StopSoundOnEntity(player, "music_skyway_15_blueroom")
+                    StopSoundOnEntity(player, "music_skyway_16_slonefight")
+                    StopSoundOnEntity(player, "music_skyway_17_slonedies")
+                    StopSoundOnEntity(player, "music_skyway_18_backblast")
+                    StopSoundOnEntity(player, "music_skyway_19_btinplace")
+                    StopSoundOnEntity(player, "music_skyway_21_leaptoship")
+                    StopSoundOnEntity(player, "music_skyway_20_landed")
+            }
+
+        }
+    }
+}

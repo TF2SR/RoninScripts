@@ -21,6 +21,7 @@ void function ClSpHud_Init()
 	if ( IsLobby() )
 		return
 
+	TimerOverlay_Init()
 	SRM_InfoHUD_Init()
 	SRM_TasHUD_Init()
 	thread SRM_InputDisplay_Init()
@@ -73,6 +74,16 @@ void function UpdatePlayerStatusCountsOnWaveSpawnFinished( entity player, int ol
 void function SpMainHud( var mainVGUI, entity player )
 {
 
+	Ronin_AppendServerSquirrelBuffer("sp/srm_savestates.nut")
+	Ronin_AppendServerSquirrelBuffer("sp/srm_force_moonboots.nut")
+	Ronin_AppendServerSquirrelBuffer("sp/category_extensions.nut")
+	Ronin_AppendServerSquirrelBuffer("timer/start_point_tracker.nut")
+	player.ClientCommand("script_executesqbuffer")
+
+	delaythread(0.1) void function () : (player){
+		Ronin_AppendServerSquirrelBuffer("timer/player_track.nut")
+		player.ClientCommand("script_executesqbuffer")
+	}()
 }
 
 /************************************************************************************************\

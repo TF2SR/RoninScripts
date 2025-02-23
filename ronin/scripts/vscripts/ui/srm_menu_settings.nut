@@ -22,13 +22,13 @@ void function SRM_InitSettingsMenu()
 
 	// Practice Tools
 	AddButtonEventHandler(
-		SRM_SetupNormalButton( "SwchPracticeMode", "Practice Mode", lbIllegalNote+"`1Some extra tools and settings to make practice a bit easier\n\n`0- Sets sv_cheats to 1\n- Disables input prevention on saveload\n- Makes quicksaves save your velocity\n- Enables use of savestates\n\nNote: Savestates do not account for level progression or NPC positions, as it simply teleports you back to the place where you created the savestate." ),
+		SRM_SetupNormalButton( "SwchPracticeMode", "Timer", "Enables the In-Game Timer." ),
 		UIE_CLICK, SRM_ClickedPracticeMode
 	)
 	SRM_SetupNormalButton( "SwchForceMoonboots", "Force Moonboots", lbIllegalNote+"`1Forcefully enables moonboots.\n\n`2Does not work on NCS saves" )
 	AddButtonEventHandler(
-		SRM_SetupNormalButton( "BtnPracticeWarps", "Practice Warps", "Warp to dev start points throughout the game to practice segments" ),
-		UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "SRM_PracticeWarpsMenu" ) )
+		SRM_SetupNormalButton( "BtnPracticeWarps", "Timer Settings", "Settings that control the behavior of the timer." ),
+		UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "SRM_TimerSettingsMenu" ) )
 	)
 
 	// Utility
@@ -53,16 +53,6 @@ void function SRM_InitSettingsMenu()
 
 void function SRM_ClickedPracticeMode( var button )
 {
-	if (GetConVarInt("srm_practice_mode") == 1)
-	{
-		SetConVarInt("sv_cheats", 1)
-		SetConVarFloat("player_respawnInputDebounceDuration", 0.0)
-	}
-	else
-	{
-		SetConVarInt("sv_cheats", 0)
-		SetConVarFloat("player_respawnInputDebounceDuration", 0.5)
-	}
 }
 
 void function SRM_ClickedTasMode( var button )
@@ -103,6 +93,7 @@ void function SRM_ClickedUnlockAllLevels( var button )
 void function SRM_AddSettingSubmenus()
 {
 	AddMenu( "SRM_SettingsMenu", $"resource/ui/menus/srm_settings.menu", SRM_InitSettingsMenu)
+	AddMenu( "SRM_TimerSettingsMenu", $"resource/ui/menus/timer_settings.menu", TimerSettingsMenu_Init)
 	AddMenu( "SRM_SpeedometerSettingsMenu", $"resource/ui/menus/srm_speedometer_settings.menu", SRM_InitSpeedometerSettingsMenu)
 	AddMenu( "SRM_InputDisplaySettingsMenu", $"resource/ui/menus/srm_input_display_settings.menu", SRM_InitInputDisplaySettingsMenu)
 	AddMenu( "SRM_PracticeWarpsMenu", $"resource/ui/menus/srm_practicewarps.menu", SRM_InitPracticeWarpsMenu )

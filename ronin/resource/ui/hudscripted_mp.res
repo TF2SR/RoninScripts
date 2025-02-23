@@ -383,4 +383,35 @@ Resource/UI/HudScripted_mp.res
 		enabled 		1
 		controlSettingsFile	"resource/ui/srm_input_display.res"
 	}
+	
+    TimerPanel
+    {
+        "ControlName"		"CNestedPanel"
+        xpos				r512
+        ypos				0
+        wide				512
+        tall				512
+        visible				1
+        enabled				1
+        zpos				10
+
+        controlSettingsFile	"resource/ui/menus/panels/timer.res"
+    }
+	
+	FPSCounter
+	{
+		ControlName				Label
+		xpos					2
+		ypos					2
+		zpos					3501
+		wide					1000
+		tall					100
+		visible					1
+		auto_wide_tocontents	0
+		font					JBMonoBold_27
+		labelText				"60"
+		textAlignment			north-west
+		auto_wide_tocontents	1
+		fgcolor_override 		"255 255 255 255"
+	}
 }

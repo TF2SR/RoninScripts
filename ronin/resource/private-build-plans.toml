@@ -1,0 +1,45 @@
+[buildPlans.IosevkaCustom]
+family = "Iosevka Ronin"
+spacing = "normal"
+serifs = "sans"
+noCvSs = true
+exportGlyphNames = false
+
+[buildPlans.IosevkaCustom.variants.design]
+one = "no-base"
+two = "straight-neck-serifless"
+four = "semi-open-non-crossing-serifless"
+five = "upright-arched-serifless"
+six = "closed-contour"
+eight = "two-circles"
+nine = "closed-contour"
+zero = "slashed"
+capital-i = "serifed"
+capital-j = "serifless"
+f = "flat-hook-serifless"
+i = "serifed"
+l = "flat-tailed"
+t = "flat-hook"
+lig-equal-chain = "without-notch"
+
+[buildPlans.IosevkaCustom.variants.italic]
+one = "no-base"
+two = "straight-neck-serifless"
+four = "semi-open-non-crossing-serifless"
+five = "upright-arched-serifless"
+six = "closed-contour"
+eight = "two-circles"
+nine = "closed-contour"
+capital-i = "serifed"
+capital-j = "serifless"
+f = "flat-hook-serifless"
+i = "serifed"
+k = "straight-serifless"
+l = "flat-tailed"
+t = "flat-hook"
+lig-equal-chain = "without-notch"
+
+[buildPlans.IosevkaCustom.widths.Normal]
+shape = 600
+menu = 5
+css = "normal"

@@ -7,7 +7,6 @@ void function LoadingScreen_Init()
 
 void function LoadingScreen()
 {
-    return
     while (true)
 	{
 		wait 0

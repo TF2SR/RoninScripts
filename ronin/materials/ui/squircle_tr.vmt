@@ -1,0 +1,23 @@
+"Basic"
+{
+    $basetexture "ui/quarter_circle"
+    $translucent		"1"
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+	"$no_fullbright" 1
+
+    "$angle" 270.0
+	"$offset" "[0.0 0.0]"
+	"$scale"	"[1.0 1.0]"
+
+    "Proxies"
+    {
+        "TextureTransform"
+        {
+			"translateVar" "$offset"
+			"scaleVar" "$scale"
+            "rotateVar" "$angle"
+            "resultVar" "$basetexturetransform"
+        }
+    }
+}

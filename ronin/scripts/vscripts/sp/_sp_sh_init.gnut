@@ -298,6 +298,7 @@ void function Client_SP_Init()
 
 	// Ronin
 	dq_strafemeterPrecache()
+	MusicStopper_Init()
 }
 #endif // CLIENT
 

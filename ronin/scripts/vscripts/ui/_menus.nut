@@ -2,6 +2,7 @@ untyped
 
 global const bool EDIT_LOADOUT_SELECTS = true
 global const string PURCHASE_SUCCESS_SOUND = "UI_Menu_Store_Purchase_Success"
+global bool overridePause = false
 
 global function UICodeCallback_CloseAllMenus
 global function UICodeCallback_ActivateMenus
@@ -154,6 +155,12 @@ void function UICodeCallback_ToggleInGameMenu()
 		ingameMenu = GetMenu( "InGameSPMenu" )
 	}
 
+	if (overridePause)
+	{
+		overridePause = false
+		ingameMenu = GetMenu( "PastRuns" )
+	}
+
 	if ( IsDialog( uiGlobal.activeMenu ) )
 	{
 		// Do nothing if a dialog is showing
@@ -216,6 +223,8 @@ bool function UICodeCallback_UpdateLoadingLevelName( string levelname )
 	if ( !Console_IsSignedIn() )
 		return false
 #endif
+
+	uiGlobal.loadingLevel = levelname
 
 	return true
 }
@@ -934,6 +943,12 @@ void function InitMenus()
 	SRM_AddSettingSubmenus()
 	SRM_AddPracticeWarpSubmenus()
 
+	// IGT
+	PastRuns_Init()
+	RunSaves_Init()
+	TimerOverlay_Init()
+	TimeMeasurement_Init()
+
 
 	AddMenu( "MainMenu", $"resource/ui/menus/main.menu", InitMainMenu, "#MAIN" )
 	AddPanel( GetMenu( "MainMenu" ), "EstablishUserPanel", InitEstablishUserPanel )
@@ -1129,7 +1144,7 @@ void function InitMenus()
 
 	// RoninScripts
 	LoadingScreen_Init()
-	SRM_SetSubtitles()
+	SRM_UIInit()
 }
 
 void functionref( var ) function AdvanceMenuEventHandler( var menu )
