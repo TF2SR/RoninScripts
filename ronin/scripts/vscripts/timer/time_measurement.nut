@@ -33,6 +33,8 @@ struct
     string activeLevelSplit
     string facts = "{}"
 
+    array<string> loadedSaves = []
+
     array<void functionref()> onTimerUpdatedCallbacks = []
 } file
 
@@ -62,8 +64,16 @@ void function CodeCallback_SetLoadedSaveFile( string loadedFile )
         file.isCheckpoint = true // hack to disable startpoint checking
     }
 
-    if (GetRunRuleset() == "NCS" && loadedFile != "fastany9" && (SRM_StartsWith(loadedFile, "fastany") || SRM_StartsWith(loadedFile, "fasthelms"))) {
+    if (
+        GetRunRuleset() == "NCS"
+        && loadedFile != "fastany5"
+        && loadedFile != "fastany7"
+        && loadedFile != "fastany9"
+        && (SRM_StartsWith(loadedFile, "fastany") || SRM_StartsWith(loadedFile, "fasthelms"))
+        && !file.loadedSaves.contains(loadedFile)
+    ){
         Split()
+        file.loadedSaves.append(loadedFile)
     }
 
     file.loadedSave = loadedFile
@@ -289,6 +299,7 @@ void function ResetTime()
     file.splits = []
     file.facts = "{}"
     file.runEnded = false
+    file.loadedSaves = []
 }
 
 int function GetSplitIndex()
