@@ -216,8 +216,6 @@ void function RetryRun( var button )
                 ClientCommand( "map " + map )
 
         }
-        
-        ClientCommand( "map " + map )
     }
     else
     {

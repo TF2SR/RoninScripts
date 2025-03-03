@@ -211,7 +211,7 @@ void function SaveRunData( Duration time, array<Duration> splits, table facts, b
     string category = GetRunCategory()
     string ruleset = GetRunRuleset()
     
-    if (category == "IL")
+    if (IsILCategory(category))
     {
         category = "IL_" + GetRunCurrentLevel()
     }
