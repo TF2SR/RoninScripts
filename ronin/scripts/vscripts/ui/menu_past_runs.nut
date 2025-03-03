@@ -41,7 +41,7 @@ void function InitPastRunsMenu()
 {
     var menu = GetMenu( "PastRuns" )
     file.menu = menu
-    
+
     SetRunJustEnded(false)
 
 	AddMenuEventHandler( file.menu, eUIEvent.MENU_OPEN, OnMenuOpened )
@@ -57,7 +57,7 @@ void function InitPastRunsMenu()
                                 "It is recommended to do this to keep performance stable (runs are ALWAYS loaded into memory!)\n" +
                                 "Are you sure you want to do this?"
         dialogData.image = $"ui/menu/common/dialog_error"
-        
+
         #if PC_PROG
             AddDialogButton( dialogData, "Yes", void function() : () {
                 for (int i = GetRunCount() - 1; i >= 0; i++)
@@ -88,7 +88,7 @@ void function InitPastRunsMenu()
         dialogData.image = $"ui/menu/common/dialog_error"
 
         int currentRunIndex = file.selectedRunIndex
-        
+
         #if PC_PROG
             AddDialogButton( dialogData, "Yes", void function() : (currentRunIndex){
                 DeleteRun(GetRunByIndex(currentRunIndex))
@@ -106,7 +106,7 @@ void function InitPastRunsMenu()
 
         OpenDialog( dialogData )
     })
-    
+
     Hud_EnableKeyBindingIcons( Hud_GetChild(Hud_GetChild(menu, "RetryButton"), "Label") )
     SimpleButton_SetText( Hud_GetChild(menu, "RetryButton"), "%[Y_BUTTON|X]%Retry")
     SimpleButton_SetBGColor( Hud_GetChild(menu, "RetryButton"), 30, 30, 30, 255)
@@ -115,9 +115,9 @@ void function InitPastRunsMenu()
         // reset for current category
         RetryRun( button )
     })
-    
 
-    
+
+
     Hud_SetText( Hud_GetChild(menu, "Verification"), "^FFD04000Mods Used:^FFFFFFFF\n\n" +
 "^40FF9600EladNLG.InGameTimer:^FFFFFFF\nba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad\n\n" +
 "^40FF9600Ronin.Server:^FFFFFFF\n0212bb197b4e2ba4fa2047e35bb0cbbb9b3d214647f9bc806f7da125393e1371\n\n" +
@@ -192,7 +192,7 @@ void function RetryRun( var button )
     {
         SetConVarString( "igt_run_category", category.slice(0, category.find("_")) )
         string map = category.slice(category.find("_") + 1, category.len())
-        
+
         switch (map)
         {
             case "sp_beacon_start":
@@ -251,7 +251,7 @@ void function RunList_Refresh()
             RunPanel_DisplayRun(runSquare, GetRunByIndex(i + file.runListScrollOffset))
         }
     }
-    
+
     Hud_SetVisible(Hud_GetChild(file.menu, "UpArrow"), (file.runListScrollOffset) > 0)
     Hud_SetText( Hud_GetChild(Hud_GetChild(file.menu, "UpArrow"), "Label"), "+" + (file.runListScrollOffset) )
 
@@ -279,12 +279,14 @@ void function PastRuns_Placeholder()
     var timesLabel = Hud_GetChild(file.menu, "Times")
     var categoryName = Hud_GetChild(file.menu, "CategoryName")
     var categoryBG = Hud_GetChild(file.menu, "CategoryBG")
+    var rulesetName = Hud_GetChild(file.menu, "RulesetName")
+    var rulesetBG = Hud_GetChild(file.menu, "RulesetBG")
     int x = Hud_GetX(categoryBG) - Hud_GetX(categoryName)
 
     string verificationLabelText = "^FFD04000Fun Fact:^FFFFFFFF\n\n" +
                                     "You haven't done a run yet.\n" +
-                                    "You can only see this because i accounted\n" + 
-                                    "For this specific edge case (this took so\n" + 
+                                    "You can only see this because i accounted\n" +
+                                    "For this specific edge case (this took so\n" +
                                     "long) "
 
     Hud_SetText( Hud_GetChild(file.menu, "Verification"), verificationLabelText )
@@ -296,11 +298,17 @@ void function PastRuns_Placeholder()
     vector color = GetCategoryColor("IL")
 
     string categoryDisplayName = "BALLING%"
-    
+
     Hud_SetText(categoryName, categoryDisplayName.toupper())
     Squircle_SetSize(categoryBG, Hud_GetTextWidth(categoryName) + abs(x) * 2, Hud_GetHeight(categoryBG))
     Squircle_SetColor(categoryBG, int(color.x), int(color.y), int(color.z), 255)
     Hud_SetText(Hud_GetChild(file.menu, "Date"), GetTimeAsString(0))
+
+    vector rulesetColor = GetCategoryColor("NORMAL")
+
+    Hud_SetText(rulesetName, "NORMAL")
+    Squircle_SetSize(rulesetBG, Hud_GetTextWidth(rulesetName) + abs(x) * 2, Hud_GetHeight(rulesetBG))
+    Squircle_SetColor(rulesetBG, int(rulesetColor.x), int(rulesetColor.y), int(rulesetColor.z), 255)
 
     Hud_SetText(splitsLabel, splitLabelText)
     Hud_SetText(timesLabel, timesLabelText)
@@ -325,6 +333,8 @@ void function PastRuns_DisplayRun(Run run)
     var timesLabel = Hud_GetChild(file.menu, "Times")
     var categoryName = Hud_GetChild(file.menu, "CategoryName")
     var categoryBG = Hud_GetChild(file.menu, "CategoryBG")
+    var rulesetName = Hud_GetChild(file.menu, "RulesetName")
+    var rulesetBG = Hud_GetChild(file.menu, "RulesetBG")
     int x = Hud_GetX(categoryBG) - Hud_GetX(categoryName)
 
     string verificationLabelText = ""
@@ -333,7 +343,7 @@ void function PastRuns_DisplayRun(Run run)
     {
         verificationLabelText += "^FF404000Run Invalid!^FFFFFFFF\n\n"
     }
-    
+
     if (run.isPB)
     {
         verificationLabelText += "^FFC83200Personal Best!^FFFFFFFF\n\n"
@@ -347,7 +357,7 @@ void function PastRuns_DisplayRun(Run run)
     if (run.seconds < 3600)
         Hud_SetText(totalTime, FormatTime(run.seconds, run.microseconds))
     else
-        Hud_SetText(totalTime, FormatTime(run.seconds)) // doesnt have the .00 part 
+        Hud_SetText(totalTime, FormatTime(run.seconds)) // doesnt have the .00 part
 
     string splitLabelText = ""
     string timesLabelText = ""
@@ -376,10 +386,18 @@ void function PastRuns_DisplayRun(Run run)
 
     // category
     vector color = GetCategoryColor(run.category)
-    
+
     Hud_SetText(categoryName, categoryDisplayName.toupper())
     Squircle_SetSize(categoryBG, Hud_GetTextWidth(categoryName) + x * 2, Hud_GetHeight(categoryBG))
     Squircle_SetColor(categoryBG, int(color.x), int(color.y), int(color.z), 255)
+
+    // ruleset
+    vector rulesetColor = GetCategoryColor(run.ruleset)
+
+    Hud_SetText(rulesetName, run.ruleset.toupper())
+    Squircle_SetSize(rulesetBG, Hud_GetTextWidth(rulesetName) + abs(x) * 2, Hud_GetHeight(rulesetBG))
+    Squircle_SetColor(rulesetBG, int(rulesetColor.x), int(rulesetColor.y), int(rulesetColor.z), 255)
+
 
     Hud_SetText(Hud_GetChild(file.menu, "Date"), GetTimeAsString(run.timestamp))
 
@@ -435,6 +453,6 @@ void function OnNavigateBack()
         ResetTime()
         ClientCommand("disconnect")
     }
-    
+
     CloseActiveMenu()
 }

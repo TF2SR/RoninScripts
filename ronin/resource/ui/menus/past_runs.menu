@@ -220,6 +220,44 @@ resource/ui/menus/timer_overlay.menu
             pin_to_sibling_corner BOTTOM_RIGHT
             pin_corner_to_sibling BOTTOM_RIGHT
         }
+        
+        "RulesetBG"
+        {
+            "ControlName"		"CNestedPanel"
+            InheritProperties   Squircle
+            xpos				4
+            ypos				0
+            wide				64
+            tall			    24
+            
+            pin_to_sibling CategoryBG
+            pin_to_sibling_corner TOP_LEFT
+            pin_corner_to_sibling TOP_RIGHT
+        }
+
+        "RulesetName"
+        {
+            ControlName				Label
+            xpos					-6
+            ypos					0
+            wide					300
+            tall					24
+            visible					1
+            enabled					1
+            //auto_wide_tocontents	1
+            wrap                    0
+            //auto_tall_tocontents    1
+            labelText				"STANDARD"
+            textAlignment			east
+            fgcolor_override 		"30 30 30 255"
+            bgcolor_override 		"0 0 0 0"
+            font					JBMonoBold_18
+
+            pin_to_sibling RulesetBG
+            pin_to_sibling_corner BOTTOM_RIGHT
+            pin_corner_to_sibling BOTTOM_RIGHT
+        }
+
 
         "Verification"
         {
