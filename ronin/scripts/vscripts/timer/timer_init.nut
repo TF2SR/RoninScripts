@@ -13,8 +13,8 @@ array< array<string> > VALID_CATEGORY_ALIASES = [
 
 // A category would be a route you take through the game.
 // e.g. any% - full game, ILs, Pilot's challenge
-global array<string> VALID_CATEGORIES = [ "ANY%", "IL", "ALL HELMETS", "ALL HELMETS IL" ] 
-global array<string> VALID_RULESETS = [ "NORMAL", "NCS", "MASTER", "GRAPPLE%", "STIM%", "SPEEDMOD" ] 
+global array<string> VALID_CATEGORIES = [ "ANY%", "IL", "ALL HELMETS", "ALL HELMETS IL", "TOURNEY IL" ]
+global array<string> VALID_RULESETS = [ "NORMAL", "NCS", "MASTER", "GRAPPLE%", "STIM%", "SPEEDMOD" ]
 
 global struct Duration
 {

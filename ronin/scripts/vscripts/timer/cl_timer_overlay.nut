@@ -15,7 +15,7 @@ global const float SP_LEVEL_TRANSITION_HOLDTIME = 3.0
 
 // this is the table facts are loaded into.
 // once the vm is destroyed, it is encoded into json
-// and transferred onto UIVM. 
+// and transferred onto UIVM.
 global table speedrunFacts
 
 global float cutsceneStartTime = -1.0
@@ -117,7 +117,7 @@ void function UpdateTimerHUD()
         var levelDeltaLabel = Hud_GetChild(file.timer, "LastLevelTimeDelta")
 
         vector color = GetCategoryColor(GetRunCategory())
-        
+
         if (file.runInvalidated)
         {
             Hud_SetColor(alphaLabel, 255, 40, 40, 255 )
@@ -139,11 +139,11 @@ void function UpdateTimerHUD()
         int labelX = Hud_GetAbsX( categoryName )
         int bgX = Hud_GetAbsX( categoryBG )
         Squircle_SetSize(categoryBG, Hud_GetWidth(categoryName) + abs(labelX - bgX) * 2 + 1, Hud_GetHeight(categoryBG))
-        
+
     Hud_SetText(rulesetName, GetRunRuleset())
     color = GetCategoryColor(GetRunRuleset())
     Squircle_SetColor(rulesetBG, int(color.x), int(color.y), int(color.z), 255)
-    
+
     labelX = Hud_GetAbsX( rulesetName )
     bgX = Hud_GetAbsX( rulesetBG )
 
@@ -169,7 +169,9 @@ void function UpdateTimerHUD()
         {
             if (GetMapName() == "sp_s2s" && ArkIL_HasLevelEnded()
                 || (GetMapName() == "sp_hub_timeshift" && EffectAndCause3IL_HasLevelEnded())
-                || (GetMapName() == "sp_sewers1" && BloodAndRust_HasLevelEnded()))
+                || (GetMapName() == "sp_sewers1" && BloodAndRust_HasLevelEnded())
+                || (GetMapName() == "sp_beacon" && Beacon3_HasLevelEnded())
+                || (GetMapName() == "sp_crashsite" && GetRunCategory() == "TOURNEY IL" && BT7274Tourney_HasLevelEnded()))
             {
                 SaveFacts()
                 RunUIScript("SetRunOver")
@@ -195,7 +197,7 @@ void function UpdateTimerHUD()
             Hud_SetText(mainDeltaLabel, file.delta)
         else
             Hud_SetText(mainDeltaLabel, "")
-        
+
         if (file.levelDelta.len() <= 0 || file.levelDelta[0] == '-')
         {
             Hud_SetColor( levelDeltaLabel, 40, 255, 40, 255 )
@@ -237,6 +239,38 @@ bool function BloodAndRust_HasLevelEnded()
     return player.ContextAction_IsBusy() && IsInCutscene() && (player.GetCinematicEventFlags() & (CE_FLAG_EMBARK | CE_FLAG_DISEMBARK)) == 0
 }
 
+entity richter = null
+bool isThreadActive = false
+bool richterExisted = false
+bool function Beacon3_HasLevelEnded()
+{
+    if (!isThreadActive)
+    {
+        isThreadActive = true
+        thread CheckBeacon3Boss()
+    }
+
+    if (richterExisted)
+    {
+        return !IsValid(richter) || !IsAlive(richter)
+    }
+
+    return false
+
+}
+
+bool function BT7274Tourney_HasLevelEnded()
+{
+    return GetGlobalNetBool("enteredTitanCockpit")
+}
+
+void function CheckBeacon3Boss() {
+    GetLocalClientPlayer().WaitSignal( "StopBossIntro" )
+    richter = GetNPCArrayEx( "npc_titan", TEAM_IMC, TEAM_ANY, <0,0,0>, 100000 )[0]
+    richterExisted = true
+
+}
+
 bool function BT7274_ActivateNCS()
 {
     if (GetMapName() != "sp_crashsite")
@@ -244,14 +278,14 @@ bool function BT7274_ActivateNCS()
 
     if (GetRunCategory() == "ANY%" && !GetConVarBool("igt_18hr_skip"))
         return false
-    
+
     if (IsILCategory(GetRunCategory()) && GetRunRuleset() != "NCS")
         return false
 
     entity player = GetLocalClientPlayer()
-    if (!IsValid( player ) || !IsAlive( player )) 
+    if (!IsValid( player ) || !IsAlive( player ))
         return false
-    
+
     if (!IsInCutscene())
     {
         cutsceneStartTime = -1.0
@@ -263,7 +297,7 @@ bool function BT7274_ActivateNCS()
 
     if (cutsceneStartTime < 0.0)
         cutsceneStartTime = Time()
-    
+
     return (Time() - cutsceneStartTime) > 5.00 // this is 5 seconds since the start of the cutscene, not 5 seconds since we entered the area IN the cutscene.
 }
 
@@ -309,7 +343,7 @@ bool function FoldWeapon_HasLevelEnded()
     if (!IsValid( player ) || !IsAlive( player ))
         return false
 
-    vector origin = player.GetOrigin() 
+    vector origin = player.GetOrigin()
 
     return origin.x < -10000 && origin.y > 0 && IsInCutscene()
 }

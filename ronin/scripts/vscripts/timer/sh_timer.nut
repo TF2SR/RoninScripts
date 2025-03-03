@@ -32,6 +32,9 @@ vector function GetCategoryColor(string category)
         case "ALL HELMETS IL":
             return <255, 104, 64>
 
+        case "TOURNEY IL":
+            return <159, 0, 255>
+
         case "SPEEDMOD":
             return <255, 160, 48>
 
@@ -40,7 +43,7 @@ vector function GetCategoryColor(string category)
 
         case "STIM%":
             return <64, 255, 80>
-        
+
         case "NORMAL":
             return <128, 128, 128>
 
@@ -57,14 +60,14 @@ vector function GetCategoryColor(string category)
 bool function IsILCategory(string category)
 {
     string cat = category.toupper()
-    
+
     return cat.find("IL") != null
 }
 
 string function GetRunCategory()
 {
     string cat = GetConVarString("igt_run_category").toupper()
-    
+
     return cat
 }
 
@@ -76,6 +79,8 @@ string function GetCategoryShortName(string category)
             return "AH"
         case "ALL HELMETS IL":
             return "AH IL"
+        case "TOURNEY IL":
+            return "TRNY"
     }
 
     return category
@@ -84,7 +89,7 @@ string function GetCategoryShortName(string category)
 string function GetRunRuleset()
 {
     string cat = GetConVarString("igt_run_ruleset").toupper()
-    
+
     return cat
 }
 
@@ -136,12 +141,12 @@ string function FormatTime( int seconds, int microseconds = -1, int precision = 
     else if (seconds >= 60)
         result = format("%i:%02i.%0" + precision + "i", seconds / 60, seconds % 60, microseconds / pow(10, 6 - precision))
 
-    else 
+    else
         result = format("%i.%0" + precision + "i", seconds, microseconds / pow(10, 6 - precision) )
 
     if (microseconds == -1 || precision == 0)
         return result.slice(0, result.len() - 1 - maxint(1, precision))
-    
+
     return result
 }
 
@@ -149,6 +154,6 @@ string function FormatHUDSplitList( string levelName, int seconds, int microseco
 {
     string formattedTime = FormatTime( seconds, microseconds, 1 )
     string stringLen = "                                      "
-    
+
     return levelName + stringLen.slice(0, stringLen.len() - levelName.len() - formattedTime.len()) + formattedTime
 }
