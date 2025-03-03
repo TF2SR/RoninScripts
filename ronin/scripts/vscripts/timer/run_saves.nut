@@ -101,7 +101,7 @@ void function WaitForAllFilesToLoad( array<string> runFiles )
         if (loadedFiles == runFiles.len())
             break
     }
-    
+
     print(format("All files loaded! %d files loaded!", runFiles.len()))
 
     foreach (string file in runFiles)
@@ -110,7 +110,7 @@ void function WaitForAllFilesToLoad( array<string> runFiles )
     }
 
     file.runs.sort(RunCompareLatest)
-    
+
     PastRuns_RunsFinishedLoading()
 }
 
@@ -123,7 +123,7 @@ string function GetILSplitName(string split, string map, bool long = false)
 {
     if (!SRM_StartsWith(split, "Startpoint "))
         return GetLevelName(split, long)
-    
+
     switch (map)
     {
         case "sp_hub_timeshift_start":
@@ -148,7 +148,7 @@ string function GetLevelName(string level, bool long = false)
 {
     if (level in file.splitNames && file.splitNames[level] != "")
         return expect string(file.splitNames[level])
-    
+
     if (level in defaultSplitNames)
         if ((level + "_long") in defaultSplitNames && long)
             return defaultSplitNames[level + "_long"]
@@ -207,15 +207,15 @@ Run function GetRunByIndex(int index)
 void function SaveRunData( Duration time, array<Duration> splits, table facts, bool isValid )
 {
     int timestamp = GetUnixTimestamp()
-    
+
     string category = GetRunCategory()
     string ruleset = GetRunRuleset()
-    
+
     if (IsILCategory(category))
     {
-        category = "IL_" + GetRunCurrentLevel()
+        category = category + "_" + GetRunCurrentLevel()
     }
-        
+
     Run run
     run.timestamp = timestamp
     run.seconds = time.seconds
@@ -304,7 +304,7 @@ array function SplitArrayToTableArray(array<Duration> splits)
 
     foreach (Duration split in splits)
         arr.append(DurationToTable(split))
-    
+
     return arr
 }
 
@@ -314,7 +314,7 @@ array<Duration> function ToSplitArray(array splits)
 
     foreach (var split in splits)
         arr.append(TableToDuration(expect table(split)))
-    
+
     return arr
 }
 
@@ -378,7 +378,7 @@ Run ornull function GetPBRun(string category)
             return run
         }
     }
-    
+
     return null
 }
 
@@ -386,7 +386,7 @@ table function GetGoldSplitsForCategory(string category)
 {
     if (!(category in file.goldSplits))
         file.goldSplits[category] <- {}
-    
+
     return expect table(file.goldSplits[category])
 }
 
