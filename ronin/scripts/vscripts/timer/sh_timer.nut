@@ -53,6 +53,10 @@ vector function GetCategoryColor(string category)
 
     if (SRM_StartsWith(category, "IL_"))
         return <255, 64, 64>
+    if (SRM_StartsWith(category, "ALL HELMETS IL"))
+        return <255, 104, 64>
+    if (SRM_StartsWith(category, "TOURNEY IL"))
+        return <159, 0, 255>
 
     return <128, 128, 128>
 }
