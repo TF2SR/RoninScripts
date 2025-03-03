@@ -1,9 +1,23 @@
 resource/ui/menus/panels/subsplit.res
 {
+    "subsplitbackground"
+    {
+        "ControlName" "ImagePanel"
+        image "vgui/hud/white"
+        scaleImage      1
+        xpos 0
+        ypos -5
+        zpos "0" // overlay over all other menus
+        "wide"								"200"
+        "tall"								"100"
+        "drawColor" "30 30 30 200" // vanilla label color
+        visible 1
+        enabled 1
+    }
         Name
 		{
 			ControlName	Label
-			xpos	0
+			xpos	10
 			ypos	0
 			wide	16
 			tall	42
@@ -43,7 +57,7 @@ resource/ui/menus/panels/subsplit.res
 			ypos	0
 			wide	16
 			tall	42
-			visible	1
+			visible	0
 			enabled	1
 			auto_wide_tocontents	1
 			labelText	"+0:00"
