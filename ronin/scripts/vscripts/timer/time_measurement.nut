@@ -338,6 +338,14 @@ string function GetRunCurrentLevel()
     switch (GetActiveLevel())
     {
         case "sp_beacon":
+            if (GetRunRuleset() == "NCS") {
+                if (file.loadedSave == "fastany3") {
+                    level += "_start"
+                } else {
+                    level += "_end"
+                }
+                break
+            }
         case "sp_hub_timeshift":
             int startPoint = GetConVarInt("sp_startpoint") // set when switching level.
 
