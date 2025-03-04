@@ -53,6 +53,16 @@ Scheme
 				antialias 		1
 			}
 		}
+		JBMonoBold_64
+		{
+			isproportional only
+			1
+			{
+				name			JBMonoBold
+				tall			64
+				antialias 		1
+			}
+		}
 		JBMonoBold_56_DropShadow
 		{
 			isproportional only

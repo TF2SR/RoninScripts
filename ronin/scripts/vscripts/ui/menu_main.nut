@@ -588,8 +588,9 @@ void function UpdateTrialLabel()
 	bool lastIsTrialVersion = Script_IsRunningTrialVersion()
 
 	Hud_SetVisible( file.trialLabel, true )
-	Hud_SetText( file.trialLabel, "Ronin v" + GetSdkVersion())
+	Hud_SetText( file.trialLabel, "RONIN")
 	Hud_SetColor( file.trialLabel, 9, 250, 74, 255)
+	Hud_SetText( Hud_GetChild(file.menu, "VersionDisplay"), GetSdkVersion())
 	/*
 
 	while ( GetTopNonDialogMenu() == file.menu )
