@@ -17,16 +17,16 @@ void function TimerSettingsMenu_Init()
 		Carousel_UpdateWithConVarAndCategoryArray( button, VALID_CATEGORIES, "igt_run_category", isRight )
 	})
 	Carousel_UpdateValue( Hud_GetChild(file.menu, "Category"), GetConVarString("igt_run_category"), GetCategoryColor(GetConVarString("igt_run_category")) )
-	
+
 	Carousel_SetLabel( Hud_GetChild(file.menu, "Ruleset"), "Ruleset" )
 	Carousel_UpdateValue( Hud_GetChild(file.menu, "Ruleset"), GetConVarString("igt_run_ruleset"), GetCategoryColor(GetConVarString("igt_run_ruleset")) )
 	Carousel_AddClickedHandler( Hud_GetChild(file.menu, "Ruleset"), void function(var button, bool isRight) : (){
 		Carousel_UpdateWithConVarAndCategoryArray( button, VALID_RULESETS, "igt_run_ruleset", isRight )
 	})
-	
+
 	Carousel_SetLabel( Hud_GetChild(file.menu, "ShowDeltas"), "Show Comparison" )
 	Carousel_UpdateValue( Hud_GetChild(file.menu, "ShowDeltas"), ["NO", "YES", "ONLY IN LOAD SCREEN (NOT IMPLEMENTED)"][GetConVarInt("igt_show_deltas")], <128, 128, 128> )
-	Carousel_AddClickedHandler( Hud_GetChild(file.menu, "ShowDeltas"), void function(var button, bool isRight) : (){	
+	Carousel_AddClickedHandler( Hud_GetChild(file.menu, "ShowDeltas"), void function(var button, bool isRight) : (){
 		string convar = "igt_show_deltas"
 		array<string> categories = ["NO", "YES", "ONLY IN LOAD SCREEN (NOT IMPLEMENTED)"]
 		printt(convar, isRight)
@@ -49,19 +49,31 @@ void function TimerSettingsMenu_Init()
 		conVarValue = categories[currentRulesetIndex]
 		SetConVarInt( convar, currentRulesetIndex )
 		vector color = GetCategoryColor(conVarValue)
-		
+
 		Carousel_UpdateValue( button, conVarValue, color )
+	})
+
+	Carousel_SetLabel( Hud_GetChild(file.menu, "ShowSubsplit"), "Show Subsplit Popups")
+	Carousel_UpdateValue(Hud_GetChild(file.menu, "ShowSubsplit"), GetConVarBool("igt_subsplit_enable") ? "YES" : "NO", GetConVarBool("igt_subsplit_enable") ? <64,255,64> : <255,64,64> )
+	Carousel_AddClickedHandler( Hud_GetChild(file.menu, "ShowSubsplit"), void function(var button, bool isRight) : (){
+		bool value = GetConVarBool("igt_subsplit_enable")
+
+		value = !value
+		SetConVarBool( "igt_subsplit_enable", value )
+		vector color = value ? <64,255,64> : <255,64,64>
+
+		Carousel_UpdateValue( button, value ? "YES" : "NO", color )
 	})
 
 	Carousel_SetLabel( Hud_GetChild(file.menu, "Autoload18Hr"), "BT-7274 - Skip 2nd cutscene in Any%" )
 	Carousel_UpdateValue( Hud_GetChild(file.menu, "Autoload18Hr"), GetConVarBool("igt_18hr_skip") ? "YES" : "NO", GetConVarBool("igt_18hr_skip") ? <64,255,64> : <255,64,64> )
-	Carousel_AddClickedHandler( Hud_GetChild(file.menu, "Autoload18Hr"), void function(var button, bool isRight) : (){	
+	Carousel_AddClickedHandler( Hud_GetChild(file.menu, "Autoload18Hr"), void function(var button, bool isRight) : (){
 		bool value = GetConVarBool("igt_18hr_skip")
 
 		value = !value
 		SetConVarBool( "igt_18hr_skip", value )
 		vector color = value ? <64,255,64> : <255,64,64>
-		
+
 		Carousel_UpdateValue( button, value ? "YES" : "NO", color )
 	})
 
@@ -73,7 +85,7 @@ void function Carousel_UpdateWithConVarAndCategoryArray( var carousel, array<str
 	printt(convar, isRight)
 	string conVarValue = GetConVarString(convar)
 
-	int currentRulesetIndex = maxint(0, categories.find(conVarValue)) 
+	int currentRulesetIndex = maxint(0, categories.find(conVarValue))
 	if (isRight)
 	{
 		currentRulesetIndex++
@@ -90,7 +102,7 @@ void function Carousel_UpdateWithConVarAndCategoryArray( var carousel, array<str
 	conVarValue = categories[currentRulesetIndex]
 	SetConVarString( convar, conVarValue )
 	vector color = GetCategoryColor(conVarValue)
-	
+
 	Carousel_UpdateValue( carousel, conVarValue, color )
 }
 

@@ -147,6 +147,23 @@ resource/ui/menus/srm_settings.menu
 
 			controlSettingsFile	"resource/ui/menus/panels/button_carousel.res"
 		}
+		ShowSubsplit
+		{
+			"ControlName"		"CNestedPanel"
+			xpos				0
+			ypos				4
+			wide				740
+			tall				40
+			visible				1
+			enabled				1
+			zpos				10
+
+			pin_to_sibling	ShowDeltas
+			pin_to_sibling_corner	BOTTOM_LEFT
+			pin_corner_to_sibling	TOP_LEFT
+
+			controlSettingsFile	"resource/ui/menus/panels/button_carousel.res"
+		}
         "NCSLabel"
         {
             ControlName				Label
@@ -163,7 +180,7 @@ resource/ui/menus/srm_settings.menu
             bgcolor_override 		"0 0 0 200"
             font					JBMonoBold_27
 
-			pin_to_sibling	ShowDeltas
+			pin_to_sibling	ShowSubsplit
 			pin_to_sibling_corner	BOTTOM_LEFT
 			pin_corner_to_sibling	TOP_LEFT
         }

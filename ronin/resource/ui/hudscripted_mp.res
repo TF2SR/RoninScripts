@@ -418,13 +418,18 @@ Resource/UI/HudScripted_mp.res
 	SubsplitPanel
 	{
 		"ControlName"		"CNestedPanel"
-		xpos				500
-		ypos				500
+		xpos				0
+		ypos				-200
 		wide				512
-		tall				512
-		visible				1
+		tall				200
+		visible				0
 		enabled				1
 		zpos				10
+
+		pin_to_sibling		Screen
+		pin_corner_to_sibling CENTER
+		pin_to_sibling_corner CENTER
+
 		controlSettingsFile	"resource/ui/menus/panels/subsplit.res"
 	}
 }

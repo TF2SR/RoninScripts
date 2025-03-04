@@ -15,12 +15,16 @@ void function Subsplit_Init() {
 }
 
 void function ShowSubsplit(string name, string time, string delta, bool gold) {
+    if (!GetConVarBool("igt_subsplit_enable")) return
+
     thread void function(): (name, time, delta, gold){
         printt("Showing Subsplit")
         file.menu = HudElement("SubsplitPanel")
         file.name = Hud_GetChild(file.menu, "Name")
         file.time = Hud_GetChild(file.menu, "Time")
         file.timeDelta = Hud_GetChild(file.menu, "TimeDelta")
+
+        Hud_SetPos(file.menu, 0, GetConVarInt("igt_subsplit_height"))
 
         Hud_SetText(file.name, name)
 
@@ -38,7 +42,7 @@ void function ShowSubsplit(string name, string time, string delta, bool gold) {
 
         Hud_SetVisible(file.menu, true)
 
-        wait 2
+        wait GetConVarInt("igt_subsplit_duration")
 
         Hud_SetVisible(file.menu, false)
     }()
