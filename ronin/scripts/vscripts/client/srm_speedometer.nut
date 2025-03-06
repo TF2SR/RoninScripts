@@ -9,7 +9,7 @@ struct
 void function SRM_Speedometer_Init()
 {
 	if (GetConVarInt("srm_enable_speedometer") != 1) return
-	
+
 	SRM_CreateSpeedometer()
 	AddCallback_EntitiesDidLoad( SRM_SpeedometerUpdate )
 }
@@ -67,6 +67,9 @@ void function SRM_SpeedometerUpdate()
 			unitConversionModifier = 1.00000
 			speedometerUnitLabel   = "u"
 			break
+		case 4:
+			unitConversionModifier = 0.91444
+			speedometerUnitLabel   = "hm/h"
 	}
 
 	RuiSetString( file.speedometerUnit, "msgText", speedometerUnitLabel )
