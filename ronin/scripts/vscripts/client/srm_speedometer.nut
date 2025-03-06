@@ -69,7 +69,7 @@ void function SRM_SpeedometerUpdate()
 			break
 		case 4:
 			unitConversionModifier = 0.91444
-			speedometerUnitLabel   = "hm/h"
+			speedometerUnitLabel   = "/10 km/h"
 	}
 
 	RuiSetString( file.speedometerUnit, "msgText", speedometerUnitLabel )

@@ -89,7 +89,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 				"m/s"				1
 				"mph"				2
 				"Units"				3
-				"hm/h"				4
+				"km/h * 10"			4
 			}
 			pin_to_sibling			ImgSubheaderBackground
 			pin_corner_to_sibling	TOP_LEFT
