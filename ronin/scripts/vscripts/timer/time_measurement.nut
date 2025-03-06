@@ -280,7 +280,7 @@ void function Split()
         SaveGoldSplits()
     }
 
-    if (GetRunCategory() == "IL")
+    if (isILCategory(category))
     {
         RunClientScript(
             "ShowSubsplit",
