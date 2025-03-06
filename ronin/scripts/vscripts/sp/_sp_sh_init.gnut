@@ -195,9 +195,6 @@ void function Server_SP_Init()
 	SP_IntroScreen_Init()
 
 	SP_TitanWeaponPickups_Init()
-
-	// Ronin
-	SRM_ForceMoonboots_Init()
 }
 
 void function ShSp_EntitiesDidLoad()
