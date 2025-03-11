@@ -376,8 +376,10 @@ void function DeleteRun( Run run )
     if (index < 0 || index > file.runs.len())
         return
 
-    string fileName = "runs/" + run.timestamp + ".json"
+    //string fileName = "runs/" + run.timestamp + ".json"
+    string fileName = "runs/" + StringReplaceAll(GetTimeAsString(run.timestamp), ":", "-") + ".json"
 
+    printt("removing run", fileName)
     DeleteFile( fileName )
     file.runs.remove( index )
 }
