@@ -166,7 +166,7 @@ string function FormatHUDSplitList( string levelName, int seconds, int microseco
 string function ColorDelta(string delta, bool isGold) {
     string result = ""
     if (isGold) {
-        result += "^9F00FF00"
+        result += "^FFD70000"
     } else if (delta[0] == '-') {
         result += "^28FF2800"
     } else {
