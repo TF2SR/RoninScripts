@@ -167,7 +167,7 @@ string function ColorDelta(string delta, bool isGold) {
     string result = ""
     if (isGold) {
         result += "^9F00FF00"
-    } else if (delta[0] == "-") {
+    } else if (delta[0] == '-') {
         result += "^28FF2800"
     } else {
         result += "^FF282800"
