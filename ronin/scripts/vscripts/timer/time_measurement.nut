@@ -260,8 +260,8 @@ bool function ShouldStopCounting()
 
 void function Split()
 {
-    var delta = GetTimeDelta(file.time)
-    file.splits.append(file.levelTime)
+    string delta = GetTimeDelta(file.time)
+    file.levelTime.delta = delta
 
 
     string category = GetRunCategory()
@@ -289,6 +289,8 @@ void function Split()
             delta,
             file.levelTime.isGold)
     }
+
+    file.splits.append(file.levelTime)
 
     Duration levelTime
     levelTime.name = ""

@@ -325,6 +325,17 @@ Duration function TableToDuration(table t)
     dur.seconds = expect int( t["seconds"] )
     dur.microseconds = expect int(t["microseconds"])
     dur.name = expect string(t["name"])
+    if ("isGold" in t) {
+        dur.isGold = bool(t["isGold"])
+    } else {
+        dur.isGold = false
+    }
+
+    if ("delta" in t) {
+        dur.delta = string(t["delta"])
+    } else {
+        dur.delta = "+0.0"
+    }
 
     return dur
 }
@@ -336,6 +347,8 @@ table function DurationToTable(Duration dur)
     result["seconds"] <- dur.seconds
     result["microseconds"] <- dur.microseconds
     result["name"] <- dur.name
+    result["isGold"] <- dur.isGold
+    result["delta"] <- dur.delta
 
     return result
 }
