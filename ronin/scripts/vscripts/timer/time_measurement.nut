@@ -409,7 +409,7 @@ string function GetTimeDelta( Duration time, int split = -1 )
     if (category == "IL")
         category = "IL_" + GetRunCurrentLevel()
 
-    Run ornull pb = GetPBRun( category )
+    Run ornull pb = GetPBRun( category, GetRunRuleset() )
 
     if (pb == null)
         return ""

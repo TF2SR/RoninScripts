@@ -228,7 +228,7 @@ void function SaveRunData( Duration time, array<Duration> splits, table facts, b
 
     if (isValid)
     {
-        Run ornull pbRun = GetPBRun(run.category)
+        Run ornull pbRun = GetPBRun(run.category, run.ruleset)
         if (pbRun == null)
         {
             run.isPB = true
@@ -369,11 +369,11 @@ void function DeleteRun( Run run )
     file.runs.remove( index )
 }
 
-Run ornull function GetPBRun(string category)
+Run ornull function GetPBRun(string category, string ruleset)
 {
     foreach (Run run in file.runs)
     {
-        if (run.category == category && run.isPB)
+        if (run.category == category && run.ruleset == ruleset && run.isPB)
         {
             return run
         }
