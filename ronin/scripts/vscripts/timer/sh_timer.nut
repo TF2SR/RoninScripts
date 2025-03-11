@@ -12,6 +12,7 @@ global function FormatHUDSplitList
 global function SubtractTimes
 global function SumOfSplits
 global function IsILCategory
+global function ColorDelta
 
 vector function GetCategoryColor(string category)
 {
@@ -160,4 +161,20 @@ string function FormatHUDSplitList( string levelName, int seconds, int microseco
     string stringLen = "                                      "
 
     return levelName + stringLen.slice(0, stringLen.len() - levelName.len() - formattedTime.len()) + formattedTime
+}
+
+string function ColorDelta(string delta, bool isGold) {
+    string result = ""
+    if (isGold) {
+        result += "^9F00FF00"
+    } else if (delta[0] == "-") {
+        result += "^28FF2800"
+    } else {
+        result += "^FF282800"
+    }
+
+    result += delta
+    result += "^FFFFFFFF"
+
+    return result
 }

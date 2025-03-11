@@ -381,7 +381,7 @@ void function PastRuns_DisplayRun(Run run)
             splitLabelText += GetLevelName(split.name, true)
         }
         splitLabelText += "\n"
-        timesLabelText += AddLeadingSpaceForTime(FormatTime(split.seconds, split.microseconds)) + "\n"
+        timesLabelText += ColorDelta(split.delta, split.isGold) + " " + AddLeadingSpaceForTime(FormatTime(split.seconds, split.microseconds)) + "\n"
     }
 
     // category
