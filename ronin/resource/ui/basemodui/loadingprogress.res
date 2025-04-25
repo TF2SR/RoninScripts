@@ -204,4 +204,17 @@
 		bgcolor_override 		"0 0 0 200"
 		font					Default_34_ShadowGlow
 	}
+    TimerPanel
+    {
+        "ControlName"		"CNestedPanel"
+        xpos				r512
+        ypos				0
+        wide				512
+        tall				512
+        visible				1
+        enabled				1
+        zpos				10
+
+        controlSettingsFile	"resource/ui/menus/panels/timer.res"
+    }
 }

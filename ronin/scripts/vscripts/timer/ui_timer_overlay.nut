@@ -1,6 +1,7 @@
 untyped
 global function TimerOverlay_Init
 global function SetTimerVisible
+global function UpdateTimerHUD
 
 global var timerOverlay
 
@@ -27,7 +28,7 @@ void function TimerOverlay_Init()
     timerOverlay = menu
     Hud_SetVisible( file.menu, true )
 
-    AddCallback_TimeUpdated( UpdateTimerHUD )
+    AddCallback_TimeUpdated( UpdateTimerHUDUI )
     thread UpdateTimerButtons() // this being first prevents funky shit for some reason
     thread AutoShowClientTimer()
 }
@@ -45,23 +46,28 @@ void function AutoShowClientTimer()
     }
 }
 
-void function UpdateTimerHUD()
+void function UpdateTimerHUDUI()
 {
-    Hud_SetVisible( file.timer, GetConVarBool("igt_enable") )
+    UpdateTimerHUD(file.timer)
+}
+
+void function UpdateTimerHUD( var timer )
+{
+    Hud_SetVisible( timer, GetConVarBool("igt_enable") )
     Hud_SetZ(file.menu, int(pow(2, 14)))
 
-    var timeLabel = Hud_GetChild(file.timer, "Time")
-    var levelTimeLabel = Hud_GetChild(file.timer, "LastLevelTime")
-    var digit0 = Hud_GetChild(file.timer, "TimeDigit0")
-    var categoryName = Hud_GetChild(file.timer, "CategoryName")
-    var rulesetName = Hud_GetChild(file.timer, "RulesetName")
-    var categoryBG = Hud_GetChild(file.timer, "CategoryBG")
-    var rulesetBG = Hud_GetChild(file.timer, "RulesetBG")
-    var alphaLabel = Hud_GetChild(file.timer, "NotLBLegal")
-    var alphaLabelShadow = Hud_GetChild(file.timer, "NotLBLegalShadow")
-    var splitListLabel = Hud_GetChild(file.timer, "SplitsList")
-    var mainDeltaLabel = Hud_GetChild(file.timer, "TimeDelta")
-    var levelDeltaLabel = Hud_GetChild(file.timer, "LastLevelTimeDelta")
+    var timeLabel = Hud_GetChild(timer, "Time")
+    var levelTimeLabel = Hud_GetChild(timer, "LastLevelTime")
+    var digit0 = Hud_GetChild(timer, "TimeDigit0")
+    var categoryName = Hud_GetChild(timer, "CategoryName")
+    var rulesetName = Hud_GetChild(timer, "RulesetName")
+    var categoryBG = Hud_GetChild(timer, "CategoryBG")
+    var rulesetBG = Hud_GetChild(timer, "RulesetBG")
+    var alphaLabel = Hud_GetChild(timer, "NotLBLegal")
+    var alphaLabelShadow = Hud_GetChild(timer, "NotLBLegalShadow")
+    var splitListLabel = Hud_GetChild(timer, "SplitsList")
+    var mainDeltaLabel = Hud_GetChild(timer, "TimeDelta")
+    var levelDeltaLabel = Hud_GetChild(timer, "LastLevelTimeDelta")
 
     string splitList = ""
     for (int i = 0; i < 10; i++)
