@@ -4,7 +4,7 @@ global function SetTimerVisible
 
 global var timerOverlay
 
-struct 
+struct
 {
     var menu
     var timer
@@ -108,8 +108,14 @@ void function UpdateTimerHUD()
     Duration time = GetSpeedrunTimer()
     Duration levelTime = GetLevelTime()
 
-    string delta = GetTimeDelta( time )
+    string delta = PreviousDelta()
+
+    // if (CmpDuration(levelTime, GetGoldSplitsForCategory(GetRunCategory()))) TODO: gold split comparison
+
     string levelDelta = GetTimeDelta( levelTime, GetSplitIndex() )
+    if (levelDelta.len() <= 0 || levelDelta[0] == '-') {
+        levelDelta = PreviousLevelDelta()
+    }
 
     if (delta.len() <= 0 || delta[0] == '-')
     {
@@ -120,7 +126,7 @@ void function UpdateTimerHUD()
         Hud_SetColor( mainDeltaLabel, 255, 40, 40, 255 )
     }
     Hud_SetText(mainDeltaLabel, delta)
-    
+
     if (levelDelta.len() <= 0 || levelDelta[0] == '-')
     {
         Hud_SetColor( levelDeltaLabel, 40, 255, 40, 255 )
@@ -136,7 +142,7 @@ void function UpdateTimerHUD()
         Hud_SetText( levelTimeLabel, FormatTime(levelTime.seconds, levelTime.microseconds, 1) )
     else
         Hud_SetText( levelTimeLabel, FormatTime(levelTime.seconds, levelTime.microseconds, 1) )
-    
+
 
     // 10 000 000
     int precision = 2
@@ -151,11 +157,11 @@ void function UpdateTimerButtons()
     var settingsButton = Hud_GetChild(file.buttons, "SettingsButton")
     var settingsBG = Hud_GetChild(file.buttons, "SettingsBG")
     var settingsLabel = Hud_GetChild(file.buttons, "SettingsLabel")
-    
+
     Hud_AddEventHandler( pastRunsButton, UIE_CLICK, OpenPastRunsMenu )
     Hud_AddEventHandler( settingsButton, UIE_CLICK, OpenTimerSettingsMenu )
 
-    array< array<var> > buttons = [ 
+    array< array<var> > buttons = [
         [ pastRunsButton, pastRunsBG, pastRunsLabel ],
         [ settingsButton, settingsBG, settingsLabel ],
     ]
@@ -166,7 +172,7 @@ void function UpdateTimerButtons()
     while (1)
     {
         wait 0.001
-        
+
         foreach (array<var> arr in buttons)
         {
             if (GetFocus() == arr[0])
@@ -190,7 +196,7 @@ void function OpenTimerSettingsMenu( var button )
     {
         return
     }
-    
+
     AdvanceMenu( GetMenu( "SRM_TimerSettingsMenu" ) )
 }
 
@@ -200,7 +206,7 @@ void function OpenPastRunsMenu( var button )
     {
         return
     }
-    
+
     AdvanceMenu( GetMenu( "PastRuns" ) )
 }
 

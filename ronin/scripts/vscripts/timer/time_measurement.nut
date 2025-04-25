@@ -13,6 +13,8 @@ global function GetLevelTime
 global function IsRunValid
 global function GetTimeDelta
 global function GetSplitIndex
+global function PreviousDelta
+global function PreviousLevelDelta
 
 struct
 {
@@ -32,6 +34,8 @@ struct
     bool reloadActivated
     string activeLevelSplit
     string facts = "{}"
+    string previousDelta = ""
+    string previousLevelDelta = ""
 
     array<string> loadedSaves = []
 
@@ -153,7 +157,10 @@ void function MeasureTime()
                 file.levelTime.seconds,
                 file.levelTime.microseconds,
                 file.runInvalidated,
-                delta, levelDelta) // bigger
+                delta,
+                levelDelta,
+                file.previousDelta,
+                file.previousLevelDelta) // bigger
             }
 
             lastIsFullyConnected = !IsInLoadingScreen()
@@ -262,6 +269,8 @@ void function Split()
 {
     string delta = GetTimeDelta(file.time)
     file.levelTime.delta = delta
+    file.previousDelta = delta
+    file.previousLevelDelta = GetTimeDelta(file.levelTime, GetSplitIndex())
 
 
     string category = GetRunCategory()
@@ -436,4 +445,12 @@ string function GetTimeDelta( Duration time, int split = -1 )
         return sign + FormatTime( abs(result.seconds) )
 
     return sign + FormatTime( abs(result.seconds), abs(result.microseconds), 1 )
+}
+
+string function PreviousDelta() {
+    return file.previousDelta
+}
+
+string function PreviousLevelDelta() {
+    return file.previousLevelDelta
 }

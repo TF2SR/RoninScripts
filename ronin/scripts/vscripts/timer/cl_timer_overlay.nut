@@ -31,6 +31,8 @@ struct
     bool calledStart
     string delta
     string levelDelta
+    string previousDelta
+    string previousLevelDelta
     array<void functionref()> loadedFactsCallbacks
     array<void functionref( string )> dialoguePlayedCallbacks
 } file
@@ -66,7 +68,7 @@ void function SetTimerVisible(bool visible)
     Hud_SetVisible( file.timer, visible )
 }
 
-void function SetTime( int seconds, int microseconds, int levelSeconds, int levelMicroseconds, bool runInvalidated, string delta, string levelDelta )
+void function SetTime( int seconds, int microseconds, int levelSeconds, int levelMicroseconds, bool runInvalidated, string delta, string levelDelta, string previousDelta, string previousLevelDelta )
 {
     file.runInvalidated = runInvalidated
     file.seconds = seconds
@@ -75,6 +77,8 @@ void function SetTime( int seconds, int microseconds, int levelSeconds, int leve
     file.levelMicroseconds = levelMicroseconds
     file.delta = delta
     file.levelDelta = levelDelta
+    file.previousDelta = previousDelta
+    file.previousLevelDelta = previousLevelDelta
     try
     {
         Signal( GetLocalClientPlayer(), "TimeSet" )
@@ -185,7 +189,13 @@ void function UpdateTimerHUD()
             isRunOver = true
         }
 
-        if (file.delta.len() <= 0 || file.delta[0] == '-')
+
+        string levelDelta = file.levelDelta
+        if (levelDelta.len() <= 0 || levelDelta[0] == '-') {
+            levelDelta = file.previousLevelDelta
+        }
+
+        if (file.previousDelta.len() <= 0 || file.previousDelta[0] == '-')
         {
             Hud_SetColor( mainDeltaLabel, 40, 255, 40, 255 )
         }
@@ -194,11 +204,11 @@ void function UpdateTimerHUD()
             Hud_SetColor( mainDeltaLabel, 255, 40, 40, 255 )
         }
         if (GetConVarInt("igt_show_deltas") == 1)
-            Hud_SetText(mainDeltaLabel, file.delta)
+            Hud_SetText(mainDeltaLabel, file.previousDelta)
         else
             Hud_SetText(mainDeltaLabel, "")
 
-        if (file.levelDelta.len() <= 0 || file.levelDelta[0] == '-')
+        if (levelDelta.len() <= 0 || levelDelta[0] == '-')
         {
             Hud_SetColor( levelDeltaLabel, 40, 255, 40, 255 )
         }
@@ -207,7 +217,7 @@ void function UpdateTimerHUD()
             Hud_SetColor( levelDeltaLabel, 255, 40, 40, 255 )
         }
         if (GetConVarInt("igt_show_deltas") == 1)
-            Hud_SetText(levelDeltaLabel, file.levelDelta)
+            Hud_SetText(levelDeltaLabel, levelDelta)
         else
             Hud_SetText(levelDeltaLabel, "")
 

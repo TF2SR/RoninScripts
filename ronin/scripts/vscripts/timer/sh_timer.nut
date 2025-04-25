@@ -13,6 +13,7 @@ global function SubtractTimes
 global function SumOfSplits
 global function IsILCategory
 global function ColorDelta
+global function CmpDuration
 
 vector function GetCategoryColor(string category)
 {
@@ -167,7 +168,7 @@ string function ColorDelta(string delta, bool isGold) {
     string result = ""
     if (isGold) {
         result += "^FFD70000"
-    } else if (delta[0] == '-') {
+    } else if ( delta.len() <= 0 || delta[0] == '-') {
         result += "^28FF2800"
     } else {
         result += "^FF282800"
@@ -177,4 +178,17 @@ string function ColorDelta(string delta, bool isGold) {
     result += "^FFFFFFFF"
 
     return result
+}
+
+int function CmpDuration(Duration lh, Duration rh) {
+    if (lh.seconds > rh.seconds) {
+        return 1
+    } else if (lh.seconds < rh.seconds) {
+        return -1
+    } else if (lh.microseconds > rh.microseconds) {
+        return 1
+    } else if (lh.microseconds < rh.microseconds) {
+        return -1
+    }
+    return 0
 }

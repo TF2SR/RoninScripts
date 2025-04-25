@@ -66,6 +66,7 @@ void function InitPastRunsMenu()
                     if (!run.isPB && i >= 50 && run.goldSplits.len() <= 0)
                     {
                         DeleteRun(run)
+                        --i
                     }
                 }
                 RunList_Refresh()
