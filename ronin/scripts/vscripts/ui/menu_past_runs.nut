@@ -60,13 +60,12 @@ void function InitPastRunsMenu()
 
         #if PC_PROG
             AddDialogButton( dialogData, "Yes", void function() : () {
-                for (int i = GetRunCount() - 1; i >= 0; i++)
+                for (int i = GetRunCount() - 1; i >= 0; i--)
                 {
                     Run run = GetRunByIndex(i)
                     if (!run.isPB && i >= 50 && run.goldSplits.len() <= 0)
                     {
                         DeleteRun(run)
-                        --i
                     }
                 }
                 RunList_Refresh()
