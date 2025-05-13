@@ -27,8 +27,13 @@ void function SRM_InitSettingsMenu()
 	)
 	SRM_SetupNormalButton( "SwchForceMoonboots", "Force Moonboots", lbIllegalNote+"`1Forcefully enables moonboots.\n\n`2Does not work on NCS saves" )
 	AddButtonEventHandler(
-		SRM_SetupNormalButton( "BtnPracticeWarps", "Timer Settings", "Settings that control the behavior of the timer." ),
+		SRM_SetupNormalButton( "BtnTimerSettings", "Timer Settings", "Settings that control the behavior of the timer." ),
 		UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "SRM_TimerSettingsMenu" ) )
+	)
+
+	AddButtonEventHandler(
+		SRM_SetupNormalButton( "BtnPracticeWarps", "Practice Warps", "Warp to dev start points throughout the game to practice segments" ),
+		UIE_CLICK, AdvanceMenuEventHandler( GetMenu( "SRM_PracticeWarpsMenu" ) )
 	)
 
 	// Utility

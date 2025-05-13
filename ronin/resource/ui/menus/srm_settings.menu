@@ -214,14 +214,26 @@ resource/ui/menus/srm_settings.menu
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp				SwchShowPos
-			navDown				BtnPracticeWarps
+			navDown				BtnTimerSettings
+		}
+
+		BtnTimerSettings
+		{
+			ControlName				RuiButton
+			InheritProperties		WideButton
+			pin_to_sibling			SwchPracticeMode
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchPracticeMode
+			navDown					BtnPracticeWarps
+
 		}
 
 		BtnPracticeWarps
 		{
 			ControlName				RuiButton
 			InheritProperties		WideButton
-			pin_to_sibling			SwchPracticeMode
+			pin_to_sibling			BtnTimerSettings
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp				SwchPracticeMode
@@ -254,7 +266,7 @@ resource/ui/menus/srm_settings.menu
 			ControlName				ImagePanel
 			InheritProperties		SubheaderBackground
 			xpos					96
-			ypos 					640
+			ypos 					680
 		}
 		LblUtilitySubheaderText
 		{
