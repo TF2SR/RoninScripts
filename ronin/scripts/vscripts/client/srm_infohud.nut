@@ -34,6 +34,7 @@ void function SRM_InfoHUD_Init()
     RegisterConVar( "host_timescale", 1.0 )
     RegisterConVar( "player_respawnInputDebounceDuration", 0.5 )
     RegisterConVar("sp_music", 1.0)
+    RegisterConVar("ronin_velocitysave", 0.0)
 
     screenSize = GetScreenSize()
 

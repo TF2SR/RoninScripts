@@ -307,10 +307,8 @@ void function CodeCallback_OnLoadSaveGame()
 	if ( !IsAlive( player ) )
 		return
 
-/* TODO TAS/CONVAR
-	if ( !GetConVarInt("srm_practice_mode") && !GetConVarInt("fzzy_enableTas") )
-	*/
-	if (true)
+	// still broken with NCS :3
+	if (!GetConVarInt("ronin_velocitysave"))
 	{
 		ClearPlayerVelocityOnContext( player )
 	}
