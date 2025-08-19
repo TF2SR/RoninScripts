@@ -165,7 +165,7 @@ void function UpdateTimerHUD()
         {
             isNCSActivated = true
             if (GetRunCategory() == "ANY%")
-                RunUIScript("AddTime", 207210000) // 3:22.21
+                RunUIScript("AddTime", 202210000) // 3:22.21
             // balls.
             GetLocalClientPlayer().ClientCommand("load fastany1")
         }
