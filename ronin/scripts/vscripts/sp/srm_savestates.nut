@@ -25,6 +25,7 @@ thread void function() : ()
         player.SetOrigin(file.position)
         player.SetAngles(file.angles)
         player.SetVelocity(file.velocity)
+        player.TouchGround()
         return true
     }
 
