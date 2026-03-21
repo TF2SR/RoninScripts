@@ -164,8 +164,8 @@ void function UpdateTimerHUD()
         if (BT7274_ActivateNCS() && !isNCSActivated)
         {
             isNCSActivated = true
-            //if (GetRunCategory() == "ANY%")
-                RunUIScript("AddTime", 207210000) // 3:22.21
+            if (GetRunCategory() == "ANY%")
+                RunUIScript("AddTime", 202210000) // 3:22.21
             // balls.
             GetLocalClientPlayer().ClientCommand("load fastany1")
         }
