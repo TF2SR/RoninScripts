@@ -28,7 +28,7 @@ void function LoadingScreen()
         }
         UpdateTimerHUD(timer)
 
-        Hud_SetText(timeLabel, GetUnixTimestamp().tostring())
+        Hud_SetText(timeLabel, GetUnixTimestamp().tostring() + "\n" + GetSdkVersion())
         //print(Hud_GetUTF8Text(modeLabel) + "HELO")
 
         //Hud_SetVisible(Hud_GetChild(loadingMenu, "LoadingTip"), true)
