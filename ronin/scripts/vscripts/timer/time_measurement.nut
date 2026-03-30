@@ -214,7 +214,13 @@ bool function ShouldStartCounting()
     {
         ResetTime()
     }
+    // only start if:
+    // exiting a loading screen and a run is not ended
+    // category is IL
+    // timer is not zero (mid run)
+    // timer is zero, and starting from new game (gauntlet, start point 0)
     bool result = !IsInLoadingScreen() && GetEngineTick() > 23 && GetActiveLevel() != "" && !file.runEnded
+                  && ((file.time.microseconds != 0 && file.time.seconds != 0) || IsILCategory(GetRunCategory()) || (GetActiveLevel() == "sp_training" && GetConVarInt("sp_currentstartpoint") == 0))
     if (result)
     {
         print("\n\n\nstart timer!!!")
