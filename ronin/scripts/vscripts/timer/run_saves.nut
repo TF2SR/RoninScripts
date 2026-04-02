@@ -15,9 +15,9 @@ global function SplitArrayToTableArray
 global function IsSplitBetter
 global function GetGoldSplitsForCategory
 global function SaveGoldSplits
-global function GetPBRunByIndex
-global function GetPBRunIndex
-global function GetPBRunCount
+global function GetFilteredRunByIndex
+global function GetFilteredRunIndex
+global function GetFilteredRunCount
 
 table<string, string> defaultSplitNames = {
     sp_training = "The Gauntlet",
@@ -44,7 +44,7 @@ table<string, string> defaultSplitNames = {
 struct
 {
     array<Run> runs
-    array<Run> pbRuns
+    array<Run> filteredRuns
     table<string, int> bestRuns
     table goldSplits
     table splitNames
@@ -116,12 +116,18 @@ void function WaitForAllFilesToLoad( array<string> runFiles )
     file.runs.sort(RunCompareLatest)
 
     foreach (Run run in file.runs) {
-        if (run.isPB) {
-            file.pbRuns.append(run)
-        }
+        file.filteredRuns.append(run)
     }
 
     PastRuns_RunsFinishedLoading()
+}
+
+void function RegenerateFilteredRuns() {
+    file.filteredRuns.clear()
+    foreach (Run run in file.runs) {
+        
+        file.filteredRuns.append(run)
+    }
 }
 
 int function RunsBeingLoaded()
@@ -214,14 +220,14 @@ Run function GetRunByIndex(int index)
     return file.runs[index]
 }
 
-int function GetPBRunCount()
+int function GetFilteredRunCount()
 {
-    return file.pbRuns.len()
+    return file.filteredRuns.len()
 }
 
-Run function GetPBRunByIndex(int index)
+Run function GetFilteredRunByIndex(int index)
 {
-    return file.pbRuns[index]
+    return file.filteredRuns[index]
 }
 
 void function SaveRunData( Duration time, array<Duration> splits, table facts, bool isValid )
@@ -378,9 +384,9 @@ int function GetRunIndex(Run run)
     return file.runs.find(run)
 }
 
-int function GetPBRunIndex(Run run)
+int function GetFilteredRunIndex(Run run)
 {
-    return file.pbRuns.find(run)
+    return file.filteredRuns.find(run)
 }
 
 int function RunCompareLatest( Run a, Run b )

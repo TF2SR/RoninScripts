@@ -235,7 +235,7 @@ void function PastRuns_OnRunPanelClick( var button )
 {
     var panel = Hud_GetParent( button )
     int index = expect int(panel.s.index)
-    PastRuns_DisplayRun(GetPBRunByIndex(index + file.runListScrollOffset))
+    PastRuns_DisplayRun(GetFilteredRunByIndex(index + file.runListScrollOffset))
 }
 
 void function RunList_Refresh()
@@ -246,10 +246,10 @@ void function RunList_Refresh()
     {
         var runSquare = Hud_GetChild(file.menu, "RunPanel" + i)
         if (/*only sort if by PB*/ true) {
-            Hud_SetVisible(runSquare, (i + file.runListScrollOffset) < GetPBRunCount())
-            if ((i + file.runListScrollOffset) < GetPBRunCount())
+            Hud_SetVisible(runSquare, (i + file.runListScrollOffset) < GetFilteredRunCount())
+            if ((i + file.runListScrollOffset) < GetFilteredRunCount())
             {
-                RunPanel_DisplayRun(runSquare, GetPBRunByIndex(i + file.runListScrollOffset))
+                RunPanel_DisplayRun(runSquare, GetFilteredRunByIndex(i + file.runListScrollOffset))
             }
         } else {
             Hud_SetVisible(runSquare, (i + file.runListScrollOffset) < GetRunCount())
@@ -332,7 +332,7 @@ string function GetTimeAsString(int timestamp)
 
 void function PastRuns_DisplayRun(Run run)
 {
-    file.selectedRunIndex = GetPBRunIndex(run)
+    file.selectedRunIndex = GetFilteredRunIndex(run)
     printt("run index", file.selectedRunIndex)
 
     var deleteButton = Hud_GetChild(file.menu, "DeleteRunButton")
