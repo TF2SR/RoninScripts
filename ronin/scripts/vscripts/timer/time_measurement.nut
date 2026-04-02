@@ -15,6 +15,7 @@ global function GetTimeDelta
 global function GetSplitIndex
 global function PreviousDelta
 global function PreviousLevelDelta
+global function SplitWithName
 
 struct
 {
@@ -170,6 +171,7 @@ void function MeasureTime()
             // dont care
         }
 
+        /*
         if (GetConVarInt("sp_currentstartpoint") > file.curStartPoint && IsILCategory(GetRunCategory()))
         {
             printt("split!  ")
@@ -177,6 +179,7 @@ void function MeasureTime()
             file.levelTime.name = "Startpoint " + GetConVarInt("sp_currentstartpoint")
             file.curStartPoint = GetConVarInt("sp_currentstartpoint")
         }
+            */
 
         foreach (void functionref() callback in file.onTimerUpdatedCallbacks)
             callback()
@@ -312,6 +315,23 @@ void function Split()
     levelTime.seconds = 0
     levelTime.microseconds = 0
     file.levelTime = levelTime
+}
+
+void function SplitWithName(string name) {
+    file.levelTime.name = name
+    Split()
+    // kinda a hacky way to name the last split
+    file.levelTime.name = GetILLastSplitName()
+}
+
+string function GetILLastSplitName() {
+    switch (GetRunCurrentLevel()) {
+        case "sp_crashsite":
+            return "No U"
+        case "sp_sewers1":
+            return "Kane"
+    }
+    return "idk"
 }
 
 void function ResetTime()

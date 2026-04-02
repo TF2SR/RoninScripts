@@ -181,6 +181,39 @@ void function UpdateTimerHUD()
                 RunUIScript("SetRunOver")
                 isRunOver = true
             }
+
+            if (GetMapName() == "sp_crashsite") {
+                BT7274IL_CheckBattery1()
+                BT7274IL_CheckBattery2()
+            }
+
+            if (GetMapName() == "sp_sewers1" /* && subsplits enabled */)
+            {
+                BloodAndRustIL_StartCallbacks()
+                BloodAndRustIL_CheckDoorTrigger()
+                BloodAndRustIL_CheckEmbark()
+            }
+
+            if (GetMapName() == "sp_boomtown_end") {
+                IntoTheAbyss3IL_CheckEmbark()
+            }
+
+            if (GetMapName() == "sp_hub_timeshift") {
+                EffectAndCause1IL_CheckHelmet()
+            }
+
+            if (GetMapName() == "sp_timeshift_spoke02") {
+                EffectAndCause2IL_StartCallbacks()
+                EffectAndCause2IL_CheckDialogue()
+                EffectAndCause2IL_CheckHellroom()
+                EffectAndCause2IL_CheckVent()
+            }
+
+            if (GetMapName() == "sp_beacon_spoke0") {
+                Beacon2IL_Init()
+                Beacon2IL_CheckDeathWarp()
+                Beacon2IL_CheckHeatsink()
+            }
         }
         if (GetMapName() == "sp_skyway_v1" && FoldWeapon_HasLevelEnded() && !isRunOver)
         {
@@ -358,6 +391,348 @@ bool function FoldWeapon_HasLevelEnded()
     return origin.x < -10000 && origin.y > 0 && IsInCutscene()
 }
 
+// subsplits lol
+// BT
+bool btGrabbedBattery1 = false
+void function BT7274IL_CheckBattery1() {
+    if (!btGrabbedBattery1) {
+        entity player = GetLocalClientPlayer()
+        if (!IsValid( player ) || !IsAlive( player ))
+            return
+
+        vector origin = player.GetOrigin()
+        if (DistanceSqr(origin, < -4568, -3669, 2110 >) < 25000 && IsInCutscene()){
+            RunUIScript("SplitWithName", "Battery 1")
+            btGrabbedBattery1 = true
+        }
+    }
+}
+
+bool btGrabbedBattery2 = false
+void function BT7274IL_CheckBattery2() {
+    if (!btGrabbedBattery2) {
+        entity player = GetLocalClientPlayer()
+        if (!IsValid( player ) || !IsAlive( player ))
+            return
+
+        vector origin = player.GetOrigin()
+        if (DistanceSqr(origin, < -4111, 4583, 2330 >) < 25000 && IsInCutscene()){
+            RunUIScript("SplitWithName", "Battery 2")
+            btGrabbedBattery2 = true
+        }
+    }
+}
+
+
+// BNR
+bool bnrCallbacksStarted = false
+void function BloodAndRustIL_StartCallbacks() {
+    // check if SewerSplit_gate_switch is used by the player
+    if (!bnrCallbacksStarted) {
+        bnrCallbacksStarted = true
+        AddCallback_UseEntGainFocus(BloodAndRustIL_Focus)
+        AddCallback_UseEntLoseFocus(BloodAndRustIL_LoseFocus)
+        RegisterConCommandTriggeredCallback("+use", BloodAndRustIL_OnUse)
+    }
+}
+
+bool bnrButton1InFocus = false
+bool bnrButton2InFocus = false
+void function BloodAndRustIL_Focus(entity thingy)
+{
+    vector origin = thingy.GetOrigin()
+    if (thingy == GetEntByScriptName("SewerSplit_gate_switch")) {
+        bnrButton1InFocus = true
+    }
+    if (int(origin.x) == -2720 && int(origin.y) == -160 && int(origin.z) == 914) { // pos of button2
+        bnrButton2InFocus = true
+    }
+}
+void function BloodAndRustIL_LoseFocus(entity thingy)
+{
+    vector origin = thingy.GetOrigin()
+    if (thingy == GetEntByScriptName("SewerSplit_gate_switch")) {
+        bnrButton1InFocus = false
+    }
+    if (int(origin.x) == -2720 && int(origin.y) == -160 && int(origin.z) == 914) {
+        bnrButton2InFocus = false
+    }
+}
+
+void function BloodAndRustIL_OnUse(entity player) {
+    if (bnrButton1InFocus) {
+        // whatever command to split
+        RunUIScript("SplitWithName", "Button 1")
+    }
+    if (bnrButton2InFocus) {
+        RunUIScript("SplitWithName", "Button 2")
+    }
+}
+
+bool bnrDoorTriggered = false
+void function BloodAndRustIL_CheckDoorTrigger() {
+    if (!bnrDoorTriggered) {
+        entity player = GetLocalClientPlayer()
+        if (!IsValid( player ) || !IsAlive( player ))
+            return
+
+        vector origin = player.GetOrigin()
+
+        if (origin.y <= -226 && origin.x <= -827 && origin.z > 450) {
+            printt("Split Door Trigger please")
+            RunUIScript("SplitWithName", "Door Trigger")
+            bnrDoorTriggered = true
+        }
+    }
+
+}
+
+bool bnrHasEmbarked = false
+void function BloodAndRustIL_CheckEmbark() {
+    if (!bnrHasEmbarked) {
+        entity player = GetLocalClientPlayer()
+        if (!IsValid( player ) || !IsAlive( player ))
+            return
+
+        if(player.GetCinematicEventFlags() & CE_FLAG_EMBARK) {
+            RunUIScript("SplitWithName", "Embark")
+            bnrHasEmbarked = true
+        }
+    }
+}
+
+// ITA 2
+bool ita3HasEmbarked = false
+void function IntoTheAbyss3IL_CheckEmbark() {
+    if(!ita3HasEmbarked) {
+        entity player = GetLocalClientPlayer()
+        if (!IsValid( player ) || !IsAlive( player ))
+            return
+
+        if(player.GetCinematicEventFlags() & CE_FLAG_EMBARK) {
+            RunUIScript("SplitWithName", "Embark")
+            ita3HasEmbarked = true
+        }
+    }
+}
+
+// ENC 1
+bool enc1HasHelmet = false
+void function EffectAndCause1IL_CheckHelmet() {
+    if(!enc1HasHelmet) {
+        entity player = GetLocalClientPlayer()
+        if (!IsValid( player ) || !IsAlive( player ))
+            return
+
+        if (DistanceSqr(player.GetOrigin(), < 997, -2718, -860>) < 25000 && IsInCutscene()) {
+            enc1HasHelmet = true
+            thread void function(): (){
+                wait 1.8
+                RunUIScript("SplitWithName", "Helmet")
+            }()
+        }
+    }
+}
+
+// ENC 2
+bool enc2Dialogue = false
+void function EffectAndCause2IL_CheckDialogue() {
+    if(!enc2Dialogue) {
+        entity player = GetLocalClientPlayer()
+        if (!IsValid( player ) || !IsAlive( player ))
+            return
+
+        vector origin = player.GetOrigin()
+
+        if (origin.x > 8755 && origin.x < 9655 && origin.y < -4528 && origin.z > 5000) {
+            enc2Dialogue = true
+            thread void function(): (){
+                wait 3
+                RunUIScript("SplitWithName", "Anderson 1")
+            }()
+        }
+
+    }
+}
+
+bool enc2Hellroom = false
+void function EffectAndCause2IL_CheckHellroom() { // start of hellroom, common split name is "Anderson 2"
+    if (!enc2Hellroom) {
+        entity player = GetLocalClientPlayer()
+        if (!IsValid( player ) || !IsAlive( player ))
+            return
+
+        vector origin = player.GetOrigin()
+
+        if (DistanceSqr(<origin.x, origin.y, 0>, <10708, -2263, 0>) < 15000) { //fzzycode ignores z here so I guess I will too, I don't want to have to search for the Z axis
+            enc2Hellroom = true
+            RunUIScript("SplitWithName", "Anderson 2")
+        }
+    }
+}
+
+bool enc2Vent = false
+void function EffectAndCause2IL_CheckVent() { // SUS. end of hellroom, bottom of vent. common split name is "hellroom"
+    if (!enc2Vent) {
+        entity player = GetLocalClientPlayer()
+        if (!IsValid( player ) || !IsAlive( player ))
+            return
+
+        vector origin = player.GetOrigin()
+
+        if (origin.z < -1200 && IsInCutscene()) {
+            enc2Vent = true
+            RunUIScript("SplitWithName", "Hellroom")
+        }
+    }
+}
+
+bool enc2callbacks = false
+void function EffectAndCause2IL_StartCallbacks() {
+    if (!enc2callbacks) {
+        enc2callbacks = true
+        AddCallback_UseEntGainFocus(EffectAndCause2IL_Focus)
+        AddCallback_UseEntLoseFocus(EffectAndCause2IL_LoseFocus)
+        RegisterConCommandTriggeredCallback("+use", EffectAndCause2IL_OnUse)
+    }
+}
+
+bool enc2Button1InFocus = false
+bool enc2Button2InFocus = false
+void function EffectAndCause2IL_Focus(entity thingy) {
+    vector origin = thingy.GetOrigin()
+
+    printt("In Focus Origin: ", origin)
+    if (int(origin.x) == 2845 && int(origin.y) == -3361 && int(origin.z) == 11015) {
+        enc2Button1InFocus = true
+    }
+    if (int(origin.x) == 6256 && int(origin.y) == -3552 && int(origin.z) == 11834) {
+        enc2Button2InFocus = true
+    }
+}
+
+void function EffectAndCause2IL_LoseFocus(entity thingy) {
+    vector origin = thingy.GetOrigin()
+
+    if (int(origin.x) == 2845 && int(origin.y) == -3361 && int(origin.z) == 11015) {
+        enc2Button1InFocus = false
+    }
+    if (int(origin.x) == 6256 && int(origin.y) == -3552 && int(origin.z) == 11834) {
+        enc2Button2InFocus = false
+    }
+
+}
+
+void function EffectAndCause2IL_OnUse(entity player) {
+    if (enc2Button1InFocus) {
+        RunUIScript("SplitWithName", "Button 1")
+    }
+    if (enc2Button2InFocus) {
+        RunUIScript("SplitWithName", "Button 2")
+    }
+}
+
+// Beacon 2
+vector oldOrigin
+bool beacon2Started = false
+void function Beacon2IL_Init() {
+    if (!beacon2Started) {
+
+        AddCallback_UseEntGainFocus(Beacon2IL_Focus)
+        AddCallback_UseEntLoseFocus(Beacon2IL_LoseFocus)
+        RegisterConCommandTriggeredCallback("+use", Beacon2IL_OnUse)
+
+        beacon2Started = true
+        entity player = GetLocalClientPlayer()
+        if (!IsValid( player ) || !IsAlive( player ))
+            return
+
+        vector origin = player.GetOrigin()
+        oldOrigin = origin // resetting it here because I need it in two places lol
+    }
+}
+
+bool b2ButtonInFocus = false
+bool b2ArcToolInFocus = false
+void function Beacon2IL_Focus(entity thingy) {
+    vector origin = thingy.GetOrigin()
+    printt(string(thingy.GetModelName()))
+    if (int(origin.x) == 2688 && int(origin.y) == 10387 && int(origin.z) == 1059) {
+        b2ButtonInFocus = true
+    }
+
+    if(string(thingy.GetModelName()) == "$\"models/weapons/arc_tool_sp/w_arc_tool_sp.mdl\"") {
+        b2ArcToolInFocus = true
+    }
+}
+
+void function Beacon2IL_LoseFocus(entity thingy) {
+    vector origin = thingy.GetOrigin()
+    if (int(origin.x) == 2688 && int(origin.y) == 10387 && int(origin.z) == 1059) {
+        b2ButtonInFocus = false
+    }
+
+    if(string(thingy.GetModelName()) == "$\"models/weapons/arc_tool_sp/w_arc_tool_sp.mdl\"") {
+        b2ArcToolInFocus = false
+    }
+
+}
+
+void function Beacon2IL_OnUse(entity player) {
+    if (b2ButtonInFocus) {
+        RunUIScript("SplitWithName", "Button")
+    }
+
+    if (b2ArcToolInFocus) {
+        RunUIScript("SplitWithName", "Arc Tool Get")
+    }
+}
+
+bool b2Heatsink = false
+void function Beacon2IL_CheckHeatsink() {
+    entity player = GetLocalClientPlayer()
+    if (!IsValid( player ) || !IsAlive( player ))
+        return
+
+    vector origin = player.GetOrigin()
+
+    if (!b2Heatsink) {
+
+        if (oldOrigin.x > -2113 && origin.x <= -2113 && origin.y < 11800 && origin.y > 10100) {
+            RunUIScript("SplitWithName", "Heatsink Trigger")
+        }
+    }
+
+    oldOrigin = origin // resetting it here because I need it in two places lol
+}
+
+bool b2DeathWarp = false
+void function Beacon2IL_CheckDeathWarp() {
+    if (!b2DeathWarp) {
+        entity player = GetLocalClientPlayer()
+        if (!IsValid( player ) || !IsAlive( player ))
+            return
+
+        vector origin = player.GetOrigin()
+        if (DistanceSqr(<origin.x, origin.y, 0>, <4019, 4233, 0>) < 500 && DistanceSqr(origin, oldOrigin) > 20000) {
+            b2DeathWarp = true
+            RunUIScript("SplitWithName", "Deathwarp")
+        }
+    }
+}
+
+// Beacon 3
+bool b3Module = false
+void function Beacon3IL_CheckModule() {
+
+}
+
+// Trial By Fire
+
+
+// ================================
+// REST OF THE FUNCTIONS
+// ================================
 
 void function ResetStartPointValue( entity player )
 {
