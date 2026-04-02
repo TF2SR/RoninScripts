@@ -213,6 +213,7 @@ void function SPDialogueInit()
 		RegisterSignal( "DialogueChoiceTimeout" )
 		RegisterSignal( "AbortConversationImmediately" )
 		RegisterSignal( "AbortCurrentDialogue" )
+		RegisterSignal( "Ronin_DialoguePlaying" )
 		RegisterConCommandTriggeredCallback( "+scriptCommand1", Pressed_Choice1 )
 		RegisterConCommandTriggeredCallback( "+scriptCommand2", Pressed_Choice2 )
 		PrecacheParticleSystem( BT_EYE_GLOW )
@@ -747,6 +748,12 @@ entity function GetBuddyTitanDialogueEnt( entity buddyTitan )
 		if ( !queueItem.success )
 			return
 
+		// RONIN - DIALOGUE SIGNALS
+		table signalData = {
+			name = data.name
+		}
+		Signal( level, "Ronin_DialoguePlaying", signalData )
+
 		/*
 		printt( "#################################" )
 		printt( "Playing Dialogue" )
@@ -978,6 +985,12 @@ entity function GetBuddyTitanDialogueEnt( entity buddyTitan )
 			ruiTable.waveformRUI = null
 			if ( data.waveformName != "" )
 				ruiTable.waveformRUI = CreateWaveform( data.waveformName, data.waveformTeam, duration )
+
+			// RONIN - DIALOGUE SIGNALS
+			table signalData = {
+				name = data.name
+			}
+			Signal( level, "Ronin_DialoguePlaying", signalData )
 
 			EmitSoundOnEntity( speaker, data.btStartAlias )
 			wait duration

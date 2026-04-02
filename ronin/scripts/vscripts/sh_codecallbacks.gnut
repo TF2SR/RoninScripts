@@ -301,8 +301,9 @@ bool function CodeCallback_OnUseEntity( entity player, entity ent )
 		}
 	}
 
-	Signal( ent, "OnPlayerUse", { player = player } )
 #endif // SERVER
+	// RONIN - emit signal for whenever we interact with somethign
+	Signal( ent, "OnPlayerUse", { player = player } )
 
 // #if CLIENT
 // 	if ( ent.IsTitan() && player == ent && IsSingleplayer() )
