@@ -54,7 +54,7 @@ void function Carousel_SetValueDisplay( var button, string val )
     var rightButton = Hud_GetChild( button, "ButtonRight" )
     printt(Hud_GetAbsX(valueLabel), Hud_GetWidth(valueLabel))
     Hud_SetText( valueLabel, val )
-    Squircle_SetSize(bg, Hud_GetWidth( valueLabel ) + 12, Hud_GetHeight(bg) )
+    Squircle_SetSize(bg, Hud_GetWidth( valueLabel ) + int(ContentScaledX(12)), Hud_GetHeight(bg) )
     printt(Hud_GetAbsX(valueLabel), Hud_GetWidth(valueLabel))
 
     int labelCenter = Hud_GetAbsX(valueLabel) + (Hud_GetWidth(valueLabel) / 2) - Hud_GetAbsX( button )

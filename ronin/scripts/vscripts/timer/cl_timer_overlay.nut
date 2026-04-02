@@ -9,6 +9,7 @@ global function AddCallback_TrackingStarted
 global function Facts_DialoguePlayed
 global function GetCrosshairWallNormal
 global function AddCallback_DialoguePlayed
+global function TimerStarted
 
 global const float SP_LEVEL_TRANSITION_FADETIME = 1.5
 global const float SP_LEVEL_TRANSITION_HOLDTIME = 3.0
@@ -53,6 +54,13 @@ void function Delayed_TimerOverlay_Init()
 	RegisterConCommandTriggeredCallback( "ingamemenu_activate", HideTimer )
     thread UpdateTimerHUD()
 	//RegisterConCommandTriggeredCallback( "reload", ResetStartPointValue )
+
+}
+
+void function TimerStarted( int seconds, int microseconds)
+{
+    entity player =GetLocalClientPlayer()
+    printt(format("%i.%03i", seconds, microseconds))
 }
 
 void function HideTimer( entity player = null )
@@ -65,7 +73,7 @@ void function SetTimerVisible(bool visible)
 {
     if (file.timer == null)
         return
-    Hud_SetVisible( file.timer, visible )
+    Hud_SetVisible( file.timer, visible && IsSingleplayer() )
 }
 
 void function SetTime( int seconds, int microseconds, int levelSeconds, int levelMicroseconds, bool runInvalidated, string delta, string levelDelta, string previousDelta, string previousLevelDelta )

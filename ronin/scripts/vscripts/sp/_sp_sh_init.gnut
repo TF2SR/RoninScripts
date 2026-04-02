@@ -67,6 +67,7 @@ void function Shared_SP_Init()
 	Server_SP_Init()
 	#elseif CLIENT
 	Client_SP_Init()
+	TimerOverlay_Init()
 	#endif
 }
 

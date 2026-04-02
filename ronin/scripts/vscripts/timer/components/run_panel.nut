@@ -43,7 +43,7 @@ void function RunPanel_DisplayRun( var panel, Run run )
     int x = Hud_GetX(categoryBG) - Hud_GetX(categoryName)
     
     Hud_SetText(categoryName, categoryDisplayName.toupper())
-    Squircle_SetSize(categoryBG, abs(x) * 2 + Hud_GetTextWidth(categoryName), 24)
+    Squircle_SetSize(categoryBG, abs(x) * 2 + Hud_GetTextWidth(categoryName), int(ContentScaledY(24)))
     Squircle_SetColor(categoryBG, int(color.x), int(color.y), int(color.z), 255)
 }
 

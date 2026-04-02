@@ -17,6 +17,8 @@ global function PreviousDelta
 global function PreviousLevelDelta
 global function SplitWithName
 
+const array<string> CUSTOM_LEVEL_SPLITS = ["sp_sewers1"]
+
 struct
 {
     bool runInvalidated
@@ -172,14 +174,15 @@ void function MeasureTime()
         }
 
         /*
-        if (GetConVarInt("sp_currentstartpoint") > file.curStartPoint && IsILCategory(GetRunCategory()))
+        if (GetConVarInt("sp_currentstartpoint") > file.curStartPoint && IsILCategory(GetRunCategory())
+        && !CUSTOM_LEVEL_SPLITS.contains(GetRunCurrentLevel()))
         {
             printt("split!  ")
             Split()
             file.levelTime.name = "Startpoint " + GetConVarInt("sp_currentstartpoint")
             file.curStartPoint = GetConVarInt("sp_currentstartpoint")
         }
-            */
+        */
 
         foreach (void functionref() callback in file.onTimerUpdatedCallbacks)
             callback()
@@ -235,6 +238,7 @@ bool function ShouldStartCounting()
         {
             file.levelTime.name = "Startpoint " + file.curStartPoint
         }
+        RunClientScript("TimerStarted", file.time.seconds, file.time.microseconds )
     }
     return result
 }
@@ -337,7 +341,7 @@ string function GetILLastSplitName() {
 void function ResetTime()
 {
     var stackInfos = getstackinfos( 2 )
-    printt("reset!  " + stackInfos["src"] + ":" + stackInfos["line"])
+    //printt("reset!  " + stackInfos["src"] + ":" + stackInfos["line"])
     file.runInvalidated = false
     file.time.seconds = 0
     file.time.microseconds = 0
