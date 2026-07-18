@@ -401,6 +401,27 @@ bool function FoldWeapon_HasLevelEnded()
 
 // subsplits lol
 // BT
+
+void function IL_FindButtons(entity thingy) {
+    //bnr
+    if (thingy.kv.scr_flagToggle == "CorkscrewRoom_OpenExitDoor") {
+        thread BloodAndRustIL_CheckButton2(thingy)
+    }
+
+    //enc2
+    if (thingy.kv.scr_flagToggle == "open_door_elevator_fight_hallway_both") {
+        thread EffectAndCause2IL_CheckButton1(thingy)
+    }
+
+    if (thingy.kv.scr_flagToggle == "open_door_elevator_top_lab") {
+        thread EffectAndCause2IL_CheckButton2(thingy)
+    }
+
+    if (thingy.kv.scr_flagToggle == "Fan1Disable") {
+        thread Beacon2IL_CheckButton(thingy)
+    }
+}
+
 bool btGrabbedBattery1 = false
 void function BT7274IL_CheckBattery1() {
     if (!btGrabbedBattery1) {
@@ -433,50 +454,6 @@ void function BT7274IL_CheckBattery2() {
 
 
 // BNR
-bool bnrCallbacksStarted = false
-void function BloodAndRustIL_StartCallbacks() {
-    // check if SewerSplit_gate_switch is used by the player
-    if (!bnrCallbacksStarted) {
-        bnrCallbacksStarted = true
-        AddCallback_UseEntGainFocus(BloodAndRustIL_Focus)
-        AddCallback_UseEntLoseFocus(BloodAndRustIL_LoseFocus)
-        RegisterConCommandTriggeredCallback("+use", BloodAndRustIL_OnUse)
-    }
-}
-
-bool bnrButton1InFocus = false
-bool bnrButton2InFocus = false
-void function BloodAndRustIL_Focus(entity thingy)
-{
-    vector origin = thingy.GetOrigin()
-    if (thingy == GetEntByScriptName("SewerSplit_gate_switch")) {
-        bnrButton1InFocus = true
-    }
-    if (int(origin.x) == -2720 && int(origin.y) == -160 && int(origin.z) == 914) { // pos of button2
-        bnrButton2InFocus = true
-    }
-}
-void function BloodAndRustIL_LoseFocus(entity thingy)
-{
-    vector origin = thingy.GetOrigin()
-    if (thingy == GetEntByScriptName("SewerSplit_gate_switch")) {
-        bnrButton1InFocus = false
-    }
-    if (int(origin.x) == -2720 && int(origin.y) == -160 && int(origin.z) == 914) {
-        bnrButton2InFocus = false
-    }
-}
-
-void function BloodAndRustIL_OnUse(entity player) {
-    if (bnrButton1InFocus) {
-        // whatever command to split
-        RunUIScript("SplitWithName", "Button 1")
-    }
-    if (bnrButton2InFocus) {
-        RunUIScript("SplitWithName", "Button 2")
-    }
-}
-
 bool bnrDoorTriggered = false
 void function BloodAndRustIL_CheckDoorTrigger() {
     if (!bnrDoorTriggered) {
@@ -509,7 +486,22 @@ void function BloodAndRustIL_CheckEmbark() {
     }
 }
 
-// ITA 2
+void function BloodAndRustIL_CheckButton1() {
+    thread void function(): (){
+        WaitSignal("OnPlayerUse", GetEntByScriptName("SewerSplit_gate_switch"))
+
+        RunUIScript("SplitWithName", "Button 1")
+    }()
+}
+
+
+void function BloodAndRustIL_CheckButton2(thingy) {
+    thingy.WaitSignal("OnPlayerUse")
+
+    RunUIScript("SplitWithName", "Button 2")
+}
+
+// ITA 3
 bool ita3HasEmbarked = false
 void function IntoTheAbyss3IL_CheckEmbark() {
     if(!ita3HasEmbarked) {
@@ -523,6 +515,7 @@ void function IntoTheAbyss3IL_CheckEmbark() {
         }
     }
 }
+
 
 // ENC 1
 bool enc1HasHelmet = false
@@ -595,50 +588,7 @@ void function EffectAndCause2IL_CheckVent() { // SUS. end of hellroom, bottom of
     }
 }
 
-bool enc2callbacks = false
-void function EffectAndCause2IL_StartCallbacks() {
-    if (!enc2callbacks) {
-        enc2callbacks = true
-        AddCallback_UseEntGainFocus(EffectAndCause2IL_Focus)
-        AddCallback_UseEntLoseFocus(EffectAndCause2IL_LoseFocus)
-        RegisterConCommandTriggeredCallback("+use", EffectAndCause2IL_OnUse)
-    }
-}
-
-bool enc2Button1InFocus = false
-bool enc2Button2InFocus = false
-void function EffectAndCause2IL_Focus(entity thingy) {
-    vector origin = thingy.GetOrigin()
-
-    printt("In Focus Origin: ", origin)
-    if (int(origin.x) == 2845 && int(origin.y) == -3361 && int(origin.z) == 11015) {
-        enc2Button1InFocus = true
-    }
-    if (int(origin.x) == 6256 && int(origin.y) == -3552 && int(origin.z) == 11834) {
-        enc2Button2InFocus = true
-    }
-}
-
-void function EffectAndCause2IL_LoseFocus(entity thingy) {
-    vector origin = thingy.GetOrigin()
-
-    if (int(origin.x) == 2845 && int(origin.y) == -3361 && int(origin.z) == 11015) {
-        enc2Button1InFocus = false
-    }
-    if (int(origin.x) == 6256 && int(origin.y) == -3552 && int(origin.z) == 11834) {
-        enc2Button2InFocus = false
-    }
-
-}
-
-void function EffectAndCause2IL_OnUse(entity player) {
-    if (enc2Button1InFocus) {
-        RunUIScript("SplitWithName", "Button 1")
-    }
-    if (enc2Button2InFocus) {
-        RunUIScript("SplitWithName", "Button 2")
-    }
-}
+// TODO: add enc2 button functions
 
 // Beacon 2
 vector oldOrigin
@@ -696,6 +646,22 @@ void function Beacon2IL_OnUse(entity player) {
     }
 }
 
+void function Beacon2IL_CheckButton(entity thingy) {
+    thingy.WaitSignal("OnPlayerUse")
+
+    RunUIScript("SplitWithName", "Button")
+}
+
+void function Beacon2IL_CheckArcTool() {
+    thread void function(): (){
+        WaitSignal("OnPlayerUse", )
+
+        RunUIScript("SplitWithName", "Arc Tool Get")
+        player.GetMainWeapons() // returns array
+        weapon.GetWeaponClassName() == "sp_weapon_arc_tool"
+    }()
+}
+
 bool b2Heatsink = false
 void function Beacon2IL_CheckHeatsink() {
     entity player = GetLocalClientPlayer()
@@ -730,12 +696,28 @@ void function Beacon2IL_CheckDeathWarp() {
 }
 
 // Beacon 3
-bool b3Module = false
-void function Beacon3IL_CheckModule() {
-
+bool b3Module1 = false
+void function Beacon3IL_CheckModule1() {
+    if (!b3Module1) {
+        if (DistanceSqr(<origin.x, origin.y, 0>, <-))
+    }
 }
 
 // Trial By Fire
+void function TrialByFire_CheckDialogue() {
+    thread void function (): (){
+        while (true) {
+            table results = level.WaitSignal("Ronin_DialoguePlaying") 
+
+            if (results.name == "SARAH_COOPER_WITH_ME") {
+                RunUIScript("SplitWithName", "Door")
+            }
+            if (results.name == "SARAH_GOING_UP") {
+                RunUIScript("SplitWithName", "Elevator")
+            }
+        }
+    }
+}
 
 
 // ================================
