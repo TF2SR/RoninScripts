@@ -362,7 +362,7 @@ bool function EffectAndCause3IL_HasLevelEnded()
     vector origin = player.GetOrigin()
     //printt(GetMapName(), player.ContextAction_IsBusy(), origin.y)
     // IMPLEMENT THIS TOO YOU MORON
-    return IsInCutscene() && origin.y > 4000
+    return IsInCutscene() && origin.z < -10000 && origin.y > 4000
 }
 
 entity viperPilot = null

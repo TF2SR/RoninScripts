@@ -3,6 +3,7 @@ global function SRM_Speedometer_Init
 struct
 {
 	var speedometer = null
+	var speedometerDig = null
 	var speedometerUnit = null
 } file
 
@@ -29,6 +30,19 @@ void function SRM_CreateSpeedometer()
     RuiSetFloat( file.speedometer, "msgAlpha", GetConVarFloat("srm_speedometer_alpha") )
     RuiSetString( file.speedometer, "msgText", "" )
     RuiSetFloat3( file.speedometer, "msgColor", <1.0,1.0,1.0> )
+
+	file.speedometerDig = CreatePermanentCockpitRui( $"ui/cockpit_console_text_top_left.rpak" )
+    RuiSetFloat2( file.speedometer, "msgPos",
+    	<
+    	GetConVarFloat("srm_speedometer_position_x") + 0.02,
+    	GetConVarFloat("srm_speedometer_position_y"),
+    	0.0
+    	>
+    )
+    RuiSetFloat( file.speedometerDig, "msgFontSize", 24 )
+    RuiSetFloat( file.speedometerDig, "msgAlpha", GetConVarFloat("srm_speedometer_alpha") )
+    RuiSetString( file.speedometerDig, "msgText", "9" )
+    RuiSetFloat3( file.speedometerDig, "msgColor", <1.0,1.0,1.0> )
 
     // unit label
     file.speedometerUnit = CreatePermanentCockpitRui( $"ui/cockpit_console_text_top_left.rpak" )
@@ -98,12 +112,28 @@ void function SRM_SpeedometerUpdate()
 
 		float speed = Length(velocity)
 
+		speed *= unitConversionModifier
+
+		float speedDecimal = speed % 1.0 * pow(10, GetConVarInt("srm_speedometer_decimals"))
+		// convert to string then round to the correct number of digits
+		RuiSetString( file.speedometer, "msgText", format("%.0f", speed) )
+		if (GetConVarInt("srm_speedometer_decimals") > 0)
+		
+			RuiSetString( file.speedometerDig, "msgText", format("%0" + GetConVarInt("srm_speedometer_decimals") + "i", int(speedDecimal)) )
+		else
+			RuiSetString( file.speedometerDig, "msgText", "" )
+
+		RuiSetFloat2( file.speedometerDig, "msgPos",
+			<
+			GetConVarFloat("srm_speedometer_position_x") + int(speed <= 10.0 ? 1.0 : log10(speed)) * 0.02,
+			GetConVarFloat("srm_speedometer_position_y") + 45 / 1080.0 / 2.5,
+			0.0
+			>
+		)
+
 		// update color depending on speed (lerp between 0 - 1000 u)
 		RuiSetFloat3( file.speedometer, "msgColor", SRM_SpeedometerColorLerp( speed ) )
 		RuiSetFloat3( file.speedometerUnit, "msgColor", SRM_SpeedometerColorLerp( speed ) )
-		speed *= unitConversionModifier
-		// convert to string then round to the correct number of digits
-		RuiSetString( file.speedometer, "msgText", format("%." + GetConVarInt("srm_speedometer_decimals") + "f", speed) )
 	}
 }
 

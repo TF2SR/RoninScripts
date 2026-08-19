@@ -19,6 +19,46 @@ global function GetPBRunByIndex
 global function GetPBRunIndex
 global function GetPBRunCount
 
+const array<string> SAVE_CONVARS = [
+    "srm_enable_speedometer",
+    "srm_speedometer_unit",
+    "srm_speedometer_axismode",
+    "srm_speedometer_decimals",
+    "srm_speedometer_position_x",
+    "srm_speedometer_position_y",
+    "srm_speedometer_color_slow_r",
+    "srm_speedometer_color_slow_g",
+    "srm_speedometer_color_slow_b",
+    "srm_speedometer_color_fast_r",
+    "srm_speedometer_color_fast_g",
+    "srm_speedometer_color_fast_b",
+    "srm_speedometer_alpha",
+    "srm_input_display",
+    "srm_input_display_r",
+    "srm_input_display_g",
+    "srm_input_display_b",
+    "srm_enable_mp",
+    "srm_practice_mode",
+    "srm_force_moonboots",
+    "fps_scale",
+    "dq_strafemeter_position",
+    "dq_strafemeter_buffer_length",
+    "igt_enable",
+
+    "igt_run_ruleset",
+    "igt_run_category",
+	"igt_run_ncs",
+	"igt_18hr_skip",
+	"igt_show_deltas",
+	"sp_currentstartpoint",
+	"igt_should_load_backup",
+	"igt_bg_color",
+
+	"igt_subsplit_enable",
+	"igt_subsplit_height",
+	"igt_subsplit_duration"
+]
+
 table<string, string> defaultSplitNames = {
     sp_training = "The Gauntlet",
     sp_crashsite = "BT-7274",
@@ -49,6 +89,7 @@ struct
     table goldSplits
     table splitNames
     int awaitingRunsToLoad
+    bool isSaveLoaded
 } file
 
 void function RunSaves_Init()
@@ -62,6 +103,7 @@ void function RunSaves_Init()
         LoadFile( runFiles[i] )
     }
 
+    LoadFile( "save.json" )
     LoadFile( "gold_splits.json" )
 
     thread OnFileLoaded( "gold_splits.json", void function(string data) : () {
@@ -72,6 +114,35 @@ void function RunSaves_Init()
         }
         file.goldSplits = DecodeJSON(data)
     })
+
+    thread OnFileLoaded( "save.json", void function(string data) : () {
+        if (data == "")
+        {
+            file.isSaveLoaded = true
+            return
+        }
+        table data = DecodeJSON(data)
+        foreach (string convar in SAVE_CONVARS)
+        {
+            if (convar in data)
+                SetConVarString(convar, data[convar])
+        }
+        file.isSaveLoaded = true
+    })
+    thread void function() : ()
+    {
+        while (true)
+        {
+		    WaitSignal( uiGlobal.signalDummy, "OpenErrorDialog", "ActiveMenuChanged" )
+            try
+            {
+                Roguelike_WriteSaveToDisk()
+            }
+            catch (e)
+            {}
+            
+        }
+    }()
     thread WaitForAllFilesToLoad( runFiles )
 }
 
@@ -433,4 +504,43 @@ table function GetGoldSplitsForCategory(string category)
 void function SaveGoldSplits()
 {
     SaveFile( "gold_splits.json", EncodeJSON(file.goldSplits) )
+}
+
+// roguelike mentioned
+float lastSaveTime = -99.9
+void function Roguelike_WriteSaveToDisk()
+{
+    if (!file.isSaveLoaded)
+        throw "Cannot save whilst save data not loaded!"
+
+    thread Roguelike_WriteSaveToDisk_Internal()
+}
+
+bool isSaving = false
+// only save once a second, and only save the most updated data
+void function Roguelike_WriteSaveToDisk_Internal()
+{
+    if (isSaving)
+        return
+
+    isSaving = true
+
+    if (Time() - lastSaveTime < 1.0)
+    {
+        wait 1.0 + Time() - lastSaveTime
+    }
+
+    lastSaveTime = Time()
+    //SetConVarInt("roguelike_save_backup", (GetConVarInt("roguelike_save_backup") + 1) % 3)
+
+    table saveData
+    foreach (string convar in SAVE_CONVARS)
+    {
+        saveData[convar] <- GetConVarString(convar)
+    }
+    printt("SAVING FILE")
+    SaveFile( "save.json", EncodeJSON(saveData) )
+    //SaveFile( "save_backup_" + GetUnixTimestamp() + ".json", EncodeJSON(saveData) )
+
+    isSaving = false
 }
