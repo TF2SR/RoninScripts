@@ -484,11 +484,13 @@ entity function Gauntlet_StartTrigThink( GauntletInfo gauntlet )
 	string signal
 	entity player
 
-	//printt( "WaitForPlayerToHitStartTrig started" )
+	printt( "WaitForPlayerToHitStartTrig started" )
 
 	// "trigStart_OnStartTouch", "trigStart_OnEndTouch", "trigStart2_OnStartTouch", "trigStart2_OnEndTouch"
-	thread Gauntlet_PlayerStartSignals( gauntlet, trigStart, "trigStart_" )
-	thread Gauntlet_PlayerStartSignals( gauntlet, trigStart2, "trigStart2_" )
+	thread Gauntlet_PlayerStartSignals( gauntlet, trigStart, trigStart2, "trigStart_" )
+	thread Gauntlet_PlayerStartSignals( gauntlet, trigStart2, trigStart, "trigStart2_" )
+
+	wait 0.5
 
 	while ( 1 )
 	{
@@ -502,17 +504,7 @@ entity function Gauntlet_StartTrigThink( GauntletInfo gauntlet )
 			}
 		}
 
-		if ( IsValid( alreadyTouchingEnt ) )
-		{
-			player = alreadyTouchingEnt
-		}
-		else
-		{
-			//printt( "Waiting for trigStart OnStartTouch" )
-
-			result = WaitSignal( trigStart, "OnStartTouch" )
-			player = expect entity( result.activator )
-		}
+		player = GetFirstPlayer()
 
 		if ( !Gauntlet_EntCanActivateGauntletTrigger( player ) )
 			continue
@@ -520,43 +512,16 @@ entity function Gauntlet_StartTrigThink( GauntletInfo gauntlet )
 		if ( !IsAlive( player ) )
 			continue
 
-		//printt( "WAITING for trigStart_OnEndTouch" )
+		printt( "WAITING for trigStart_OnEndTouch" )
 
 		while ( IsAlive( player ) )
 		{
-			WaitSignal( player, "trigStart_OnEndTouch" )
-
-			//printt( "RECEIVED trigStart_OnEndTouch" )
-
-			// player exited start trig without running gauntlet
-			if ( !trigStart2.IsTouching( player ) )
-			{
-				player.Signal( "Gauntlet_PlayerWentBackwardsThroughStartTrig" )
-				continue
-			}
-
-			//printt( "WAITING for trigStart_OnStartTouch or trigStart2_OnEndTouch" )
-
-			// player is now in trig2
-			result = WaitSignal( player, "trigStart_OnStartTouch", "trigStart2_OnEndTouch" )
-			signal = expect string( result.signal )
-			if ( signal == "trigStart2_OnEndTouch" )
-			{
-				//printt( "RECEIVED trigStart2_OnEndTouch" )
-
-				// player exited trig2 without touching trig1, so we know they started the gauntlet
-				if ( !trigStart.IsTouching( player ) )
-				{
-					//printt( "SENDING Gauntlet_PlayerHitStartTrig" )
-					gauntlet.signalEnt.Signal( "Gauntlet_PlayerHitStartTrig" )
-					gauntlet.player = player
-				}
-			}
+			wait 0.1
 		}
 	}
 }
 
-void function Gauntlet_PlayerStartSignals( GauntletInfo gauntlet, entity trig, string signalPrefix )
+void function Gauntlet_PlayerStartSignals( GauntletInfo gauntlet, entity trig, entity trig2, string signalPrefix )
 {
 	EndSignal( trig, "OnDestroy" )
 	EndSignal( gauntlet.signalEnt, "Gauntlet_RunStopped" )
@@ -589,7 +554,36 @@ void function Gauntlet_PlayerStartSignals( GauntletInfo gauntlet, entity trig, s
 
 		Assert( outboundSignal != signalPrefix )
 
-		Signal( activator, outboundSignal )
+		printt("sending signal", outboundSignal)
+
+		entity player = activator
+		if (!gauntlet.isActive && outboundSignal == "trigStart2_OnEndTouch")
+		{
+			// player exited start trig without running gauntlet
+			if ( trig2.IsTouching(player) )
+			{
+				printt("player went backwards")
+				continue
+			}
+
+			// player exited trig2 without touching trig1, so we know they started the gauntlet
+			printt( "SENDING Gauntlet_PlayerHitStartTrig" )
+			gauntlet.signalEnt.Signal( "Gauntlet_PlayerHitStartTrig" )
+			gauntlet.player = player
+		}
+		if (gauntlet.isActive && outboundSignal == "trigStart_OnEndTouch")
+		{
+			// player exited start trig without running gauntlet
+			if ( trig2.IsTouching(player) )
+			{
+				printt("player went backwards")
+				continue
+			}
+
+			// player exited trig2 without touching trig1, so we know they started the gauntlet
+			gauntlet.player.Signal( "Gauntlet_PlayerWentBackwardsThroughStartTrig" )
+			gauntlet.player = player
+		}
 	}
 }
 
