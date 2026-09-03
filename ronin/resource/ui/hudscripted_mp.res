@@ -377,8 +377,8 @@ Resource/UI/HudScripted_mp.res
 		ControlName		CNestedPanel
 		xpos			0
 		ypos			0
-		wide			1920
-		tall			1080
+		wide			%100
+		tall			%100
 		visible 		1
 		enabled 		1
 		controlSettingsFile	"resource/ui/srm_input_display.res"

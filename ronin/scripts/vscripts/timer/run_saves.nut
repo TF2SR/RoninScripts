@@ -18,6 +18,7 @@ global function SaveGoldSplits
 global function GetPBRunByIndex
 global function GetPBRunIndex
 global function GetPBRunCount
+global function GetRunArray
 
 const array<string> SAVE_CONVARS = [
     "srm_enable_speedometer",
@@ -32,7 +33,12 @@ const array<string> SAVE_CONVARS = [
     "srm_speedometer_color_fast_r",
     "srm_speedometer_color_fast_g",
     "srm_speedometer_color_fast_b",
+    "srm_speedometer_outline_alpha",
+    "srm_speedometer_outline_thickness",
     "srm_speedometer_alpha",
+    "srm_speedometer_size",
+    "srm_speedometer_slow",
+    "srm_speedometer_fast",
     "srm_input_display",
     "srm_input_display_r",
     "srm_input_display_g",
@@ -285,6 +291,11 @@ Run function GetRunByIndex(int index)
     return file.runs[index]
 }
 
+array<Run> function GetRunArray()
+{
+    return file.runs
+}
+
 int function GetPBRunCount()
 {
     return file.pbRuns.len()
@@ -422,12 +433,6 @@ Duration function TableToDuration(table t)
         dur.isGold = false
     }
 
-    if ("delta" in t) {
-        dur.delta = string(t["delta"])
-    } else {
-        dur.delta = "+0.0"
-    }
-
     return dur
 }
 
@@ -439,7 +444,6 @@ table function DurationToTable(Duration dur)
     result["microseconds"] <- dur.microseconds
     result["name"] <- dur.name
     result["isGold"] <- dur.isGold
-    result["delta"] <- dur.delta
 
     return result
 }

@@ -38,7 +38,7 @@ string function DisplayFact( table facts )
     return format("You have pulled off %d/%d wallkicks (%.0f%% WK Quality).\nYou jump on average %.0fms after beginning wallrunning.\nUnstable Rate: %.2f", 
     facts[FACT_NAME].wallkicks, 
     facts[FACT_NAME].missedWallkicks + facts[FACT_NAME].wallkicks,
-    (facts[FACT_NAME].totalWKQuality * 100.0 / facts[FACT_NAME].wallkicks + facts[FACT_NAME].missedWallkicks + facts[FACT_NAME].missedCrouchkicks),
+    (facts[FACT_NAME].totalWKQuality * 100.0 / (facts[FACT_NAME].wallkicks + facts[FACT_NAME].missedWallkicks + facts[FACT_NAME].missedCrouchkicks)),
     avgTimingOffset,
     stdDeviation)
 }
@@ -165,18 +165,21 @@ void function FactsLoaded()
                 {
                     // this is a crouch kick
                     // cks get a 10% bonus to wk quality
-                    float wkQuality = wallkickTiming / 75 * 1.1  // as a side note, when ckf is implemented check for the actual space press
+                    float wkQuality = (75 - wallkickTiming) / 75 * 1.1  // as a side note, when ckf is implemented check for the actual space press
                                                             // NOT the frame we left the wall! this can lead to inaccuracies!
 
                     if (isFirstie)
                         wkQuality = 1.1
+
+                    printt(wkQuality)
 
                     speedrunFacts[FACT_NAME].totalWKQuality += wkQuality
 
                 }
                 else
                 {
-                    float wkQuality = wallkickTiming / 75.0
+                    float wkQuality = (75 - wallkickTiming) / 75.0
+                    printt(wkQuality)
                     speedrunFacts[FACT_NAME].totalWKQuality += wkQuality
                 }
                 speedrunFacts[FACT_NAME].timingOffsets.append(wallkickTiming)

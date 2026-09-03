@@ -41,6 +41,7 @@ struct
 void function TimerOverlay_Init()
 {
     Facts_Init()
+    AddCreateCallback("prop_dynamic", OnPropDynamic) // actually the worst but this is in case they have no script_name
     RegisterSignal( "TrackingEnded" )
     thread Delayed_TimerOverlay_Init()
 }
@@ -83,8 +84,6 @@ void function SetTime( int seconds, int microseconds, int levelSeconds, int leve
     file.microseconds = microseconds
     file.levelSeconds = levelSeconds
     file.levelMicroseconds = levelMicroseconds
-    file.delta = delta
-    file.levelDelta = levelDelta
     file.previousDelta = previousDelta
     file.previousLevelDelta = previousLevelDelta
     try
@@ -133,8 +132,8 @@ void function UpdateTimerHUD()
         if (file.runInvalidated)
         {
             Hud_SetColor(alphaLabel, 255, 40, 40, 255 )
-            Hud_SetText(alphaLabel, "INVALID")
-            Hud_SetText(alphaLabelShadow, "INVALID")
+            Hud_SetText(alphaLabel, "INVALID RUN")
+            Hud_SetText(alphaLabelShadow, "INVALID RUN")
         }
         else
         {
@@ -222,6 +221,9 @@ void function UpdateTimerHUD()
                 Beacon2IL_CheckDeathWarp()
                 Beacon2IL_CheckHeatsink()
             }
+            if (GetMapName() == "sp_beacon") {
+                Beacon3IL_Init()
+            }
         }
         if (GetMapName() == "sp_skyway_v1" && FoldWeapon_HasLevelEnded() && !isRunOver)
         {
@@ -293,6 +295,7 @@ bool function BloodAndRust_HasLevelEnded()
 entity richter = null
 bool isThreadActive = false
 bool richterExisted = false
+float endTime = -1.0
 bool function Beacon3_HasLevelEnded()
 {
     if (!isThreadActive)
@@ -303,7 +306,15 @@ bool function Beacon3_HasLevelEnded()
 
     if (richterExisted)
     {
-        return !IsValid(richter) || !IsAlive(richter)
+        if (IsValid(richter) && richter.GetTitanSoul().IsEjecting() && endTime == -1)
+            endTime = Time() + 2.95
+        else if (!IsValid(richter) || (!IsAlive(richter) && !richter.GetTitanSoul().IsEjecting()))
+            return true
+    }
+
+    if (endTime != -1)
+    {
+        return Time() > endTime
     }
 
     return false
@@ -401,27 +412,6 @@ bool function FoldWeapon_HasLevelEnded()
 
 // subsplits lol
 // BT
-
-void function IL_FindButtons(entity thingy) {
-    //bnr
-    if (thingy.kv.scr_flagToggle == "CorkscrewRoom_OpenExitDoor") {
-        thread BloodAndRustIL_CheckButton2(thingy)
-    }
-
-    //enc2
-    if (thingy.kv.scr_flagToggle == "open_door_elevator_fight_hallway_both") {
-        thread EffectAndCause2IL_CheckButton1(thingy)
-    }
-
-    if (thingy.kv.scr_flagToggle == "open_door_elevator_top_lab") {
-        thread EffectAndCause2IL_CheckButton2(thingy)
-    }
-
-    if (thingy.kv.scr_flagToggle == "Fan1Disable") {
-        thread Beacon2IL_CheckButton(thingy)
-    }
-}
-
 bool btGrabbedBattery1 = false
 void function BT7274IL_CheckBattery1() {
     if (!btGrabbedBattery1) {
@@ -452,8 +442,50 @@ void function BT7274IL_CheckBattery2() {
     }
 }
 
+void function SplitOnInteract(entity ent, string name, float delay = 0)
+{
+    thread void function() : (ent, name, delay)
+    {
+        ent.WaitSignal("OnPlayerUse")
+        if (delay > 0)
+            wait delay
+        RunUIScript("SplitWithName", name)
+    }()
+}
+
+void function OnPropDynamic( entity ent )
+{
+    vector origin = ent.GetOrigin()
+    // BNR
+    if (GetMapName() == "sp_sewers1" && int(origin.x) == -2720 && int(origin.y) == -160 && int(origin.z) == 914)
+    {
+        SplitOnInteract(ent, "Button 2")
+    }
+    // 1473 -5258 10964
+    if (GetMapName() == "sp_timeshift_spoke02" && int(origin.x) == 1473 && int(origin.y) == -5258 && int(origin.z) == 10964) {
+        SplitOnInteract(ent, "Button \"Juan\"")
+    }
+    if (GetMapName() == "sp_timeshift_spoke02" && int(origin.x) == 2845 && int(origin.y) == -3361 && int(origin.z) == 11015) {
+        SplitOnInteract(ent, "Button \"Too\"")
+    }
+    if (GetMapName() == "sp_timeshift_spoke02" && int(origin.x) == 6256 && int(origin.y) == -3552 && int(origin.z) == 11834) { // anderson one
+        SplitOnInteract(ent, "Button \"Tree\"")
+    }
+    if (GetMapName() == "sp_timeshift_spoke02" && int(origin.x) == 4697 && int(origin.y) == -75 && int(origin.z) == 11407) {
+        SplitOnInteract(ent, "Button \"Floor\"")
+    }
+    // 4697.74 -75.7991 11407.9
+}
 
 // BNR
+bool bnrCallbacksStarted = false
+void function BloodAndRustIL_StartCallbacks() {
+    // check if SewerSplit_gate_switch is used by the player
+    if (!bnrCallbacksStarted) {
+        SplitOnInteract(GetEntByScriptName("SewerSplit_gate_switch"), "Button 1")
+    }
+}
+
 bool bnrDoorTriggered = false
 void function BloodAndRustIL_CheckDoorTrigger() {
     if (!bnrDoorTriggered) {
@@ -486,22 +518,7 @@ void function BloodAndRustIL_CheckEmbark() {
     }
 }
 
-void function BloodAndRustIL_CheckButton1() {
-    thread void function(): (){
-        WaitSignal("OnPlayerUse", GetEntByScriptName("SewerSplit_gate_switch"))
-
-        RunUIScript("SplitWithName", "Button 1")
-    }()
-}
-
-
-void function BloodAndRustIL_CheckButton2(thingy) {
-    thingy.WaitSignal("OnPlayerUse")
-
-    RunUIScript("SplitWithName", "Button 2")
-}
-
-// ITA 3
+// ITA 2
 bool ita3HasEmbarked = false
 void function IntoTheAbyss3IL_CheckEmbark() {
     if(!ita3HasEmbarked) {
@@ -515,7 +532,6 @@ void function IntoTheAbyss3IL_CheckEmbark() {
         }
     }
 }
-
 
 // ENC 1
 bool enc1HasHelmet = false
@@ -588,7 +604,12 @@ void function EffectAndCause2IL_CheckVent() { // SUS. end of hellroom, bottom of
     }
 }
 
-// TODO: add enc2 button functions
+bool enc2callbacks = false
+void function EffectAndCause2IL_StartCallbacks() {
+    if (!enc2callbacks) {
+        enc2callbacks = true
+    }
+}
 
 // Beacon 2
 vector oldOrigin
@@ -607,6 +628,20 @@ void function Beacon2IL_Init() {
 
         vector origin = player.GetOrigin()
         oldOrigin = origin // resetting it here because I need it in two places lol
+        thread void function() : (player)
+        {
+            while (1)
+            {
+                wait 0.001
+                if (!IsValid(player.GetActiveWeapon()))
+                    continue
+                if (player.GetActiveWeapon().GetWeaponClassName() != "sp_weapon_arc_tool")
+                    continue
+                    
+                RunUIScript("SplitWithName", "Arc Tool Get")
+                break
+            }
+        }()
     }
 }
 
@@ -615,7 +650,7 @@ bool b2ArcToolInFocus = false
 void function Beacon2IL_Focus(entity thingy) {
     vector origin = thingy.GetOrigin()
     printt(string(thingy.GetModelName()))
-    if (int(origin.x) == 2688 && int(origin.y) == 10387 && int(origin.z) == 1059) {
+    if (fabs(origin.x - 2688) < 0.5 && fabs(origin.y - 10387) < 0.5 && fabs(origin.z - 1059) < 0.5) {
         b2ButtonInFocus = true
     }
 
@@ -625,6 +660,8 @@ void function Beacon2IL_Focus(entity thingy) {
 }
 
 void function Beacon2IL_LoseFocus(entity thingy) {
+    if (!IsValid(thingy))
+        return
     vector origin = thingy.GetOrigin()
     if (int(origin.x) == 2688 && int(origin.y) == 10387 && int(origin.z) == 1059) {
         b2ButtonInFocus = false
@@ -642,24 +679,7 @@ void function Beacon2IL_OnUse(entity player) {
     }
 
     if (b2ArcToolInFocus) {
-        RunUIScript("SplitWithName", "Arc Tool Get")
     }
-}
-
-void function Beacon2IL_CheckButton(entity thingy) {
-    thingy.WaitSignal("OnPlayerUse")
-
-    RunUIScript("SplitWithName", "Button")
-}
-
-void function Beacon2IL_CheckArcTool() {
-    thread void function(): (){
-        WaitSignal("OnPlayerUse", )
-
-        RunUIScript("SplitWithName", "Arc Tool Get")
-        player.GetMainWeapons() // returns array
-        weapon.GetWeaponClassName() == "sp_weapon_arc_tool"
-    }()
 }
 
 bool b2Heatsink = false
@@ -696,10 +716,32 @@ void function Beacon2IL_CheckDeathWarp() {
 }
 
 // Beacon 3
-bool b3Module1 = false
-void function Beacon3IL_CheckModule1() {
-    if (!b3Module1) {
-        if (DistanceSqr(<origin.x, origin.y, 0>, <-))
+bool b3Module = false
+bool b3Module2 = false
+void function Beacon3IL_Init() {
+    if (!b3Module)
+    {
+        try
+        {
+            SplitOnInteract(GetEntByScriptName("satellite_platform_button"), "Module Retrieved", 1.895)
+            b3Module = true
+        }
+        catch (e)
+        {
+            
+        }
+    }
+    if (!b3Module2) 
+    {
+        try
+        {
+            SplitOnInteract(GetEntByScriptName("dish_objective_button"), "Module Inserted", 1.845)
+            b3Module2 = true
+        }
+        catch (e)
+        {
+            
+        }
     }
 }
 
@@ -707,7 +749,7 @@ void function Beacon3IL_CheckModule1() {
 void function TrialByFire_CheckDialogue() {
     thread void function (): (){
         while (true) {
-            table results = level.WaitSignal("Ronin_DialoguePlaying") 
+            table results = expect table(level.WaitSignal("Ronin_DialoguePlaying"))
 
             if (results.name == "SARAH_COOPER_WITH_ME") {
                 RunUIScript("SplitWithName", "Door")
@@ -716,9 +758,8 @@ void function TrialByFire_CheckDialogue() {
                 RunUIScript("SplitWithName", "Elevator")
             }
         }
-    }
+    }()
 }
-
 
 // ================================
 // REST OF THE FUNCTIONS
