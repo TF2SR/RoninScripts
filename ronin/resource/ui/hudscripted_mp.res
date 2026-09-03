@@ -432,4 +432,30 @@ Resource/UI/HudScripted_mp.res
 
 		controlSettingsFile	"resource/ui/menus/panels/subsplit.res"
 	}
+    
+	TriggerInfo
+	{
+        "ControlName"				"CNestedPanel"
+        "xpos"						"1024"
+        "ypos"						"476" 
+        "wide"						"256"
+        "tall"						"128"
+        "visible"					"1"
+        "tabPosition"				"0"
+        "zpos"						"-1"
+        "controlSettingsFile"		"resource/ui/TriggerInfo.res"
+	}
+
+    TriggerDot1
+    {
+        "ControlName"				"CNestedPanel"
+        "xpos"						"928"
+        "ypos"						"508" 
+        "wide"						"64"
+        "tall"						"64"
+        "visible"					"1"
+        "tabPosition"				"0"
+        "zpos"						"-1"
+        "controlSettingsFile"		"resource/ui/TriggerDot.res"
+    }
 }
