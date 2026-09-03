@@ -26,6 +26,11 @@ void function SRM_InitSpeedometerSettingsMenu()
 
 	// alpha
 	SRM_SetupSlider( "SldSpeedometerAlpha", "Alpha", "Transparency of the Speedometer.\n`11.0`0 = Fully opaque\n`10.0`0 = Fully transparent" )
+	SRM_SetupSlider( "SldSpeedometerOutlineAlpha", "Outline Alpha", "Transparency of the outline.\n`11.0`0 = Fully opaque\n`10.0`0 = Fully transparent"+mustReloadNote )
+	SRM_SetupSlider( "SldSpeedometerOutlineThickness", "Outline Thickness", "Thickness of the outline."+mustReloadNote )
+	SRM_SetupSlider( "SldSpeedometerSize", "Font Size", "Size of the speedometer."+mustReloadNote )
+	SRM_SetupSlider( "SldSpeedometerSlowSpeed", "Slow Threshold", "Speed (in u/s) for which to use the SLOW color." )
+	SRM_SetupSlider( "SldSpeedometerFastSpeed", "Fast Threshold", "Speed (in u/s) for which to use the FAST color." )
 
 	// footer
 	SRM_SetupFooter()
