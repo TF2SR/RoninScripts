@@ -224,6 +224,13 @@ void function UpdateTimerHUD()
             if (GetMapName() == "sp_beacon") {
                 Beacon3IL_Init()
             }
+			if (GetMapName() == "sp_tday") {
+				TrialByFire_CheckDialogue()
+			}
+			if (GetMapName() == "sp_skyway_v1") {
+				FoldWeaponIL_CheckDatacore()
+				FoldWeaponIL_CheckEscape()
+			}
         }
         if (GetMapName() == "sp_skyway_v1" && FoldWeapon_HasLevelEnded() && !isRunOver)
         {
@@ -721,6 +728,46 @@ void function TrialByFire_CheckDialogue() {
             }
         }
     }()
+}
+
+// Fold Weapon
+bool fwdatacore = false
+void function FoldWeaponIL_CheckDatacore() { // SUS. end of hellroom, bottom of vent. common split name is "hellroom"
+    if (!fwdatacore) {
+        entity player = GetLocalClientPlayer()
+        if (!IsValid( player ) || !IsAlive( player ))
+            return
+
+        vector origin = player.GetOrigin()
+
+        if (DistanceSqr(<5252, -5776, 0>, <origin.x, origin.y, 0>) < 25000 && IsInCutscene()) {
+            fwdatacore = true
+
+            thread void function(): (){
+                wait 7.95
+                RunUIScript("SplitWithName", "Datacore")
+            }()
+        }
+    }
+}
+
+bool fwescape = false
+bool fwWasInCutscene = false
+void function FoldWeaponIL_CheckEscape() {
+	if (!fwescape) {
+        entity player = GetLocalClientPlayer()
+        if (!IsValid( player ) || !IsAlive( player ))
+            return
+
+        vector origin = player.GetOrigin()
+
+        if (DistanceSqr(<535, 6549, 0>, <origin.x, origin.y, 0) < 25000 && fwWasInCutscene && !IsInCutscene()) {
+            fwescape = true
+
+			RunUIScript("SplitWithName", "Escape")
+        }
+		fwWasInCutscene = IsInCutscene()
+	}
 }
 
 // ================================
