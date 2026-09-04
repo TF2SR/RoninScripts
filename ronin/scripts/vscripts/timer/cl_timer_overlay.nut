@@ -511,7 +511,7 @@ void function BloodAndRustIL_CheckEmbark() {
         if (!IsValid( player ) || !IsAlive( player ))
             return
 
-        if(player.GetCinematicEventFlags() & CE_FLAG_EMBARK) {
+        if(player.GetCinematicEventFlags() & CE_FLAG_EMBARK && GetConVarInt("sp_currentstartpoint") > 3) {
             RunUIScript("SplitWithName", "Embark")
             bnrHasEmbarked = true
         }

@@ -3,12 +3,12 @@ global function SRM_Speedometer_Init
 struct
 {
 	var speedometer = null
-	var speedometerOutline = null
-	var speedometerDig = null
-	var speedometerDigOutline = null
 	var speedometerUnit = null
-	var speedometerUnitOutline = null
 	float fontSize = 45
+	bool swapFont = false
+	float lastTime = 0.0
+
+	float multiplier = 1.0
 } file
 
 void function SRM_Speedometer_Init()
@@ -19,137 +19,146 @@ void function SRM_Speedometer_Init()
 	AddCallback_EntitiesDidLoad( SRM_SpeedometerUpdate )
 }
 
+
+void function UpdateRuiParameters(float speed = 0.0)
+{
+	bool swapFont = file.swapFont
+	float yMultiplier = (swapFont ? 0.002 : 0.0)
+	float alignment = GetConVarInt("srm_speedometer_alignment") / 2.0 // 
+	file.fontSize = GetConVarFloat("srm_speedometer_size")
+
+	// fast threshold is 50km/h
+	// 75km/h = 100%
+	// 100km/h = 102%
+	// 125 = 104%
+	// 274km/h = ~112%
+
+	// fast threshold is 125km/h
+	// 
+	//if (GetConVarBool("sv_cheats"))
+	float dt = Time() - file.lastTime
+	
+	float target = GraphCapped(speed, GetConVarFloat("srm_speedometer_fast") + 25 / 0.09144, 200 / 0.09144, 1.0, 1.05)
+
+	if (file.multiplier >= target)
+	{
+		file.multiplier -= min(file.multiplier - target, 0.5 * dt)
+	}
+	else if (file.multiplier < target)
+	{
+		file.multiplier += min(0.5 * dt, target - file.multiplier)
+	}
+	
+	file.fontSize *= file.multiplier
+
+	file.lastTime = Time()
+
+	// speedometer
+    RuiSetFloat2( file.speedometer, "position",
+    	<
+    	GetConVarFloat("srm_speedometer_position_x"),
+    	GetConVarFloat("srm_speedometer_position_y") + yMultiplier * (file.fontSize / 45.0),
+    	0.0
+    	>
+    )
+	RuiSetFloat2( file.speedometer, "alignment", <alignment, 1, 0> )
+    RuiSetFloat( file.speedometer, "fontSize", file.fontSize )
+    RuiSetFloat( file.speedometer, "fontSizeAlt", file.fontSize * GetConVarFloat("srm_speedometer_decimals_size") )
+    RuiSetFloat( file.speedometer, "outlineThickness", GetConVarFloat("srm_speedometer_outline_thickness") )
+    RuiSetFloat( file.speedometer, "outlineAlpha", GetConVarFloat("srm_speedometer_outline_alpha") )
+    RuiSetFloat( file.speedometer, "alpha", GetConVarFloat("srm_speedometer_alpha") )
+    RuiSetFloat( file.speedometer, "thickness", GetConVarFloat("srm_speedometer_thickness") )
+    RuiSetString( file.speedometer, "text", "" )
+    RuiSetFloat3( file.speedometer, "color", <1.0,1.0,1.0> )
+    RuiSetFloat3( file.speedometer, "outlineColor", <0.0,0.0,0.0> )
+	
+	// speedometer label
+	float xMovement = 0.0
+	switch (GetConVarInt("srm_speedometer_alignment"))
+	{
+		case 0:
+			xMovement = 0.0007
+			break
+		case 2:
+			xMovement = -0.0007
+			break
+	}
+    RuiSetFloat2( file.speedometerUnit, "position",
+    	<
+    	GetConVarFloat("srm_speedometer_position_x") + xMovement * (file.fontSize / 45.0),
+    	GetConVarFloat("srm_speedometer_position_y") + (GetConVarFloat("srm_speedometer_ulabel_distance") / 100.0 - yMultiplier) * (file.fontSize / 45.0),
+    	0.0
+    	>
+    )
+	
+    RuiSetFloat( file.speedometerUnit, "fontSize", file.fontSize * GetConVarFloat("srm_speedometer_ulabel_size") )
+	RuiSetFloat2( file.speedometerUnit, "alignment", <alignment, 1, 0> )
+    RuiSetFloat( file.speedometerUnit, "outlineThickness", GetConVarFloat("srm_speedometer_outline_thickness") )
+    RuiSetFloat( file.speedometerUnit, "outlineAlpha", GetConVarFloat("srm_speedometer_outline_alpha") )
+    RuiSetFloat( file.speedometerUnit, "alpha", GetConVarFloat("srm_speedometer_alpha") )
+    RuiSetFloat( file.speedometerUnit, "thickness", GetConVarFloat("srm_speedometer_thickness") )
+    RuiSetString( file.speedometerUnit, "text", "aaaaa" )
+    RuiSetFloat3( file.speedometerUnit, "color", <1.0,1.0,1.0> )
+    RuiSetFloat3( file.speedometerUnit, "outlineColor", <0.0,0.0,0.0> )
+}
+
 void function SRM_CreateSpeedometer()
 {
 	file.fontSize = GetConVarFloat("srm_speedometer_size")
 
-	file.speedometerOutline = CreatePermanentCockpitRui( $"ui/cockpit_console_text_top_left.rpak" )
-    RuiSetFloat2( file.speedometerOutline, "msgPos",
-    	<
-    	GetConVarFloat("srm_speedometer_position_x"),
-    	GetConVarFloat("srm_speedometer_position_y"),
-    	0.0
-    	>
-    )
-    RuiSetFloat( file.speedometerOutline, "msgFontSize", file.fontSize )
-    RuiSetFloat( file.speedometerOutline, "msgAlpha", GetConVarFloat("srm_speedometer_alpha") * GetConVarFloat("srm_speedometer_outline_alpha") )
-    RuiSetString( file.speedometerOutline, "msgText", "" )
-    RuiSetFloat( file.speedometerOutline, "thicken", GetConVarFloat("srm_speedometer_outline_thickness") )
-    RuiSetFloat3( file.speedometerOutline, "msgColor", <0.0,0.0,0.0> )
-
+	file.swapFont = GetConVarBool("srm_speedometer_font")
+	bool swapFont = file.swapFont
+	asset rui = swapFont ? $"ui/multi_font_text_metronic.rpak" : $"ui/multi_font_text.rpak"
 	// value display
-	file.speedometer = CreatePermanentCockpitRui( $"ui/cockpit_console_text_top_left.rpak" )
-    RuiSetFloat2( file.speedometer, "msgPos",
-    	<
-    	GetConVarFloat("srm_speedometer_position_x"),
-    	GetConVarFloat("srm_speedometer_position_y"),
-    	0.0
-    	>
-    )
-    RuiSetFloat( file.speedometer, "msgFontSize", file.fontSize )
-    RuiSetFloat( file.speedometer, "msgAlpha", GetConVarFloat("srm_speedometer_alpha") )
-    RuiSetString( file.speedometer, "msgText", "" )
-    RuiSetFloat3( file.speedometer, "msgColor", <1.0,1.0,1.0> )
-	
-
-	
-
-	file.speedometerDigOutline = CreatePermanentCockpitRui( $"ui/cockpit_console_text_top_left.rpak" )
-    RuiSetFloat2( file.speedometerDigOutline, "msgPos",
-    	<
-    	GetConVarFloat("srm_speedometer_position_x") + 0.02 * (file.fontSize / 45.0),
-    	GetConVarFloat("srm_speedometer_position_y"),
-    	0.0
-    	>
-    )
-    RuiSetFloat( file.speedometerDigOutline, "msgFontSize", 28 * (file.fontSize / 45.0) )
-    RuiSetFloat( file.speedometerDigOutline, "msgAlpha", GetConVarFloat("srm_speedometer_alpha") * GetConVarFloat("srm_speedometer_outline_alpha") )
-    RuiSetString( file.speedometerDigOutline, "msgText", "9" )
-    RuiSetFloat( file.speedometerDigOutline, "thicken", GetConVarFloat("srm_speedometer_outline_thickness") )
-    RuiSetFloat3( file.speedometerDigOutline, "msgColor", <0.0,0.0,0.0> )
-
-	file.speedometerDig = CreatePermanentCockpitRui( $"ui/cockpit_console_text_top_left.rpak" )
-    RuiSetFloat2( file.speedometerDig, "msgPos",
-    	<
-    	GetConVarFloat("srm_speedometer_position_x") + 0.02 * (file.fontSize / 45.0),
-    	GetConVarFloat("srm_speedometer_position_y"),
-    	0.0
-    	>
-    )
-    RuiSetFloat( file.speedometerDig, "msgFontSize", 28 * (file.fontSize / 45.0) )
-    RuiSetFloat( file.speedometerDig, "msgAlpha", GetConVarFloat("srm_speedometer_alpha") )
-    RuiSetString( file.speedometerDig, "msgText", "9" )
-    RuiSetFloat3( file.speedometerDig, "msgColor", <1.0,1.0,1.0> )
+	file.speedometer = CreatePermanentCockpitRui( rui )
 
     // unit label
-	
 
-    file.speedometerUnitOutline = CreatePermanentCockpitRui( $"ui/cockpit_console_text_top_left.rpak" )
-    RuiSetFloat2( file.speedometerUnitOutline, "msgPos",
-    	<
-    	GetConVarFloat("srm_speedometer_position_x") + 0.0007 * (file.fontSize / 45.0),
-    	GetConVarFloat("srm_speedometer_position_y") + 0.04 * (file.fontSize / 45.0),
-    	0.0
-    	>
-    )
-    RuiSetFloat( file.speedometerUnitOutline, "msgFontSize", 20 * (file.fontSize / 45.0) )
-    RuiSetFloat( file.speedometerUnitOutline, "thicken", GetConVarFloat("srm_speedometer_outline_thickness") )
-    RuiSetFloat( file.speedometerUnitOutline, "msgAlpha", GetConVarFloat("srm_speedometer_alpha") * GetConVarFloat("srm_speedometer_outline_alpha") )
-    RuiSetString( file.speedometerUnitOutline, "msgText", "" )
-    RuiSetFloat3( file.speedometerUnitOutline, "msgColor", <0.0,0.0,0.0> )
+    file.speedometerUnit = CreatePermanentCockpitRui( rui )
 
-
-    file.speedometerUnit = CreatePermanentCockpitRui( $"ui/cockpit_console_text_top_left.rpak" )
-    RuiSetFloat2( file.speedometerUnit, "msgPos",
-    	<
-    	GetConVarFloat("srm_speedometer_position_x") + 0.0007 * (file.fontSize / 45.0),
-    	GetConVarFloat("srm_speedometer_position_y") + 0.04 * (file.fontSize / 45.0),
-    	0.0
-    	>
-    )
-    RuiSetFloat( file.speedometerUnit, "msgFontSize", 20 * (file.fontSize / 45.0) )
-    RuiSetFloat( file.speedometerUnit, "msgAlpha", GetConVarFloat("srm_speedometer_alpha") )
-    RuiSetString( file.speedometer, "msgText", "" )
-    RuiSetFloat3( file.speedometerUnit, "msgColor", <1.0,1.0,1.0> )
+	UpdateRuiParameters()
 }
 
 void function SRM_SpeedometerUpdate()
 {
-	float unitConversionModifier
-	string speedometerUnitLabel
-	switch ( GetConVarInt("srm_speedometer_unit") )
-	{
-		case 0:
-			unitConversionModifier = 0.09144
-			speedometerUnitLabel   = "km/h"
-			break
-		case 1:
-			unitConversionModifier = 0.02540
-			speedometerUnitLabel   = "m/s"
-			break
-		case 2:
-			unitConversionModifier = 0.05681
-			speedometerUnitLabel   = "mph"
-			break
-		case 3:
-			unitConversionModifier = 1.00000
-			speedometerUnitLabel   = "u"
-			break
-		case 4:
-			unitConversionModifier = 0.91444
-			speedometerUnitLabel   = "/10 km/h"
-	}
-
-	RuiSetString( file.speedometerUnit, "msgText", speedometerUnitLabel )
-	RuiSetString( file.speedometerUnitOutline, "msgText", speedometerUnitLabel )
 
 	entity player = GetLocalClientPlayer()
 	while (true)
 	{
 		WaitFrame()
-
+		
+		float unitConversionModifier
+		string speedometerUnitLabel
+		switch ( GetConVarInt("srm_speedometer_unit") )
+		{
+			case 0:
+				unitConversionModifier = 0.09144
+				speedometerUnitLabel   = "km/h"
+				break
+			case 1:
+				unitConversionModifier = 0.02540
+				speedometerUnitLabel   = "m/s"
+				break
+			case 2:
+				unitConversionModifier = 0.05681
+				speedometerUnitLabel   = "mph"
+				break
+			case 3:
+				unitConversionModifier = 1.00000
+				speedometerUnitLabel   = "u"
+				break
+			case 4:
+				unitConversionModifier = 0.91444
+				speedometerUnitLabel   = "/10 km/h"
+		}
+		if (GetConVarString("srm_speedometer_ulabel_text") != "")
+			speedometerUnitLabel = GetConVarString("srm_speedometer_ulabel_text")
+		
 		vector velocity = player.GetVelocity()
 		velocity += Ronin_GetPlayerPlatformVelocity(player)
+
+		RuiSetString( file.speedometerUnit, "text", speedometerUnitLabel )
+
 
 		switch ( GetConVarInt("srm_speedometer_axismode") )
 		{
@@ -168,43 +177,45 @@ void function SRM_SpeedometerUpdate()
 		float speed = Length(velocity)
 		float speedConverted = speed * unitConversionModifier
 
+		UpdateRuiParameters(speed)
+    	//RuiSetFloat( file.speedometerUnit, "fontSize", 20 * (file.fontSize / 45.0) * sin(Time() * 3) )
+		//RuiSetFloat2( file.speedometerUnit, "alignment", <0, (sin(Time() * 3) + 1.0) / 2.0, 0> )
+
 		float speedDecimal = speedConverted % 1.0 * pow(10, GetConVarInt("srm_speedometer_decimals"))
 		// convert to string then round to the correct number of digits
-		RuiSetString( file.speedometer, "msgText", format("%.0f", speedConverted) )
-		RuiSetString( file.speedometerOutline, "msgText", format("%.0f", speedConverted) )
+		//RuiSetString( file.speedometer, "text", format("%.0f" + "`1%0" + GetConVarInt("srm_speedometer_decimals") + "i", speedConverted, speedDecimal) )
+		string speedFormat
+		int decimals = GetConVarInt("srm_speedometer_decimals")
+		switch (GetConVarInt("srm_speedometer_decimals_space"))
+		{
+			case 0:
+				speedFormat = "`0%.0f" + "`1%0" + decimals + "i"
+				break
+			case 1:
+				speedFormat = "`0%.0f" + "`1.%0" + decimals + "i"
+				break
+			case 2:
+				speedFormat = "`0%.0f" + "`1 %0" + decimals + "i"
+				break
+			case 3:
+				speedFormat = "`0%.0f" + ".`1%0" + decimals + "i"
+				break
+			case 4:
+				speedFormat = "`0%.0f" + " `1%0" + decimals + "i"
+				break
+		}
 		if (GetConVarInt("srm_speedometer_decimals") > 0)
 		{
-			RuiSetString( file.speedometerDigOutline, "msgText", format("%0" + GetConVarInt("srm_speedometer_decimals") + "i", int(speedDecimal)) )
-			RuiSetString( file.speedometerDig, "msgText", format("%0" + GetConVarInt("srm_speedometer_decimals") + "i", int(speedDecimal)) )
+			RuiSetString( file.speedometer, "text", format(speedFormat, speedConverted, speedDecimal) )
 		}
 		else
 		{
-			RuiSetString( file.speedometerDigOutline, "msgText", "" )
-			RuiSetString( file.speedometerDig, "msgText", "" )
+			RuiSetString( file.speedometer, "text", format("%.0f", speedConverted) )
 		}
 
-		float xOffset = int(speed < 10.0 ? 1.0 : 1 + log10(speedConverted)) * 0.012 + 0.001
-		xOffset *= (file.fontSize / 45.0)
-		float yOffset = (file.fontSize) / 1080.0 / 3.15
-		RuiSetFloat2( file.speedometerDig, "msgPos",
-			<
-			GetConVarFloat("srm_speedometer_position_x") + xOffset,
-			GetConVarFloat("srm_speedometer_position_y") + yOffset,
-			0.0
-			>
-		)
-		RuiSetFloat2( file.speedometerDigOutline, "msgPos",
-			<
-			GetConVarFloat("srm_speedometer_position_x") + xOffset,
-			GetConVarFloat("srm_speedometer_position_y") + yOffset,
-			0.0
-			>
-		)
-
 		// update color depending on speed (lerp between 0 - 1000 u)
-		RuiSetFloat3( file.speedometer, "msgColor", SRM_SpeedometerColorLerp( speed ) )
-		RuiSetFloat3( file.speedometerUnit, "msgColor", SRM_SpeedometerColorLerp( speed ) )
-		RuiSetFloat3( file.speedometerDig, "msgColor", SRM_SpeedometerColorLerp( speed ) )
+		RuiSetFloat3( file.speedometer, "color", SRM_SpeedometerColorLerp( speed ) )
+		RuiSetFloat3( file.speedometerUnit, "color", SRM_SpeedometerColorLerp( speed ) )
 	}
 }
 

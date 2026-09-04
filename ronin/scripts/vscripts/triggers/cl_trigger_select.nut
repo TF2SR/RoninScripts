@@ -25,6 +25,7 @@ global struct TriggerData
 struct
 {
     array<TriggerData> triggers
+    int focusedTrigIndex = -1
 } file
 
 void function TriggerSelect_Init()
@@ -47,7 +48,7 @@ void function UpdateTriggerDisplay()
         var triggerInfo = HudElement("TriggerInfo")
         var triggerDot = HudElement("TriggerDot1")
 
-        bool visualize = true
+        bool visualize = GetConVarBool("ronin_triggerdisplay")
         if (!visualize)
         {
             Hud_SetVisible(triggerInfo, false)
@@ -59,7 +60,7 @@ void function UpdateTriggerDisplay()
         {
             SetConVarInt("enable_debug_overlays", 1)
         }
-        if (time > 0.9)
+        if (time > 0.066)
         {
             DisplayTriggers()
             time = 0.0
@@ -80,6 +81,8 @@ void function UpdateTriggerDisplay()
                 focusedTrigIndex = i
             }
         }
+
+        file.focusedTrigIndex = focusedTrigIndex
         
 
         Hud_SetVisible(triggerInfo, focusedTrigIndex != -1)
@@ -93,10 +96,11 @@ void function UpdateTriggerDisplay()
         var hoverEffect = Hud_GetChild(triggerDot, "HoverEffect")
         vector screenPos = WorldToScreenPos(trig.origin)
 
-        Hud_SetColor(dot, trig.color.x, trig.color.y, trig.color.z, 255)
-        Hud_SetColor(label, trig.color.x, trig.color.y, trig.color.z, 255)
-        Hud_SetColor(hoverEffect, trig.color.x, trig.color.y, trig.color.z, 255)
-        Hud_SetPos(triggerDot, screenPos.x - 32, screenPos.y - 32)
+        vector color = GetTrigColor(trig)
+        Hud_SetColor(dot, color.x, color.y, color.z, 255)
+        Hud_SetColor(label, color.x, color.y, color.z, 255)
+        Hud_SetColor(hoverEffect, color.x, color.y, color.z, 255)
+        Hud_SetPos(triggerDot, screenPos.x - 42, screenPos.y - 42)
 
         string text = format("classname: %s", trig.classname)
 
@@ -121,12 +125,38 @@ void function UpdateTriggerDisplay()
     }
 }
 
+vector function GetTrigColor(TriggerData trig)
+{
+    vector color = <64, 64, 64>
+    if (trig.script_flag != "")
+    {
+        color = <0, 128, 64>
+    }
+    if (trig.script_name != "")
+    {
+        color = <0, 128, 128>
+    }
+    if (trig.editorclass == "trigger_checkpoint")
+    {
+        color = <0, 128, 128>
+    }
+    if (trig.editorclass == "trigger_quickdeath_checkpoint")
+        color = <128, 0, 128>
+    if (trig.editorclass == "trigger_quickdeath_checkpoint")
+        color = <128, 0, 128>
+    if (trig.classname == "trigger_hurt" || trig.editorclass == "trigger_quickdeath" || trig.editorclass == "trigger_deadly_fog" || trig.editorclass == "trigger_death_fall")
+        color = <128, 0, 0>
+    if (file.focusedTrigIndex != -1 && file.triggers[file.focusedTrigIndex] == trig)
+        color *= 255.0 / 128.0
+    return color
+}
+
 bool function ShouldDisplayTrigger(TriggerData trig)
 {
-    if (trig.editorclass == "trigger_quickdeath" /*&& GetConVarBool("trigger_overlay_hide_deathtriggers")*/)
-        return false;
+    //if (trig.editorclass == "trigger_quickdeath" /*&& GetConVarBool("trigger_overlay_hide_deathtriggers")*/)
+    //    return false;
     entity player = GetLocalClientPlayer()
-    float maxDist = 100000.0 // GetConVarFloat("trigger_overlay_max_dist")
+    float maxDist = 5000.0 // GetConVarFloat("trigger_overlay_max_dist")
     return DistanceSqr(trig.origin, player.CameraPosition()) < maxDist * maxDist
 }
 
@@ -164,7 +194,8 @@ void function DisplayTriggers()
         {
             for (int i = 0; i < trig.edges.len(); i += 2)
             {
-                DebugDrawLine( trig.edges[i], trig.edges[i+1], trig.color.x, trig.color.y, trig.color.z, false, 1.0 )
+                vector color = GetTrigColor(trig)
+                DebugDrawLine( trig.edges[i], trig.edges[i+1], color.x, color.y, color.z, false, 0.1 )
             }
         }
     }
