@@ -474,6 +474,10 @@ void function OnPropDynamic( entity ent )
     if (GetMapName() == "sp_timeshift_spoke02" && int(origin.x) == 4697 && int(origin.y) == -75 && int(origin.z) == 11407) {
         SplitOnInteract(ent, "Button \"Floor\"")
     }
+    if (GetMapName() == "sp_beacon_spoke0" && fabs(origin.x - 2688) < 0.5 && fabs(origin.y - 10387) < 0.5 && fabs(origin.z - 1059) < 0.5)
+    {
+        SplitOnInteract(ent, "Button")
+    }
     // 4697.74 -75.7991 11407.9
 }
 
@@ -616,11 +620,6 @@ vector oldOrigin
 bool beacon2Started = false
 void function Beacon2IL_Init() {
     if (!beacon2Started) {
-
-        AddCallback_UseEntGainFocus(Beacon2IL_Focus)
-        AddCallback_UseEntLoseFocus(Beacon2IL_LoseFocus)
-        RegisterConCommandTriggeredCallback("+use", Beacon2IL_OnUse)
-
         beacon2Started = true
         entity player = GetLocalClientPlayer()
         if (!IsValid( player ) || !IsAlive( player ))
@@ -642,43 +641,6 @@ void function Beacon2IL_Init() {
                 break
             }
         }()
-    }
-}
-
-bool b2ButtonInFocus = false
-bool b2ArcToolInFocus = false
-void function Beacon2IL_Focus(entity thingy) {
-    vector origin = thingy.GetOrigin()
-    printt(string(thingy.GetModelName()))
-    if (fabs(origin.x - 2688) < 0.5 && fabs(origin.y - 10387) < 0.5 && fabs(origin.z - 1059) < 0.5) {
-        b2ButtonInFocus = true
-    }
-
-    if(string(thingy.GetModelName()) == "$\"models/weapons/arc_tool_sp/w_arc_tool_sp.mdl\"") {
-        b2ArcToolInFocus = true
-    }
-}
-
-void function Beacon2IL_LoseFocus(entity thingy) {
-    if (!IsValid(thingy))
-        return
-    vector origin = thingy.GetOrigin()
-    if (int(origin.x) == 2688 && int(origin.y) == 10387 && int(origin.z) == 1059) {
-        b2ButtonInFocus = false
-    }
-
-    if(string(thingy.GetModelName()) == "$\"models/weapons/arc_tool_sp/w_arc_tool_sp.mdl\"") {
-        b2ArcToolInFocus = false
-    }
-
-}
-
-void function Beacon2IL_OnUse(entity player) {
-    if (b2ButtonInFocus) {
-        RunUIScript("SplitWithName", "Button")
-    }
-
-    if (b2ArcToolInFocus) {
     }
 }
 

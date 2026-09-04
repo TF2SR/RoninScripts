@@ -151,13 +151,10 @@ void function SRM_SpeedometerUpdate()
 				unitConversionModifier = 0.91444
 				speedometerUnitLabel   = "/10 km/h"
 		}
-		if (GetConVarString("srm_speedometer_ulabel_text") != "")
-			speedometerUnitLabel = GetConVarString("srm_speedometer_ulabel_text")
 		
 		vector velocity = player.GetVelocity()
 		velocity += Ronin_GetPlayerPlatformVelocity(player)
 
-		RuiSetString( file.speedometerUnit, "text", speedometerUnitLabel )
 
 
 		switch ( GetConVarInt("srm_speedometer_axismode") )
@@ -178,6 +175,10 @@ void function SRM_SpeedometerUpdate()
 		float speedConverted = speed * unitConversionModifier
 
 		UpdateRuiParameters(speed)
+
+		if (GetConVarString("srm_speedometer_ulabel_text") != "")
+			speedometerUnitLabel = GetConVarString("srm_speedometer_ulabel_text")
+		RuiSetString( file.speedometerUnit, "text", speedometerUnitLabel )
     	//RuiSetFloat( file.speedometerUnit, "fontSize", 20 * (file.fontSize / 45.0) * sin(Time() * 3) )
 		//RuiSetFloat2( file.speedometerUnit, "alignment", <0, (sin(Time() * 3) + 1.0) / 2.0, 0> )
 
