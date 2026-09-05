@@ -270,10 +270,23 @@ void function RunList_Refresh()
     Hud_SetText( Hud_GetChild(Hud_GetChild(file.menu, "DownArrow"), "Label"), "+" + (GetRunCount() - 8 - file.runListScrollOffset) )
 }
 
+int function RunCompareLatest( Run a, Run b )
+{
+	if ( a.timestamp < b.timestamp )
+		return 1
+	else if ( a.timestamp > b.timestamp )
+		return -1
+
+	return 0;
+}
+
+
 int function SortFunc_PBsFirst( Run a, Run b )
 {
 	if (a.isPB == b.isPB)
-		return 0
+    {
+        return RunCompareLatest(a,b)
+    }
     
 	if (!a.isPB)
 		return 1
@@ -405,9 +418,13 @@ void function PastRuns_DisplayRun(Run run)
         {
             splitLabelText += GetLevelName(split.name, true)
         }
+        //Duration targetSplit = 
         splitLabelText += "\n"
         timesLabelText += AddLeadingSpaceForTime(FormatTime(split.seconds, split.microseconds)) + "\n"
-        deltasLabelText += AddLeadingSpaceForTime(ColorDelta(format("%.1f", [-1.5, 1.0, -0.5, 0.0, 2.0].getrandom()), split.isGold)) + "\n"
+        //Duration delta = SubtractTimes( )
+        if (split.isGold)
+            deltasLabelText += "^FFD70000GOLD!"
+        deltasLabelText += "\n"
     }
 
     // category

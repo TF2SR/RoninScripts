@@ -761,7 +761,7 @@ void function FoldWeaponIL_CheckEscape() {
 
         vector origin = player.GetOrigin()
 
-        if (DistanceSqr(<535, 6549, 0>, <origin.x, origin.y, 0) < 25000 && fwWasInCutscene && !IsInCutscene()) {
+        if (DistanceSqr(<535, 6549, 0>, <origin.x, origin.y, 0>) < 25000 && fwWasInCutscene && !IsInCutscene()) {
             fwescape = true
 
 			RunUIScript("SplitWithName", "Escape")

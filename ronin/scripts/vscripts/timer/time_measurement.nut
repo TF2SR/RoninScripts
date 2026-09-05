@@ -144,6 +144,8 @@ void function MeasureTime()
         {
             SetConVarFloat("player_respawnInputDebounceDuration", 0.0)
         }
+        else
+            SetConVarFloat("player_respawnInputDebounceDuration", 0.5)
         if (!file.runInvalidated && !CheckRunValid())
             file.runInvalidated = true
 

@@ -49,7 +49,8 @@ void function UpdateRuiParameters(float speed = 0.0)
 		file.multiplier += min(0.5 * dt, target - file.multiplier)
 	}
 	
-	file.fontSize *= file.multiplier
+	if (GetConVarBool("srm_speedometer_wowowowow"))
+		file.fontSize *= file.multiplier
 
 	file.lastTime = Time()
 
