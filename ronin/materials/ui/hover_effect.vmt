@@ -1,0 +1,17 @@
+"Basic"
+{
+    $basetexture "ui/hover_effect"
+    $translucent		"1"
+	"$vertexcolor" 1
+	"$vertexalpha" 1
+	"$no_fullbright" 1
+    "Proxies"
+    {
+        "AnimatedTexture"
+        {
+            "animatedTextureVar"                     "$basetexture" 
+            "animatedTextureFrameNumVar"    "$frame"
+            "animatedTextureFrameRate"         "60" 
+        }
+    }
+}

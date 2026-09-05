@@ -37,7 +37,7 @@ void function SRM_InitSettingsMenu()
 	)
 
 	// Utility
-	SRM_SetupNormalButton( "SwchCrouchKickFix", "Crouch Kick Fix", "`1Adds an 8 ms Buffer to your jump and crouch inputs.\n\n`0Pressing both Jump and Crouch up to 8 ms apart from each other will register both inputs at the same time\nThe combined input will be registered at the time of your second input" )
+	SRM_SetupNormalButton( "SwchCrouchKickFix", "Crouch Kick Fix", "`1Adds an 9 ms Buffer to your jump and crouch inputs.\n\n`0Pressing both Jump and Crouch up to 9 ms apart from each other will register both inputs at the same time\nThe combined input will be registered at the time of your second input" )
 	SRM_SetupNormalButton( "SwchEnableMP", "Multiplayer", "`1Enables or disables the multiplayer buttons in the main menu" )
 	AddButtonEventHandler(
 		SRM_SetupNormalButton( "BtnResetHelmets", "Reset Helmets", "Reset all the collectible helmet items" ),

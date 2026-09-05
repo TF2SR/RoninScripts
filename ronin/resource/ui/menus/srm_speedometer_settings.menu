@@ -51,10 +51,10 @@ resource/ui/menus/srm_speedometer_settings.menu
 		LblMenuItemDescription
 		{
 			ControlName				RuiPanel
-			xpos					975
+			xpos					1275
 			ypos					158
-			tall					370
-			wide 					844
+			tall					246
+			wide 					562
 			rui                     "ui/control_options_description.rpak"
 		}
 
@@ -64,6 +64,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 		{
 			ControlName				ImagePanel
 			InheritProperties		SubheaderBackground
+			wide					580
 			xpos					96
 			ypos					160
 		}
@@ -74,13 +75,31 @@ resource/ui/menus/srm_speedometer_settings.menu
 			pin_to_sibling			ImgSubheaderBackground
 			pin_corner_to_sibling	LEFT
 			pin_to_sibling_corner	LEFT
-			labelText				"Settings"
+			labelText				"Display"
+		}
+
+		SwchSpeedometerFont
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			wide					500
+			style					DialogListButton
+			ConVar					"srm_speedometer_font"
+			list
+			{
+				"Square"				0
+				"Modern"				1
+			}
+			pin_to_sibling			ImgSubheaderBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
 		}
 
 		SwchSpeedometerUnit
 		{
 			ControlName				RuiButton
 			InheritProperties		SwitchButton
+			wide					500
 			style					DialogListButton
 			ConVar					"srm_speedometer_unit"
 			list
@@ -91,7 +110,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 				"Units"				3
 				"km/h * 10"			4
 			}
-			pin_to_sibling			ImgSubheaderBackground
+			pin_to_sibling			SwchSpeedometerFont
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 		}
@@ -100,6 +119,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 		{
 			ControlName				RuiButton
 			InheritProperties		SwitchButton
+			wide					500
 			style					DialogListButton
 			ConVar					"srm_speedometer_axismode"
 			list
@@ -113,45 +133,133 @@ resource/ui/menus/srm_speedometer_settings.menu
 			pin_to_sibling_corner	BOTTOM_LEFT
 		}
 
-        SwchSpeedometerDecimals
+        SwchSpeedometerAlignment
 		{
 			ControlName				RuiButton
 			InheritProperties		SwitchButton
+			wide					500
 			style					DialogListButton
-			ConVar					"srm_speedometer_decimals"
+			ConVar					"srm_speedometer_alignment"
 			list
 			{
-				"0"				    0
-				"1"				    1
-				"2"				    2
+				"Left"				    0
+				"Middle"				1
+				"Right"				    2
 			}
 			pin_to_sibling			SwchSpeedometerAxisMode
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 		}
-
-		CustomizationSubheaderBackground
+		SldSpeedometerSize
 		{
-			ControlName				ImagePanel
-			InheritProperties		SubheaderBackground
-			xpos					96
-			ypos					365
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			wide					500
+			pin_to_sibling			SwchSpeedometerAlignment
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			
+			conCommand				"srm_speedometer_size"
+			minValue				0.0
+			maxValue				400.0
+			stepSize				1.0
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				wide					500
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
 		}
-		CustomizationSubheaderText
+		TextEntrySldSpeedometerSize
 		{
-			ControlName				Label
-			InheritProperties		SubheaderText
-			pin_to_sibling			CustomizationSubheaderBackground
-			pin_corner_to_sibling	LEFT
-			pin_to_sibling_corner	LEFT
-			labelText				"Customization"
+			ControlName				TextEntry
+			xpos                    8
+			zpos					100
+			wide					50
+			tall					30
+			visible					1
+			enabled					1
+			textHidden				0
+			editable				1
+			maxchars				5
+			NumericInputOnly		1
+			font 					Default_21
+			allowRightClickMenu		0
+			allowSpecialCharacters	0
+			unicode					0
+			syncedConVar			"srm_speedometer_size"
+
+			pin_to_sibling			SldSpeedometerSize
+            pin_corner_to_sibling	LEFT
+            pin_to_sibling_corner	RIGHT
+		}
+		SldSpeedometerThickness
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			wide					500
+			pin_to_sibling			SldSpeedometerSize
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			
+			conCommand				"srm_speedometer_thickness"
+			minValue				0.0
+			maxValue				1.0
+			stepSize				0.1
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				wide					500
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+		TextEntrySldSpeedometerThickness
+		{
+			ControlName				TextEntry
+			xpos                    8
+			zpos					100
+			wide					50
+			tall					30
+			visible					1
+			enabled					1
+			textHidden				0
+			editable				1
+			maxchars				5
+			NumericInputOnly		1
+			font 					Default_21
+			allowRightClickMenu		0
+			allowSpecialCharacters	0
+			unicode					0
+			syncedConVar			"srm_speedometer_thickness"
+
+			pin_to_sibling			SldSpeedometerThickness
+            pin_corner_to_sibling	LEFT
+            pin_to_sibling_corner	RIGHT
 		}
 
 		SldSpeedometerPositionX
 		{
+			ypos					30
 			ControlName				SliderControl
 			InheritProperties		SliderControl
-			pin_to_sibling			CustomizationSubheaderBackground
+			wide					500
+			pin_to_sibling			SldSpeedometerThickness
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp					SldBrightness
@@ -165,6 +273,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 			{
 				ControlName				RuiButton
 				InheritProperties		WideButton
+				wide					500
 				clip 					0
 				autoResize				1
 				pinCorner				0
@@ -198,10 +307,12 @@ resource/ui/menus/srm_speedometer_settings.menu
             pin_to_sibling_corner	RIGHT
 		}
 
+
 		SldSpeedometerPositionY
 		{
 			ControlName				SliderControl
 			InheritProperties		SliderControl
+			wide					500
 			pin_to_sibling			SldSpeedometerPositionX
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
@@ -216,6 +327,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 			{
 				ControlName				RuiButton
 				InheritProperties		WideButton
+				wide					500
 				clip 					0
 				autoResize				1
 				pinCorner				0
@@ -249,16 +361,142 @@ resource/ui/menus/srm_speedometer_settings.menu
             pin_to_sibling_corner	RIGHT
 		}
 
+		SpeedThresholdSubheaderBackground
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackground
+			wide					580
+			xpos					96
+			ypos					580
+		}
+		SpeedThresholdSubheaderText
+		{
+			ControlName				Label
+			InheritProperties		SubheaderText
+			pin_to_sibling			SpeedThresholdSubheaderBackground
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			labelText				"Unit Label"
+		}
+		
+		SldSpeedometerULabelSize
+		{
+			ypos 					0
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			wide					500
+			pin_to_sibling			SpeedThresholdSubheaderBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldSpeedometerSlowSpeed
+			navDown					SldFilmGrain
+			conCommand				"srm_speedometer_ulabel_size"
+			minValue				0
+			maxValue				1	
+			stepSize				0.05
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				wide					500
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+		TextEntrySldSpeedometerULabelSize
+		{
+			ControlName				TextEntry
+			xpos                    8
+			zpos					100
+			wide					50
+			tall					30
+			visible					1
+			enabled					1
+			textHidden				0
+			editable				1
+			maxchars				5
+			NumericInputOnly		1
+			font 					Default_21
+			allowRightClickMenu		0
+			allowSpecialCharacters	0
+			unicode					0
+			syncedConVar			"srm_speedometer_ulabel_size"
+
+			pin_to_sibling			SldSpeedometerULabelSize
+            pin_corner_to_sibling	LEFT
+            pin_to_sibling_corner	RIGHT
+		}
+
+		SldSpeedometerULabelDistance
+		{
+			ypos 					0
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			wide					500
+			pin_to_sibling			SldSpeedometerULabelSize
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldSpeedometerSlowSpeed
+			navDown					SldFilmGrain
+			conCommand				"srm_speedometer_ulabel_distance"
+			minValue				0.5
+			maxValue				3	
+			stepSize				0.1
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				wide					500
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+		TextEntrySldSpeedometerULabelDistance
+		{
+			ControlName				TextEntry
+			xpos                    8
+			zpos					100
+			wide					50
+			tall					30
+			visible					1
+			enabled					1
+			textHidden				0
+			editable				1
+			maxchars				5
+			NumericInputOnly		1
+			font 					Default_21
+			allowRightClickMenu		0
+			allowSpecialCharacters	0
+			unicode					0
+			syncedConVar			"srm_speedometer_ulabel_distance"
+
+			pin_to_sibling			SldSpeedometerULabelDistance
+            pin_corner_to_sibling	LEFT
+            pin_to_sibling_corner	RIGHT
+		}
 
 		SldSpeedometerColorSlowR
 		{
-			ypos 					30
+			ypos 					0
 			ControlName				SliderControl
 			InheritProperties		SliderControl
-			pin_to_sibling			SldSpeedometerPositionY
+			wide					500
+			pin_to_sibling			SldSpeedometerSlowSpeed
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					SldSpeedometerPositionY
+			navUp					SldSpeedometerSlowSpeed
 			navDown					SldFilmGrain
 			conCommand				"srm_speedometer_color_slow_r"
 			minValue				0
@@ -269,6 +507,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 			{
 				ControlName				RuiButton
 				InheritProperties		WideButton
+				wide					500
 				clip 					0
 				autoResize				1
 				pinCorner				0
@@ -305,6 +544,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 		{
 			ControlName				SliderControl
 			InheritProperties		SliderControl
+			wide					500
 			pin_to_sibling			SldSpeedometerColorSlowR
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
@@ -319,6 +559,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 			{
 				ControlName				RuiButton
 				InheritProperties		WideButton
+				wide					500
 				clip 					0
 				autoResize				1
 				pinCorner				0
@@ -355,6 +596,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 		{
 			ControlName				SliderControl
 			InheritProperties		SliderControl
+			wide					500
 			pin_to_sibling			SldSpeedometerColorSlowG
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
@@ -369,6 +611,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 			{
 				ControlName				RuiButton
 				InheritProperties		WideButton
+				wide					500
 				clip 					0
 				autoResize				1
 				pinCorner				0
@@ -404,13 +647,14 @@ resource/ui/menus/srm_speedometer_settings.menu
 
 		SldSpeedometerColorFastR
 		{
-			ypos 					30
+			ypos 					0
 			ControlName				SliderControl
 			InheritProperties		SliderControl
-			pin_to_sibling			SldSpeedometerColorSlowB
+			wide					500
+			pin_to_sibling			SldSpeedometerFastSpeed
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
-			navUp					SldSpeedometerColorSlowB
+			navUp					SldSpeedometerFastSpeed
 			navDown					SldFilmGrain
 			conCommand				"srm_speedometer_color_fast_r"
 			minValue				0
@@ -421,6 +665,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 			{
 				ControlName				RuiButton
 				InheritProperties		WideButton
+				wide					500
 				clip 					0
 				autoResize				1
 				pinCorner				0
@@ -457,6 +702,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 		{
 			ControlName				SliderControl
 			InheritProperties		SliderControl
+			wide					500
 			pin_to_sibling			SldSpeedometerColorFastR
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
@@ -471,6 +717,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 			{
 				ControlName				RuiButton
 				InheritProperties		WideButton
+				wide					500
 				clip 					0
 				autoResize				1
 				pinCorner				0
@@ -507,6 +754,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 		{
 			ControlName				SliderControl
 			InheritProperties		SliderControl
+			wide					500
 			pin_to_sibling			SldSpeedometerColorFastG
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
@@ -521,6 +769,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 			{
 				ControlName				RuiButton
 				InheritProperties		WideButton
+				wide					500
 				clip 					0
 				autoResize				1
 				pinCorner				0
@@ -560,11 +809,12 @@ resource/ui/menus/srm_speedometer_settings.menu
 			ypos 					30
 			ControlName				SliderControl
 			InheritProperties		SliderControl
+			wide					500
 			pin_to_sibling			SldSpeedometerColorFastB
 			pin_corner_to_sibling	TOP_LEFT
 			pin_to_sibling_corner	BOTTOM_LEFT
 			navUp					SldSpeedometerColorFastB
-			navDown					SldFilmGrain
+			navDown					SldSpeedometerOutlineAlpha
 			conCommand				"srm_speedometer_alpha"
 			minValue				0.0
 			maxValue				1.0
@@ -574,6 +824,7 @@ resource/ui/menus/srm_speedometer_settings.menu
 			{
 				ControlName				RuiButton
 				InheritProperties		WideButton
+				wide					500
 				clip 					0
 				autoResize				1
 				pinCorner				0
@@ -606,7 +857,366 @@ resource/ui/menus/srm_speedometer_settings.menu
             pin_corner_to_sibling	LEFT
             pin_to_sibling_corner	RIGHT
 		}
+		DecimalsSubheaderBackground
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackground
+			wide					580
+			xpos					-8
+			ypos					8
+			pin_to_sibling			LblMenuItemDescription
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		DecimalsSubheaderText
+		{
+			ControlName				Label
+			InheritProperties		SubheaderText
+			pin_to_sibling			DecimalsSubheaderBackground
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			labelText				"Decimals"
+		}
 
+        SwchSpeedometerDecimals
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			wide					500
+			style					DialogListButton
+			ConVar					"srm_speedometer_decimals"
+			list
+			{
+				"0"				    0
+				"1"				    1
+				"2"				    2
+			}
+			pin_to_sibling			DecimalsSubheaderBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+        SwchSpeedometerDecimalsSpacing
+		{
+			ControlName				RuiButton
+			InheritProperties		SwitchButton
+			wide					500
+			style					DialogListButton
+			ConVar					"srm_speedometer_decimals_space"
+			list
+			{
+				"None"				    0
+				"Small Dot"				    1
+				"Small Space"				    2
+				"Big Dot"				    3
+				"Big Space"				    4
+			}
+			pin_to_sibling			SwchSpeedometerDecimals
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+		}
+		SldSpeedometerDecimalSize
+		{
+			ypos 					0
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			wide					500
+			pin_to_sibling			SwchSpeedometerDecimalsSpacing
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SwchSpeedometerDecimalsSpacing
+			navDown					SldSpeedometerOutlineAlpha
+			conCommand				"srm_speedometer_decimals_size"
+			minValue				0.0
+			maxValue				1.0
+			stepSize				0.1
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				wide					500
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+		TextEntrySldSpeedometerDecimalSize
+		{
+			ControlName				TextEntry
+			xpos                    8
+			zpos					100
+			wide					50
+			tall					30
+			visible					1
+			enabled					1
+			textHidden				0
+			editable				1
+			maxchars				5
+			NumericInputOnly		1
+			font 					Default_21
+			allowRightClickMenu		0
+			allowSpecialCharacters	0
+			unicode					0
+			syncedConVar			"srm_speedometer_decimals_size"
+
+			pin_to_sibling			SldSpeedometerDecimalSize
+            pin_corner_to_sibling	LEFT
+            pin_to_sibling_corner	RIGHT
+		}
+
+		OutlineSubheaderBackground
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackground
+			wide					580
+			xpos					694
+			ypos					655
+		}
+		OutlineSubheaderText
+		{
+			ControlName				Label
+			InheritProperties		SubheaderText
+			pin_to_sibling			OutlineSubheaderBackground
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			labelText				"Outline"
+		}
+
+		SldSpeedometerOutlineAlpha
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			wide					500
+			ypos					0
+			pin_to_sibling			OutlineSubheaderBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldSpeedometerAlpha
+			navDown					SldSpeedometerOutlineThickness
+			conCommand				"srm_speedometer_outline_alpha"
+			minValue				0.0
+			maxValue				1.0
+			stepSize				0.1
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				wide					500
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+		TextEntrySldSpeedometerOutlineAlpha
+		{
+			ControlName				TextEntry
+			xpos                    8
+			zpos					100
+			wide					50
+			tall					30
+			visible					1
+			enabled					1
+			textHidden				0
+			editable				1
+			maxchars				5
+			NumericInputOnly		1
+			font 					Default_21
+			allowRightClickMenu		0
+			allowSpecialCharacters	0
+			unicode					0
+			syncedConVar			"srm_speedometer_outline_alpha"
+
+			pin_to_sibling			SldSpeedometerOutlineAlpha
+            pin_corner_to_sibling	LEFT
+            pin_to_sibling_corner	RIGHT
+		}
+		SldSpeedometerOutlineThickness
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			wide					500
+			pin_to_sibling			SldSpeedometerOutlineAlpha
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			navUp					SldSpeedometerOutlineAlpha
+			navDown					SldFilmGrain
+			conCommand				"srm_speedometer_outline_thickness"
+			minValue				0.0
+			maxValue				10.0
+			stepSize				0.5
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				wide					500
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+		TextEntrySldSpeedometerOutlineThickness
+		{
+			ControlName				TextEntry
+			xpos                    8
+			zpos					100
+			wide					50
+			tall					30
+			visible					1
+			enabled					1
+			textHidden				0
+			editable				1
+			maxchars				5
+			NumericInputOnly		1
+			font 					Default_21
+			allowRightClickMenu		0
+			allowSpecialCharacters	0
+			unicode					0
+			syncedConVar			"srm_speedometer_outline_thickness"
+
+			pin_to_sibling			SldSpeedometerOutlineThickness
+            pin_corner_to_sibling	LEFT
+            pin_to_sibling_corner	RIGHT
+		}
+
+		CustomizationSubheaderBackground
+		{
+			ControlName				ImagePanel
+			InheritProperties		SubheaderBackground
+			wide					580
+			xpos					16
+			ypos					0
+			pin_to_sibling			ImgSubheaderBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	TOP_RIGHT
+		}
+		CustomizationSubheaderText
+		{
+			ControlName				Label
+			InheritProperties		SubheaderText
+			pin_to_sibling			CustomizationSubheaderBackground
+			pin_corner_to_sibling	LEFT
+			pin_to_sibling_corner	LEFT
+			labelText				"Colors"
+		}
+		SldSpeedometerSlowSpeed
+		{
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			wide					500
+			pin_to_sibling			CustomizationSubheaderBackground
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			//navUp					SldSpeedometerOutlineAlpha
+			//navDown					SldSpeedometerPositionY
+			conCommand				"srm_speedometer_slow"
+			minValue				0.0
+			maxValue				1093.6133
+			stepSize				0.5
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				wide					500
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+		TextEntrySldSpeedometerSlowSpeed
+		{
+			ControlName				TextEntry
+			xpos                    8
+			zpos					100
+			wide					50
+			tall					30
+			visible					1
+			enabled					1
+			textHidden				0
+			editable				1
+			maxchars				5
+			NumericInputOnly		1
+			font 					Default_21
+			allowRightClickMenu		0
+			allowSpecialCharacters	0
+			unicode					0
+			syncedConVar			"srm_speedometer_slow"
+
+			pin_to_sibling			SldSpeedometerSlowSpeed
+            pin_corner_to_sibling	LEFT
+            pin_to_sibling_corner	RIGHT
+		}
+		SldSpeedometerFastSpeed
+		{
+			ypos					30
+			ControlName				SliderControl
+			InheritProperties		SliderControl
+			wide					500
+			pin_to_sibling			SldSpeedometerColorSlowB
+			pin_corner_to_sibling	TOP_LEFT
+			pin_to_sibling_corner	BOTTOM_LEFT
+			//navUp					SldSpeedometerOutlineAlpha
+			//navDown					SldFilmGrain
+			conCommand				"srm_speedometer_fast"
+			minValue				0.0
+			maxValue				1093.6133
+			stepSize				0.5
+			inverseFill				0
+			BtnDropButton
+			{
+				ControlName				RuiButton
+				InheritProperties		WideButton
+				wide					500
+				clip 					0
+				autoResize				1
+				pinCorner				0
+				visible					1
+				enabled					1
+				style					SliderButton
+				command					""
+			}
+		}
+		TextEntrySldSpeedometerFastSpeed
+		{
+			ControlName				TextEntry
+			xpos                    8
+			zpos					100
+			wide					50
+			tall					30
+			visible					1
+			enabled					1
+			textHidden				0
+			editable				1
+			maxchars				5
+			NumericInputOnly		1
+			font 					Default_21
+			allowRightClickMenu		0
+			allowSpecialCharacters	0
+			unicode					0
+			syncedConVar			"srm_speedometer_fast"
+
+			pin_to_sibling			SldSpeedometerFastSpeed
+            pin_corner_to_sibling	LEFT
+            pin_to_sibling_corner	RIGHT
+		}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

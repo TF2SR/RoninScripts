@@ -15,6 +15,9 @@ global function GetTimeDelta
 global function GetSplitIndex
 global function PreviousDelta
 global function PreviousLevelDelta
+global function SplitWithName
+
+const array<string> CUSTOM_LEVEL_SPLITS = ["sp_sewers1"]
 
 struct
 {
@@ -137,9 +140,13 @@ void function MeasureTime()
             ResetTime()
         }
 
-        CheckRunValid()
-
-        if (!file.runInvalidated && !IsRunValid())
+        if (GetConVarBool("sv_cheats"))
+        {
+            SetConVarFloat("player_respawnInputDebounceDuration", 0.0)
+        }
+        else
+            SetConVarFloat("player_respawnInputDebounceDuration", 0.5)
+        if (!file.runInvalidated && !CheckRunValid())
             file.runInvalidated = true
 
 
@@ -150,8 +157,8 @@ void function MeasureTime()
                 if (!lastIsFullyConnected)
                     RunClientScript("LoadFacts", file.facts)
 
-                string delta = GetTimeDelta( file.time )
-                string levelDelta = GetTimeDelta( file.levelTime, GetSplitIndex() )
+                string delta = GetTimeDelta( file.time, "", false )
+                string levelDelta = GetTimeDelta( file.levelTime, GetLastSplitName(), false )
                 RunClientScript("SetTime", file.time.seconds,
                 file.time.microseconds,
                 file.levelTime.seconds,
@@ -170,13 +177,16 @@ void function MeasureTime()
             // dont care
         }
 
-        if (GetConVarInt("sp_currentstartpoint") > file.curStartPoint && IsILCategory(GetRunCategory()))
+        /*
+        if (GetConVarInt("sp_currentstartpoint") > file.curStartPoint && IsILCategory(GetRunCategory())
+        && !CUSTOM_LEVEL_SPLITS.contains(GetRunCurrentLevel()))
         {
             printt("split!  ")
             Split()
             file.levelTime.name = "Startpoint " + GetConVarInt("sp_currentstartpoint")
             file.curStartPoint = GetConVarInt("sp_currentstartpoint")
         }
+        */
 
         foreach (void functionref() callback in file.onTimerUpdatedCallbacks)
             callback()
@@ -214,7 +224,13 @@ bool function ShouldStartCounting()
     {
         ResetTime()
     }
+    // only start if:
+    // exiting a loading screen and a run is not ended
+    // category is IL
+    // timer is not zero (mid run)
+    // timer is zero, and starting from new game (gauntlet, start point 0)
     bool result = !IsInLoadingScreen() && GetEngineTick() > 23 && GetActiveLevel() != "" && !file.runEnded
+                  && ((file.time.microseconds != 0 && file.time.seconds != 0) || IsILCategory(GetRunCategory()) || (GetActiveLevel() == "sp_training" && GetConVarInt("sp_currentstartpoint") == 0))
     if (result)
     {
         print("\n\n\nstart timer!!!")
@@ -226,6 +242,7 @@ bool function ShouldStartCounting()
         {
             file.levelTime.name = "Startpoint " + file.curStartPoint
         }
+        RunClientScript("TimerStarted", file.time.seconds, file.time.microseconds )
     }
     return result
 }
@@ -267,10 +284,11 @@ bool function ShouldStopCounting()
 
 void function Split()
 {
+    string splitName = file.levelTime.name
     string delta = GetTimeDelta(file.time)
     file.levelTime.delta = delta
     file.previousDelta = delta
-    file.previousLevelDelta = GetTimeDelta(file.levelTime, GetSplitIndex())
+    file.previousLevelDelta = GetTimeDelta(file.levelTime, splitName)
 
 
     string category = GetRunCategory()
@@ -281,7 +299,6 @@ void function Split()
 
     // save gold splits
     table goldSplits = GetGoldSplitsForCategory(category)
-    string splitName = file.levelTime.name
     if (!(file.levelTime.name in goldSplits) || IsSplitBetter(file.levelTime, TableToDuration(expect table(goldSplits[splitName]))))
     {
         file.levelTime.isGold = true // yay!
@@ -308,10 +325,34 @@ void function Split()
     file.levelTime = levelTime
 }
 
+void function SplitWithName(string name) {
+    foreach (Duration split in file.splits)
+    {
+        if (split.name == name)
+            return
+    }
+    file.levelTime.name = name
+    Split()
+    // kinda a hacky way to name the last split
+    file.levelTime.name = GetILLastSplitName()
+}
+
+string function GetILLastSplitName() {
+    switch (GetRunCurrentLevel()) {
+        case "sp_crashsite":
+            return "No U"
+        case "sp_sewers1":
+            return "Kane"
+        case "sp_boomtown_spoke0":
+            return "Level End"
+    }
+    return "idk"
+}
+
 void function ResetTime()
 {
     var stackInfos = getstackinfos( 2 )
-    printt("reset!  " + stackInfos["src"] + ":" + stackInfos["line"])
+    //printt("reset!  " + stackInfos["src"] + ":" + stackInfos["line"])
     file.runInvalidated = false
     file.time.seconds = 0
     file.time.microseconds = 0
@@ -327,6 +368,13 @@ void function ResetTime()
 int function GetSplitIndex()
 {
     return file.splits.len()
+}
+
+string function GetLastSplitName()
+{
+    if (file.splits.len() <= 0)
+        return ""
+    return file.splits[file.splits.len() - 1].name
 }
 
 Duration function GetSpeedrunTimer()
@@ -414,7 +462,7 @@ void function SetFacts(string facts)
     file.facts = facts
 }
 
-string function GetTimeDelta( Duration time, int split = -1 )
+string function GetTimeDelta( Duration time, string split = "", bool debug = true )
 {
     string category = GetRunCategory()
     if (category == "IL")
@@ -427,14 +475,37 @@ string function GetTimeDelta( Duration time, int split = -1 )
 
     expect Run( pb )
 
-    Duration b
-    if (split >= 0)
+    string splitToFind = split
+    if (split == "")
     {
-        b = pb.splits[minint(split, pb.splits.len() - 1)]
+        splitToFind = GetLevelTime().name
+    }
+    int splitIndex = -1
+    for (int i = 0; i < pb.splits.len(); i++)
+    {
+        if (pb.splits[i].name == splitToFind)
+        {
+            splitIndex = i
+            break
+        }
+        if (i == pb.splits.len() - 1)
+        {
+            // had a split name but didnt find it, so no split delta is available
+            if (debug)
+                printt("didnt find split", split)
+            return ""
+        }
+    }
+    if (debug)
+        printt(splitIndex)
+    Duration b
+    if (split != "")
+    {
+        b = pb.splits[minint(splitIndex, pb.splits.len() - 1)]
     }
     else
     {
-        b = SumOfSplits( pb.splits, GetSplitIndex() + 1 )
+        b = SumOfSplits( pb.splits, pb.splits[splitIndex].name )
     }
 
     Duration result = SubtractTimes( time, b )

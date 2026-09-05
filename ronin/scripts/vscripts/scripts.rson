@@ -1118,6 +1118,7 @@ Scripts:
 [
 	timer/cl_timer_overlay.nut
 	timer/cl_subsplit.nut
+	triggers/cl_trigger_select.nut
 ]
 When: "UI"
 Scripts:
@@ -1130,4 +1131,90 @@ Scripts:
 	timer/components/button_carousel.nut
 	timer/components/run_panel.nut
 	ui/menu_past_runs.nut
+]
+
+// TRIGGER BULLSHIT
+
+When: "CLIENT && MAP_sp_skyway_v1"
+Scripts:
+[
+	triggers/sp_skyway_v1_script.nut
+]
+
+When: "CLIENT && MAP_sp_sewers1"
+Scripts:
+[
+	triggers/sp_sewers1_script.nut
+]
+
+When: "CLIENT && MAP_sp_s2s"
+Scripts:
+[
+	triggers/sp_s2s_script.nut
+]
+
+When: "CLIENT && MAP_sp_tday"
+Scripts:
+[
+	triggers/sp_tday_script.nut
+]
+
+When: "CLIENT && MAP_sp_training"
+Scripts:
+[
+	triggers/sp_training_script.nut
+]
+
+When: "CLIENT && MAP_sp_timeshift_spoke02"
+Scripts:
+[
+	triggers/sp_timeshift_spoke02_script.nut
+]
+
+When: "CLIENT && MAP_sp_hub_timeshift"
+Scripts:
+[
+	triggers/sp_hub_timeshift_script.nut
+]
+
+When: "CLIENT && MAP_sp_crashsite"
+Scripts:
+[
+	triggers/sp_crashsite_script.nut
+]
+
+When: "CLIENT && MAP_sp_boomtown_start"
+Scripts:
+[
+	triggers/sp_boomtown_start_script.nut
+]
+
+When: "CLIENT && MAP_sp_boomtown"
+Scripts:
+[
+	triggers/sp_boomtown_script.nut
+]
+
+When: "CLIENT && MAP_sp_boomtown_end"
+Scripts:
+[
+	triggers/sp_boomtown_end_script.nut
+]
+
+When: "CLIENT && MAP_sp_crashsite"
+Scripts:
+[
+	triggers/sp_crashsite_script.nut
+]
+
+When: "CLIENT && MAP_sp_beacon"
+Scripts:
+[
+	triggers/sp_beacon_script.nut
+]
+
+When: "CLIENT && MAP_sp_beacon_spoke0"
+Scripts:
+[
+	triggers/sp_beacon_spoke0_script.nut
 ]

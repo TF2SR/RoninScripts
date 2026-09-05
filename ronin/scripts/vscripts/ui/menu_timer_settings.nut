@@ -25,12 +25,12 @@ void function TimerSettingsMenu_Init()
 	})
 
 	Carousel_SetLabel( Hud_GetChild(file.menu, "ShowDeltas"), "Show Comparison" )
-	Carousel_UpdateValue( Hud_GetChild(file.menu, "ShowDeltas"), ["NO", "YES", "ONLY IN LOAD SCREEN (NOT IMPLEMENTED)"][GetConVarInt("igt_show_deltas")], <128, 128, 128> )
+	Carousel_UpdateValue( Hud_GetChild(file.menu, "ShowDeltas"), 
+	["NO", "YES", "ONLY IN LOAD SCREEN (NOT IMPLEMENTED)"][GetConVarInt("igt_show_deltas")], 
+	[<255,64,64>, <64,255,64>, <128,128,128>][GetConVarInt("igt_show_deltas")] )
 	Carousel_AddClickedHandler( Hud_GetChild(file.menu, "ShowDeltas"), void function(var button, bool isRight) : (){
 		string convar = "igt_show_deltas"
 		array<string> categories = ["NO", "YES", "ONLY IN LOAD SCREEN (NOT IMPLEMENTED)"]
-		printt(convar, isRight)
-		string conVarValue = GetConVarString(convar)
 
 		int currentRulesetIndex = GetConVarInt(convar)
 		if (isRight)
@@ -46,9 +46,9 @@ void function TimerSettingsMenu_Init()
 				currentRulesetIndex = categories.len() - 1
 		}
 
-		conVarValue = categories[currentRulesetIndex]
+		string conVarValue = categories[currentRulesetIndex]
 		SetConVarInt( convar, currentRulesetIndex )
-		vector color = GetCategoryColor(conVarValue)
+		vector color = [<255,64,64>, <64,255,64>, <128,128,128>][currentRulesetIndex]
 
 		Carousel_UpdateValue( button, conVarValue, color )
 	})
@@ -72,6 +72,18 @@ void function TimerSettingsMenu_Init()
 
 		value = !value
 		SetConVarBool( "igt_18hr_skip", value )
+		vector color = value ? <64,255,64> : <255,64,64>
+
+		Carousel_UpdateValue( button, value ? "YES" : "NO", color )
+	})
+	
+	Carousel_SetLabel( Hud_GetChild(file.menu, "Enable"), "Enable Timer" )
+	Carousel_UpdateValue( Hud_GetChild(file.menu, "Enable"), GetConVarBool("igt_enable") ? "YES" : "NO", GetConVarBool("igt_enable") ? <64,255,64> : <255,64,64> )
+	Carousel_AddClickedHandler( Hud_GetChild(file.menu, "Enable"), void function(var button, bool isRight) : (){
+		bool value = GetConVarBool("igt_enable")
+
+		value = !value
+		SetConVarBool( "igt_enable", value )
 		vector color = value ? <64,255,64> : <255,64,64>
 
 		Carousel_UpdateValue( button, value ? "YES" : "NO", color )

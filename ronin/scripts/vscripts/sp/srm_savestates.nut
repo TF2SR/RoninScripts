@@ -28,7 +28,15 @@ thread void function() : ()
         player.TouchGround()
         return true
     }
+    bool functionref(entity, array<string>) Pressed_SetPos = bool function( entity player, array<string> args ) : (file)
+    {
+        if (!GetConVarInt("sv_cheats")) return false
+        player.SetOrigin(<float(args[0]), float(args[1]), float(args[2])>)
+        player.TouchGround()
+        return true
+    }
 
     AddClientCommandCallback( "createsavestate", Pressed_CreateSaveState )
     AddClientCommandCallback( "loadsavestate", Pressed_LoadSaveState )
+    AddClientCommandCallback( "setpos", Pressed_SetPos )
 }()

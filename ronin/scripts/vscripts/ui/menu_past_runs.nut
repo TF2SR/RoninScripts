@@ -14,6 +14,7 @@ struct
     int runListScrollOffset = 0
     int selectedRunIndex = 0
     bool buttonsRegistered = false
+    array<Run> runArray
 } file
 
 void function SetRunJustEnded(bool justEnded)
@@ -62,7 +63,7 @@ void function InitPastRunsMenu()
             AddDialogButton( dialogData, "Yes", void function() : () {
                 for (int i = GetRunCount() - 1; i >= 0; i--)
                 {
-                    Run run = GetRunByIndex(i)
+                    Run run = file.runArray[i]
                     if (!run.isPB && i >= 50 && run.goldSplits.len() <= 0)
                     {
                         DeleteRun(run)
@@ -91,9 +92,9 @@ void function InitPastRunsMenu()
 
         #if PC_PROG
             AddDialogButton( dialogData, "Yes", void function() : (currentRunIndex){
-                DeleteRun(GetRunByIndex(currentRunIndex))
+                DeleteRun(file.runArray[currentRunIndex])
                 if (GetRunCount() > 0)
-                    PastRuns_DisplayRun(GetRunByIndex(maxint(0, minint(currentRunIndex, GetRunCount() - 1))))
+                    PastRuns_DisplayRun(file.runArray[maxint(0, minint(currentRunIndex, GetRunCount() - 1))])
                 else
                     PastRuns_Placeholder()
                 RunList_Refresh()
@@ -179,7 +180,7 @@ void function RetryRun( var button )
 {
     if (uiGlobal.activeMenu != file.menu)
         return
-    Run currentRun = GetRunByIndex(file.selectedRunIndex)
+    Run currentRun = file.runArray[file.selectedRunIndex]
     string category = currentRun.category
     SetConVarString( "igt_run_category", category )
     SetConVarString( "igt_run_ruleset", currentRun.ruleset )
@@ -235,20 +236,30 @@ void function PastRuns_OnRunPanelClick( var button )
 {
     var panel = Hud_GetParent( button )
     int index = expect int(panel.s.index)
-    PastRuns_DisplayRun(GetRunByIndex(index + file.runListScrollOffset))
+    PastRuns_DisplayRun(file.runArray[index + file.runListScrollOffset])
 }
 
 void function RunList_Refresh()
 {
     Hud_SetVisible( Hud_GetChild(file.menu, "DeleteRunButton"), GetRunCount() > 0 )
     Hud_SetVisible( Hud_GetChild(file.menu, "CleanUpButton"), GetRunCount() > 0 )
+    file.runArray = clone GetRunArray()
+    file.runArray.sort( SortFunc_PBsFirst )
     for (int i = 0; i < 8; i++)
     {
         var runSquare = Hud_GetChild(file.menu, "RunPanel" + i)
-        Hud_SetVisible(runSquare, (i + file.runListScrollOffset) < GetRunCount())
-        if ((i + file.runListScrollOffset) < GetRunCount())
-        {
-            RunPanel_DisplayRun(runSquare, GetRunByIndex(i + file.runListScrollOffset))
+        if (/*only sort if by PB*/ true) {
+            Hud_SetVisible(runSquare, (i + file.runListScrollOffset) < GetRunCount())
+            if ((i + file.runListScrollOffset) < GetRunCount())
+            {
+                RunPanel_DisplayRun(runSquare, file.runArray[i + file.runListScrollOffset])
+            }
+        } else {
+            Hud_SetVisible(runSquare, (i + file.runListScrollOffset) < GetRunCount())
+            if ((i + file.runListScrollOffset) < GetRunCount())
+            {
+                RunPanel_DisplayRun(runSquare, file.runArray[i + file.runListScrollOffset])
+            }
         }
     }
 
@@ -259,12 +270,36 @@ void function RunList_Refresh()
     Hud_SetText( Hud_GetChild(Hud_GetChild(file.menu, "DownArrow"), "Label"), "+" + (GetRunCount() - 8 - file.runListScrollOffset) )
 }
 
+int function RunCompareLatest( Run a, Run b )
+{
+	if ( a.timestamp < b.timestamp )
+		return 1
+	else if ( a.timestamp > b.timestamp )
+		return -1
+
+	return 0;
+}
+
+
+int function SortFunc_PBsFirst( Run a, Run b )
+{
+	if (a.isPB == b.isPB)
+    {
+        return RunCompareLatest(a,b)
+    }
+    
+	if (!a.isPB)
+		return 1
+	
+	return -1
+}
+
 void function PastRuns_RunsFinishedLoading()
 {
     RunList_Refresh()
     if (GetRunCount() > 0)
     {
-        PastRuns_DisplayRun(GetRunByIndex(0))
+        PastRuns_DisplayRun(file.runArray[0])
     }
     else
     {
@@ -324,13 +359,14 @@ string function GetTimeAsString(int timestamp)
 
 void function PastRuns_DisplayRun(Run run)
 {
-    file.selectedRunIndex = GetRunIndex(run)
+    file.selectedRunIndex = file.runArray.find(run)
     printt("run index", file.selectedRunIndex)
 
     var deleteButton = Hud_GetChild(file.menu, "DeleteRunButton")
     var totalTime = Hud_GetChild(file.menu, "FinalTime")
     var splitsLabel = Hud_GetChild(file.menu, "Splits")
     var timesLabel = Hud_GetChild(file.menu, "Times")
+    var deltasLabel = Hud_GetChild(file.menu, "Deltas")
     var categoryName = Hud_GetChild(file.menu, "CategoryName")
     var categoryBG = Hud_GetChild(file.menu, "CategoryBG")
     var rulesetName = Hud_GetChild(file.menu, "RulesetName")
@@ -344,7 +380,7 @@ void function PastRuns_DisplayRun(Run run)
         verificationLabelText += "^FF404000Run Invalid!^FFFFFFFF\n\n"
     }
 
-    if (run.isPB)
+    else if (run.isPB)
     {
         verificationLabelText += "^FFC83200Personal Best!^FFFFFFFF\n\n"
     }
@@ -361,6 +397,7 @@ void function PastRuns_DisplayRun(Run run)
 
     string splitLabelText = ""
     string timesLabelText = ""
+    string deltasLabelText = ""
 
     bool isIL = IsILCategory(run.category)
     string map
@@ -372,6 +409,7 @@ void function PastRuns_DisplayRun(Run run)
 
     foreach (Duration split in run.splits)
     {
+        Run ornull bestTime = GetPBRun(run.category, run.ruleset)
         if (isIL)
         {
             splitLabelText += GetILSplitName(split.name, map, true)
@@ -380,8 +418,13 @@ void function PastRuns_DisplayRun(Run run)
         {
             splitLabelText += GetLevelName(split.name, true)
         }
+        //Duration targetSplit = 
         splitLabelText += "\n"
-        timesLabelText += ColorDelta(split.delta, split.isGold) + " " + AddLeadingSpaceForTime(FormatTime(split.seconds, split.microseconds)) + "\n"
+        timesLabelText += AddLeadingSpaceForTime(FormatTime(split.seconds, split.microseconds)) + "\n"
+        //Duration delta = SubtractTimes( )
+        if (split.isGold)
+            deltasLabelText += "^FFD70000GOLD!"
+        deltasLabelText += "\n"
     }
 
     // category
@@ -403,6 +446,8 @@ void function PastRuns_DisplayRun(Run run)
 
     Hud_SetText(splitsLabel, splitLabelText)
     Hud_SetText(timesLabel, timesLabelText)
+    Hud_SetText(deltasLabel, deltasLabelText)
+    printt(timesLabelText)
 
     Hud_SetVisible( deleteButton, GetRunIndex(run) >= 0 )
 }
@@ -410,9 +455,9 @@ void function PastRuns_DisplayRun(Run run)
 // monospace font abusal...
 string function AddLeadingSpaceForTime(string str)
 {
-    string whitespace = "          "
+    string whitespace = "                      "
 
-    return whitespace.slice(0, 10 - str.len()) + str
+    return whitespace.slice(0, 18 - str.len()) + str
 }
 
 void function OnMenuOpened()

@@ -99,13 +99,15 @@ string function GetRunRuleset()
     return cat
 }
 
-Duration function SumOfSplits( array<Duration> splits, int maxIndex )
+Duration function SumOfSplits( array<Duration> splits, string stopAtSplit = "" )
 {
     Duration a
-    for (int i = 0; i < minint(maxIndex, splits.len()); i++)
+    for (int i = 0; i < splits.len(); i++)
     {
         a.seconds += splits[i].seconds
         a.microseconds += splits[i].microseconds
+        if (splits[i].name == stopAtSplit)
+            break
     }
     a.seconds += a.microseconds / 1000000
     a.microseconds = a.microseconds % 1000000

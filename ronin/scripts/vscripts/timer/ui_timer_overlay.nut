@@ -118,7 +118,7 @@ void function UpdateTimerHUD( var timer )
 
     // if (CmpDuration(levelTime, GetGoldSplitsForCategory(GetRunCategory()))) TODO: gold split comparison
 
-    string levelDelta = GetTimeDelta( levelTime, GetSplitIndex() )
+    string levelDelta = GetTimeDelta( levelTime, levelTime.name, false )
     if (levelDelta.len() <= 0 || levelDelta[0] == '-') {
         levelDelta = PreviousLevelDelta()
     }
