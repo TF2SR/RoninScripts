@@ -1201,12 +1201,6 @@ Scripts:
 	triggers/sp_boomtown_end_script.nut
 ]
 
-When: "CLIENT && MAP_sp_crashsite"
-Scripts:
-[
-	triggers/sp_crashsite_script.nut
-]
-
 When: "CLIENT && MAP_sp_beacon"
 Scripts:
 [
