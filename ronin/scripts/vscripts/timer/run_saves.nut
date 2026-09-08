@@ -56,11 +56,6 @@ const array<string> SAVE_CONVARS = [
     "srm_practice_mode",
     "srm_force_moonboots",
     "fps_scale",
-    "cl_showpos",
-    "ronin_triggerdisplay",
-    "ronin_velocitysave",
-    "sp_music",
-    "dq_strafemeter_enabled",
     "dq_strafemeter_position",
     "dq_strafemeter_buffer_length",
     "igt_enable",
@@ -511,7 +506,6 @@ void function SaveGoldSplits()
     SaveFile( "gold_splits.json", EncodeJSON(file.goldSplits) )
 }
 
-// Keep the Roguelike-style JSON save, including changes made without opening a menu.
 void function SaveConVarsWhenChanged()
 {
     table lastSave
@@ -541,7 +535,6 @@ void function SaveConVarsWhenChanged()
         }
         catch (e)
         {
-            // A failed attempt must not prevent later changes from being saved.
             printt("Failed to save Ronin convars:", e)
         }
     }
