@@ -41,6 +41,9 @@ const array<string> SAVE_CONVARS = [
     "srm_speedometer_fast",
     "srm_speedometer_ulabel_text",
     "srm_speedometer_ulabel_distance",
+    "srm_speedometer_ulabel_size",
+    "srm_speedometer_thickness",
+    "srm_speedometer_wowowowow",
     "srm_speedometer_alignment",
     "srm_speedometer_font",
     "srm_speedometer_decimals_size",
@@ -141,20 +144,7 @@ void function RunSaves_Init()
         }
         file.isSaveLoaded = true
     })
-    thread void function() : ()
-    {
-        while (true)
-        {
-		    WaitSignal( uiGlobal.signalDummy, "OpenErrorDialog", "ActiveMenuChanged" )
-            try
-            {
-                Roguelike_WriteSaveToDisk()
-            }
-            catch (e)
-            {}
-            
-        }
-    }()
+    thread SaveConVarsWhenChanged()
     thread WaitForAllFilesToLoad( runFiles )
 }
 
@@ -516,41 +506,36 @@ void function SaveGoldSplits()
     SaveFile( "gold_splits.json", EncodeJSON(file.goldSplits) )
 }
 
-// roguelike mentioned
-float lastSaveTime = -99.9
-void function Roguelike_WriteSaveToDisk()
+void function SaveConVarsWhenChanged()
 {
-    if (!file.isSaveLoaded)
-        throw "Cannot save whilst save data not loaded!"
-
-    thread Roguelike_WriteSaveToDisk_Internal()
-}
-
-bool isSaving = false
-// only save once a second, and only save the most updated data
-void function Roguelike_WriteSaveToDisk_Internal()
-{
-    if (isSaving)
-        return
-
-    isSaving = true
-
-    if (Time() - lastSaveTime < 1.0)
+    table lastSave
+    while (true)
     {
-        wait 1.0 + Time() - lastSaveTime
+        wait 1.0
+        if (!file.isSaveLoaded)
+            continue
+
+        try
+        {
+            table saveData
+            bool changed = false
+            foreach (string convar in SAVE_CONVARS)
+            {
+                string value = GetConVarString(convar)
+                saveData[convar] <- value
+                if (!(convar in lastSave) || lastSave[convar] != value)
+                    changed = true
+            }
+
+            if (changed)
+            {
+                SaveFile("save.json", EncodeJSON(saveData))
+                lastSave = saveData
+            }
+        }
+        catch (e)
+        {
+            printt("Failed to save Ronin convars:", e)
+        }
     }
-
-    lastSaveTime = Time()
-    //SetConVarInt("roguelike_save_backup", (GetConVarInt("roguelike_save_backup") + 1) % 3)
-
-    table saveData
-    foreach (string convar in SAVE_CONVARS)
-    {
-        saveData[convar] <- GetConVarString(convar)
-    }
-    printt("SAVING FILE")
-    SaveFile( "save.json", EncodeJSON(saveData) )
-    //SaveFile( "save_backup_" + GetUnixTimestamp() + ".json", EncodeJSON(saveData) )
-
-    isSaving = false
 }
