@@ -718,7 +718,7 @@ void function Beacon3IL_Init() {
 void function TrialByFire_CheckDialogue() {
     thread void function (): (){
         while (true) {
-            table results = expect table(level.WaitSignal("Ronin_DialoguePlaying"))
+            table results = WaitSignal( level, "Ronin_DialoguePlaying")
 
             if (results.name == "SARAH_COOPER_WITH_ME") {
                 RunUIScript("SplitWithName", "Door")
