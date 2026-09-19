@@ -26,6 +26,9 @@ struct
 	array<var> spotlightButtons
 
 	bool installing = false
+	bool updateCheckStarted = false
+	bool updateCheckRunning = false
+	bool updateDialogShown = false
 } file
 
 const DEBUG_PERMISSIONS = false
@@ -106,6 +109,7 @@ void function InitMainMenuPanel()
 	file.buttonData = []
 
 	#if PC_PROG
+		file.buttonData.append( { name = "Check for updates", activateFunc = OnUpdateButton_Activate, updateFunc = UpdateRoninUpdateButton } )
 		file.buttonData.append( { name = "#QUIT", activateFunc = OnQuitButton_Activate } )
 	#endif // PC_PROG
 
@@ -178,6 +182,97 @@ void function OnShowMainMenuPanel()
 
 	SetPanelDefaultFocus( file.panel, Hud_GetChild( file.panel, defaultButtonRowFocus ) )
 	PanelFocusDefault( file.panel )
+	if ( !file.updateCheckStarted )
+	{
+		file.updateCheckStarted = true
+		thread CheckRoninUpdates()
+	}
+	ShowRoninUpdateNotice()
+}
+
+void function UpdateRoninUpdateButton( var button )
+{
+	string state = Ronin_GetUpdateState()
+	string text = "Check for updates"
+	switch ( state )
+	{
+		case "checking":
+			text = "Checking for updates..."
+			break
+		case "available":
+			text = "Download Ronin " + Ronin_GetLatestVersion()
+			break
+		case "current":
+			text = "Ronin is up to date"
+			break
+		case "unavailable":
+			text = "Update check failed"
+			break
+		case "development":
+			text = "View release " + Ronin_GetLatestVersion()
+			break
+	}
+	RuiSetString( Hud_GetRui( button ), "buttonText", text )
+	Hud_SetEnabled( button, state != "checking" )
+}
+
+void function CheckRoninUpdates()
+{
+	if ( file.updateCheckRunning )
+		return
+	file.updateCheckRunning = true
+	OnThreadEnd( void function() : () { file.updateCheckRunning = false } )
+	Ronin_CheckForUpdates()
+	UpdateRoninUpdateButton( file.menuButtons[0] )
+	while ( Ronin_GetUpdateState() == "checking" )
+		wait 0.1
+	UpdateRoninUpdateButton( file.menuButtons[0] )
+	ShowRoninUpdateNotice()
+}
+
+void function ShowRoninUpdateNotice()
+{
+	if ( file.updateDialogShown || Ronin_GetUpdateState() != "available" || GetActiveMenu() != file.menu )
+		return
+	file.updateDialogShown = true
+	DialogData dialogData
+	dialogData.header = "A Ronin update is available"
+	dialogData.message = "You're running " + GetSdkVersion() + ". The latest release is " + Ronin_GetLatestVersion() + ".\n\nGet the update from the Ronin releases page."
+	AddDialogButton( dialogData, "View releases", OpenRoninReleases )
+	AddDialogButton( dialogData, "Later" )
+	OpenDialog( dialogData )
+}
+
+void function OnUpdateButton_Activate()
+{
+	string state = Ronin_GetUpdateState()
+	if ( state == "available" || state == "development" )
+	{
+		OpenRoninReleases()
+		return
+	}
+	if ( state == "unavailable" )
+	{
+		DialogData dialogData
+		dialogData.header = "Couldn't check for Ronin updates"
+		dialogData.message = "Check your connection and try again. Checks are limited to once per minute."
+		AddDialogButton( dialogData, "Retry", RetryRoninUpdateCheck )
+		AddDialogButton( dialogData, "View releases", OpenRoninReleases )
+		AddDialogButton( dialogData, "#CANCEL" )
+		OpenDialog( dialogData )
+		return
+	}
+	thread CheckRoninUpdates()
+}
+
+void function RetryRoninUpdateCheck()
+{
+	thread CheckRoninUpdates()
+}
+
+void function OpenRoninReleases()
+{
+	LaunchExternalWebBrowser( "https://github.com/TF2SR/Ronin/releases/latest", WEBBROWSER_FLAG_MUTEGAME )
 }
 
 void function EnableCheckPlus()

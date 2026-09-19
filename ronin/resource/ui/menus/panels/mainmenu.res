@@ -148,7 +148,7 @@
     {
         ControlName				RuiPanel
         xpos					-12
-        ypos					-38
+        ypos					10
         wide					744
         tall					100
         rui                     "ui/service_status.rpak"
