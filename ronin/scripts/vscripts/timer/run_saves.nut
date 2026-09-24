@@ -429,6 +429,12 @@ Duration function TableToDuration(table t)
         dur.isGold = false
     }
 
+    if ("delta" in t) {
+    	dur.delta = string(t["delta"])
+	} else {
+		dur.delta = "+0.0"
+	}
+
     return dur
 }
 
@@ -440,6 +446,7 @@ table function DurationToTable(Duration dur)
     result["microseconds"] <- dur.microseconds
     result["name"] <- dur.name
     result["isGold"] <- dur.isGold
+	result["delta"] <- dur.delta
 
     return result
 }
