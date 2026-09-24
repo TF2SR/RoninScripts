@@ -422,8 +422,8 @@ void function PastRuns_DisplayRun(Run run)
         splitLabelText += "\n"
         timesLabelText += AddLeadingSpaceForTime(FormatTime(split.seconds, split.microseconds)) + "\n"
         //Duration delta = SubtractTimes( )
-        if (split.isGold)
-            deltasLabelText += "^FFD70000GOLD!"
+	deltasLabelText += ColorDelta(split.delta, split.isGold)
+	
         deltasLabelText += "\n"
     }
 
