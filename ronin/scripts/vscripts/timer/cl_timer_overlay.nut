@@ -462,6 +462,10 @@ void function SplitOnInteract(entity ent, string name, float delay = 0)
 
 void function OnPropDynamic( entity ent )
 {
+	// we don't want these subsplits if it's any% (yet...)
+	if (!IsILCategory(GetRunCategory()))
+		return
+	
     vector origin = ent.GetOrigin()
     // BNR
     if (GetMapName() == "sp_sewers1" && int(origin.x) == -2720 && int(origin.y) == -160 && int(origin.z) == 914)
